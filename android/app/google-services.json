@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "649885100643",
+    "project_id": "trendmasterass2",
+    "storage_bucket": "trendmasterass2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649885100643:android:59c81800f59271c3f8e656",
+        "android_client_info": {
+          "package_name": "com.trendmasterass2.trendmasterass2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvQBXJtGdEMAQleBHHF6_75WPuxTDsnmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
