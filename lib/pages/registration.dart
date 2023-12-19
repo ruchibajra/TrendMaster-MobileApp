@@ -1,4 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 enum Gender { Male, Female }
 
 class InfluencerRegistrationScreen extends StatefulWidget {
@@ -24,6 +29,9 @@ class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScr
   String? selectedGender;
   List<String> selectedNiches = [];
 
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   List<Map<String, dynamic>> getNicheList() {
     return [
       {'niche': 'Fashion', 'color': Colors.teal},
@@ -36,6 +44,26 @@ class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScr
       {'niche': 'Model', 'color': Colors.teal},
       {'niche': 'Comedy', 'color': Colors.teal},
     ];
+  }
+
+  Future<void> _saveUserDataLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('firstName', firstNameController.text);
+    prefs.setString('middleName', middleNameController.text);
+    prefs.setString('lastName', lastNameController.text);
+    prefs.setString('address', addressController.text);
+    prefs.setString('gender', selectedGender ?? '');
+    prefs.setString('phone', phoneController.text);
+    prefs.setString('email', emailController.text);
+    prefs.setString('password', passwordController.text);
+    prefs.setString('instagram', instagramController.text);
+    prefs.setString('youtube', youtubeController.text);
+    prefs.setInt('instagramSubscriber',
+        int.parse(instagramSubscriberController.text));
+    prefs.setInt(
+        'youtubeSubscriber', int.parse(youtubeSubscriberController.text));
+    prefs.setStringList('niche', selectedNiches);
+    prefs.setString('description', descriptionController.text);
   }
 
   //Personal Info Section
@@ -314,6 +342,42 @@ class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScr
     );
   }
 
+// Registration Process Function
+  Future<void> _registerUser() async {
+    try {
+      // Save data locally
+      await _saveUserDataLocally();
+
+      // Create user account in Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // Save additional user data to Firestore
+      await _firestore.collection('users').doc(userCredential.user?.uid).set({
+        'firstName': firstNameController.text,
+        'middleName': middleNameController.text,
+        'lastName': lastNameController.text,
+        'address': addressController.text,
+        'gender': selectedGender,
+        'phone': phoneController.text,
+        'instagram': instagramController.text,
+        'youtube': youtubeController.text,
+        'instagramSubscriber': int.parse(instagramSubscriberController.text),
+        'youtubeSubscriber': int.parse(youtubeSubscriberController.text),
+        'niche': selectedNiches,
+        'description': descriptionController.text,
+      });
+
+      // Navigate to the next screen or perform any additional actions
+      // You can use Navigator.push() to navigate to a new screen
+    } catch (e) {
+      // Handle registration errors (e.g., display an error message)
+      print('Error during registration: $e');
+    }
+  }
+
   // Override Section
   @override
   Widget build(BuildContext context) {
@@ -325,8 +389,6 @@ class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScr
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
         child: Form(
-          // Add a GlobalKey<FormState> for form validation
-          // key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -337,10 +399,7 @@ class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScr
               SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Implement registration logic
-                    // Validate form and save data to Firebase
-                  },
+                  onPressed: _registerUser,
                   style: ElevatedButton.styleFrom(
                     primary: Colors.teal,
                     minimumSize: Size(150, 50),

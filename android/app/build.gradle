@@ -22,9 +22,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-//this is addecd
-apply plugin: 'com.google.gms.google-services'
-
 android {
     namespace "com.trendmasterass2.trendmasterass2"
     compileSdkVersion flutter.compileSdkVersion
@@ -52,6 +49,12 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        //this is added by Ru
+        multiDexEnabled true
+        //this is added by Ru
+
+
     }
 
     buildTypes {
@@ -59,8 +62,30 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+
+            //THIS IS ADDED BY Ru
+            minifyEnabled true
+//            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //THIS IS ADDED BY Ru
+
+
         }
     }
+
+    // this is added by ru
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    // this is added by ru
+
+    // this is added by ru
+    dependencies {
+        implementation 'com.android.support:multidex:1.0.3'
+    }
+    // this is added by ru
+
+
 }
 
 flutter {
@@ -68,3 +93,6 @@ flutter {
 }
 
 dependencies {}
+
+//this is addecd
+apply plugin: 'com.google.gms.google-services'
