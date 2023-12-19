@@ -12,7 +12,20 @@
           "package_name": "com.trendmasterass2.trendmasterass2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "649885100643-qud79gr4p3va5pt1bdtg904ue7s5pmkl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trendmasterass2.trendmasterass2",
+            "certificate_hash": "07322f5ac00c33f143cf7fc281c1186e3ba233ce"
+          }
+        },
+        {
+          "client_id": "649885100643-nri28t5jj6kdck5kohe419ck525ca074.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCvQBXJtGdEMAQleBHHF6_75WPuxTDsnmg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649885100643-nri28t5jj6kdck5kohe419ck525ca074.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
