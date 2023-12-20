@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trendmasterass2/model/user_model.dart';
+import 'package:trendmasterass2/pages/company_homepage.dart';
 
 
 enum Gender { Male, Female }
@@ -19,11 +22,14 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController instagramController = TextEditingController();
   TextEditingController youtubeController = TextEditingController();
+  TextEditingController facebookController = TextEditingController();
   TextEditingController rateController = TextEditingController();
   TextEditingController instagramSubscriberController = TextEditingController();
   TextEditingController youtubeSubscriberController = TextEditingController();
+  TextEditingController facebookSubscriberController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
   String? selectedGender;
@@ -56,12 +62,17 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     prefs.setString('phone', phoneController.text);
     prefs.setString('email', emailController.text);
     prefs.setString('password', passwordController.text);
+    prefs.setString('confirmPassword', confirmPasswordController.text);
     prefs.setString('instagram', instagramController.text);
     prefs.setString('youtube', youtubeController.text);
+    prefs.setString('facebook', facebookController.text);
+
     prefs.setInt('instagramSubscriber',
         int.parse(instagramSubscriberController.text));
     prefs.setInt(
         'youtubeSubscriber', int.parse(youtubeSubscriberController.text));
+    prefs.setInt('facebookSubscriber',
+        int.parse(facebookSubscriberController.text));
     prefs.setStringList('niche', selectedNiches);
     prefs.setString('description', descriptionController.text);
   }
@@ -184,6 +195,15 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             border: OutlineInputBorder(),
           ),
         ),
+        SizedBox(height: 10,),
+        TextFormField(
+          controller: confirmPasswordController,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'Confirm Password',
+            border: OutlineInputBorder(),
+          ),
+        ),
       ],
     );
   }
@@ -246,6 +266,35 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
               width: 100,
               child: TextFormField(
                 controller: youtubeSubscriberController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Subscribers',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10,),
+
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: TextFormField(
+                  controller: facebookController,
+                  decoration: InputDecoration(
+                    labelText: 'Facebook Handle',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 100,
+              child: TextFormField(
+                controller: facebookSubscriberController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Subscribers',
@@ -342,43 +391,52 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     );
   }
 
-// Registration Process Function
-  Future<void> _registerUser() async {
-    try {
-      // Save data locally
-      await _saveUserDataLocally();
 
-      // Create user account in Firebase Authentication
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      // Save additional user data to Firestore
-      await _firestore.collection('users').doc(userCredential.user?.uid).set({
-        'firstName': firstNameController.text,
-        'middleName': middleNameController.text,
-        'lastName': lastNameController.text,
-        'address': addressController.text,
-        'gender': selectedGender,
-        'phone': phoneController.text,
-        'instagram': instagramController.text,
-        'youtube': youtubeController.text,
-        'instagramSubscriber': int.parse(instagramSubscriberController.text),
-        'youtubeSubscriber': int.parse(youtubeSubscriberController.text),
-        'niche': selectedNiches,
-        'description': descriptionController.text,
-      });
-
-      // Navigate to the next screen or perform any additional actions
-      // You can use Navigator.push() to navigate to a new screen
-    } catch (e) {
-      // Handle registration errors (e.g., display an error message)
-      print('Error during registration: $e');
-    }
+  void signUp(String email, String password) async {
+    // if (_formKey.currentState!.validate)
+    await _auth.createUserWithEmailAndPassword(email: email, password: password)
+        .then((value) => postDetailsToFirestore());
   }
 
-  // Override Section
+  postDetailsToFirestore() async {
+    //calling our firestore and usermodel
+    //sendind these value
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    UserModel userModel = UserModel(
+      email: user!.email,
+      uid: user.uid,
+      firstName: firstNameController.text,
+      middleName: middleNameController.text,
+      lastName: lastNameController.text,
+      address: addressController.text,
+      gender: selectedGender.toString(),
+      phone: phoneController.text,
+      instagram: instagramController.text,
+      youtube: youtubeController.text,
+      facebook: facebookController.text,
+      instagramSubscriber: int.parse(instagramSubscriberController.text),
+      youtubeSubscriber: int.parse(youtubeSubscriberController.text),
+      facebookSubscriber: int.parse(facebookSubscriberController.text),
+      niche: selectedNiches.join(', ') as List<String>?,
+      description: descriptionController.text,
+    );
+
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+
+    Fluttertoast.showToast(msg: "Account Created Successfully!");
+
+    Navigator.pushAndRemoveUntil(
+        (context), MaterialPageRoute(builder: (context) => CompanyHomePage()), (
+        route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -399,7 +457,9 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
               SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: _registerUser,
+                  onPressed: () {
+                    signUp(emailController.text, passwordController.text);
+                  },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.teal,
                     minimumSize: Size(150, 50),
@@ -420,6 +480,5 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     );
   }
 }
-
 
 
