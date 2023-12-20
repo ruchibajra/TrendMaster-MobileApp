@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trendmasterass2/pages/registration.dart';
-import 'package:trendmasterass2/pages/signin_page.dart';
-
+import 'package:trendmasterass2/pages/creator_registration.dart';
+import 'package:trendmasterass2/pages/usertype_page.dart';
+import 'package:trendmasterass2/unused/welcome_page.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,6 @@ Future<void> main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,21 +27,9 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.aBeeZee().fontFamily,
       ),
 
-
         //Route
         routes: <String, WidgetBuilder>{
-          "/": (context) => InfluencerRegistrationScreen(),
-          // "/": (context) => CreatorsPage(),
-          // "/": (context) => CompanyHomePage(),
-          // "/": (context) => InfluencerProfile(),
-          // "/": (context) => InfluencerHomePage(),
-          // "/": (context) => Budget(),
-          // "/": (context) => LoginPage(),
-          // "/": (context) => AddDetailsPage(),
-          // "/": (context) => CompanyLocationPage(),
-          // "/": (context) => CompanySuccessPage(),
-          // "/": (context) => InfluencerHomePage(),
-          // "/": (context) => CampaignDetailPage(),
+          "/": (context) => UsertypePage(),
         }
     );
   }

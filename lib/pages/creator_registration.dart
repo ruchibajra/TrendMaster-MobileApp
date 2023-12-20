@@ -6,12 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum Gender { Male, Female }
 
-class InfluencerRegistrationScreen extends StatefulWidget {
+class CreatorRegistration extends StatefulWidget {
   @override
-  _InfluencerRegistrationScreenState createState() => _InfluencerRegistrationScreenState();
+  _CreatorRegistrationState createState() => _CreatorRegistrationState();
 }
 
-class _InfluencerRegistrationScreenState extends State<InfluencerRegistrationScreen> {
+class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController middleNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();

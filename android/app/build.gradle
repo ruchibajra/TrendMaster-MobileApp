@@ -53,8 +53,6 @@ android {
         //this is added by Ru
         multiDexEnabled true
         //this is added by Ru
-
-
     }
 
     buildTypes {
