@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/company_registration.dart';
+import 'package:trendmasterass2/pages/creator_registration.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 
 class UsertypePage extends StatelessWidget {
@@ -29,7 +32,7 @@ class UsertypePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => CreatorRegistration(),
                   ),
                 );
               },
@@ -55,8 +58,6 @@ class UsertypePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-
-
             // Button Two Section
             const Text(
               'Creator',
@@ -66,12 +67,13 @@ class UsertypePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => CompanyRegistrationScreen(),
                   ),
                 );
               },
