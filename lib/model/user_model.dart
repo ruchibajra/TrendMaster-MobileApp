@@ -15,9 +15,10 @@ class UserModel {
   int? facebookSubscriber;
   String? niche;
   String? description;
+  String? userType;
 
   UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,
-  this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description});
+  this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description, this.userType});
 
   // receiving data from server
   factory UserModel.fromMap(map){
@@ -38,13 +39,14 @@ class UserModel {
       facebookSubscriber: map['facebookSubscriber'],
       niche: map['niche'],
       description: map['description'],
+      userType: map['userType'],
     );
   }
     // sending data to server
     Map<String, dynamic> toMap(){
       return {
         'firstName' : firstName,
-        'middleName': middleName,
+        if (middleName != null && middleName!.isNotEmpty) 'middleName': middleName,
         'lastName' : lastName,
         'address': address,
         'gender' : gender,
@@ -58,6 +60,7 @@ class UserModel {
         'facebookSubscriber' : facebookSubscriber,
         'niche': niche,
         'description': description,
+        'userType': userType,
     };
   }
 }

@@ -66,7 +66,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         TextFormField(
           controller: firstNameController,
           decoration: InputDecoration(
-            labelText: 'First Name',
+            labelText: 'First Name*',
             border: OutlineInputBorder(),
           ),
         ),
@@ -82,13 +82,13 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         TextFormField(
           controller: lastNameController,
           decoration: InputDecoration(
-            labelText: 'Last Name',
+            labelText: 'Last Name*',
             border: OutlineInputBorder(),
           ),
         ),
         SizedBox(height: 10),
         Text(
-          'Address',
+          'Address*',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -102,7 +102,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Gender',
+          'Gender*',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -127,7 +127,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Email',
+          'Email*',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -141,7 +141,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Phone',
+          'Phone*',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -155,7 +155,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Password',
+          'Password*',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -378,6 +378,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     UserModel userModel = UserModel(
       email: user!.email,
       uid: user.uid,
+      userType: 'Creator',
       firstName: firstNameController.text,
       middleName: middleNameController.text,
       lastName: lastNameController.text,
