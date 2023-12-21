@@ -13,7 +13,7 @@ class UserModel {
   int? instagramSubscriber;
   int? youtubeSubscriber;
   int? facebookSubscriber;
-  List<String>? niche;
+  String? niche;
   String? description;
 
   UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,

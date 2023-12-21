@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendmasterass2/model/user_model.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
-
 
 enum Gender { Male, Female }
 
@@ -26,11 +24,11 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController instagramController = TextEditingController();
   TextEditingController youtubeController = TextEditingController();
   TextEditingController facebookController = TextEditingController();
-  TextEditingController rateController = TextEditingController();
   TextEditingController instagramSubscriberController = TextEditingController();
   TextEditingController youtubeSubscriberController = TextEditingController();
   TextEditingController facebookSubscriberController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController rateController = TextEditingController();
 
   String? selectedGender;
   List<String> selectedNiches = [];
@@ -50,31 +48,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       {'niche': 'Model', 'color': Colors.teal},
       {'niche': 'Comedy', 'color': Colors.teal},
     ];
-  }
-
-  Future<void> _saveUserDataLocally() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('firstName', firstNameController.text);
-    prefs.setString('middleName', middleNameController.text);
-    prefs.setString('lastName', lastNameController.text);
-    prefs.setString('address', addressController.text);
-    prefs.setString('gender', selectedGender ?? '');
-    prefs.setString('phone', phoneController.text);
-    prefs.setString('email', emailController.text);
-    prefs.setString('password', passwordController.text);
-    prefs.setString('confirmPassword', confirmPasswordController.text);
-    prefs.setString('instagram', instagramController.text);
-    prefs.setString('youtube', youtubeController.text);
-    prefs.setString('facebook', facebookController.text);
-
-    prefs.setInt('instagramSubscriber',
-        int.parse(instagramSubscriberController.text));
-    prefs.setInt(
-        'youtubeSubscriber', int.parse(youtubeSubscriberController.text));
-    prefs.setInt('facebookSubscriber',
-        int.parse(facebookSubscriberController.text));
-    prefs.setStringList('niche', selectedNiches);
-    prefs.setString('description', descriptionController.text);
   }
 
   //Personal Info Section
@@ -399,9 +372,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   }
 
   postDetailsToFirestore() async {
-    //calling our firestore and usermodel
-    //sendind these value
-
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
@@ -420,10 +390,9 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       instagramSubscriber: int.parse(instagramSubscriberController.text),
       youtubeSubscriber: int.parse(youtubeSubscriberController.text),
       facebookSubscriber: int.parse(facebookSubscriberController.text),
-      niche: selectedNiches.join(', ') as List<String>?,
+      niche: selectedNiches.toString(),
       description: descriptionController.text,
     );
-
 
     await firebaseFirestore
         .collection("users")
@@ -441,7 +410,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Influencer Registration'),
+        title: const Text('Influencer Registration'),
         backgroundColor: Colors.teal,
       ),
       body: SingleChildScrollView(
@@ -464,7 +433,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
                     primary: Colors.teal,
                     minimumSize: Size(150, 50),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Register',
                     style: TextStyle(
                       color: Colors.white,
