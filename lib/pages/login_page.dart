@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/creator_homepage.dart';
 import 'package:trendmasterass2/pages/creator_registration.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import 'company_registration.dart';
@@ -148,18 +150,52 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
   //login function
- void signIn(String email, String password) async{
-    if(_formKey.currentState!.validate()){
-      await _auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((uid) => {
-            Fluttertoast.showToast(msg: "Login Successful"),
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CompanyHomePage())),
-      }).catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
-    }
+ void signIn(String email, String password) async {
+   if (_formKey.currentState!.validate()) {
+     try{
+       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+           email: email,
+           password: password);
+
+       User? user = userCredential.user;
+
+       if(user != null){
+         DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+             .collection('users')
+             .doc(user.uid)
+             .get();
+
+         if (userSnapshot.exists){
+           String userType = userSnapshot['userType'];
+
+           if(userType == 'Company'){
+             Navigator.of(context).pushReplacement(
+               MaterialPageRoute(builder: (context) => CompanyHomePage()),
+             );
+           } else if(userType == 'Creator'){
+             Navigator.of(context).pushReplacement(
+               MaterialPageRoute(builder: (context) => CreatorHomePage()),
+             );
+           }else{
+             Fluttertoast.showToast(msg: 'User details not found');
+           }
+         }
+       }
+     } catch(e){
+       Fluttertoast.showToast(msg: e.toString());
+     }
+   }
  }
+ //      await _auth
+ //          .signInWithEmailAndPassword(email: email, password: password)
+ //          .then((uid) => {
+ //            Fluttertoast.showToast(msg: "Login Successful"),
+ //        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CompanyHomePage())),
+ //      }).catchError((e) {
+ //        Fluttertoast.showToast(msg: e!.message);
+ //      });
+ //    }
+ // }
 
 }
 
