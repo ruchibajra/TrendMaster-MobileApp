@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/company_registration.dart';
+import 'package:trendmasterass2/pages/creator_registration.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 
 class UsertypePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const containerPadding = EdgeInsets.only(bottom: 20, right: 20); // Adjust the bottom padding as needed
-    const imageSize = 100.0; // Adjust the size of the image
-    const logoSize = 100.0; // Adjust the size of the logo
-
     return Scaffold(
-      // Remove the app bar
       body: Center(
         child: Column(
           children: <Widget>[
-            // Logo at the Top
             Image.asset(
-              'assets/images/logo.png', // Replace with your logo asset path
+              'assets/images/logo.png',
               width: 300,
               height: 300,
             ),
             SizedBox(height: 20),
 
-            // Two Texts below the Logo
             Center(
               child: Text(
                 'Choose Your',
@@ -45,6 +41,7 @@ class UsertypePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 0),
+
             Text(
               'Collaborate for Success!',
               style: TextStyle(
@@ -78,7 +75,7 @@ class UsertypePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginPage(),
+                        builder: (context) => CreatorRegistration(),
                       ),
                     );
                   },
@@ -151,7 +148,7 @@ class UsertypePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginPage(),
+                        builder: (context) => CompanyRegistrationScreen(),
                       ),
                     );
                   },

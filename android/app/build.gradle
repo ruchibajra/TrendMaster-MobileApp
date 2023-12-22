@@ -90,7 +90,12 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    //added
+    dependencies { implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0' }
+
+
+}
 
 //this is addecd
 apply plugin: 'com.google.gms.google-services'

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/creator_registration.dart';
+import 'package:trendmasterass2/pages/usertype_page.dart';
+import 'company_registration.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
-
 
 class _LoginPageState extends State<LoginPage> {
   // form key
@@ -20,16 +21,19 @@ class _LoginPageState extends State<LoginPage> {
   // firebase
   final _auth = FirebaseAuth.instance;
 
-
   // Function of on press buttons
   void onPressed(BuildContext context) {
     signIn(emailController.text, passwordController.text);
   }
 
-  void onPressedSignup(BuildContext context) {
+  void onPressedSignupType(BuildContext context) {
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => CreatorRegistration()));
+        MaterialPageRoute(builder: (context) => UsertypePage()));
+  }
 
+  void onPressedSignupCompany(BuildContext context){
+    Navigator.of(context).push(
+      MaterialPageRoute(builder:(context) => CompanyRegistrationScreen()));
   }
 
   @override
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         FractionallySizedBox(
                           widthFactor: 0.97,
                           child: ElevatedButton(
-                            onPressed: () => onPressedSignup(context),
+                            onPressed: () => onPressedSignupType(context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                             child: Text("CREATE NEW ACCOUNT"),
                           ),
@@ -118,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         FractionallySizedBox(
                           widthFactor: 0.97,
                           child: ElevatedButton(
-                            onPressed: () => onPressed(context),
+                            onPressed: () => onPressedSignupCompany(context),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                             child: Text("Sign up with Google"),
                           ),
