@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/creator_homepage.dart';
-import 'package:trendmasterass2/pages/creator_registration.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import 'company_registration.dart';
 
@@ -100,7 +100,16 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 10),
 
-            Text("Forgotten Password?", style: TextStyle(color: Colors.red)),
+            // Forgotten Password
+            Container(
+              child: TextButton(
+                onPressed: () =>  Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => PasswordResetScreen()),
+                ),
+                child: Text("Forgotten Password?", style: TextStyle(color: Colors.red)),
+              ),
+            ),
+
 
             Padding(
               padding: const EdgeInsets.only(top: 30),
@@ -124,7 +133,9 @@ class _LoginPageState extends State<LoginPage> {
                         FractionallySizedBox(
                           widthFactor: 0.97,
                           child: ElevatedButton(
-                            onPressed: () => onPressedSignupCompany(context),
+                            onPressed: () {
+                              signInWithGoogle();
+                            },
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                             child: Text("Sign up with Google"),
                           ),
@@ -149,6 +160,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  //Sign in with Google
+  signInWithGoogle() async{
+
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken ,
+    );
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+  }
+
+
   //login function
  void signIn(String email, String password) async {
    if (_formKey.currentState!.validate()) {
@@ -186,17 +214,58 @@ class _LoginPageState extends State<LoginPage> {
      }
    }
  }
- //      await _auth
- //          .signInWithEmailAndPassword(email: email, password: password)
- //          .then((uid) => {
- //            Fluttertoast.showToast(msg: "Login Successful"),
- //        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CompanyHomePage())),
- //      }).catchError((e) {
- //        Fluttertoast.showToast(msg: e!.message);
- //      });
- //    }
- // }
+}
 
+
+class PasswordResetScreen extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void onPressedPasswordReset(BuildContext context) async {
+    if (emailController.text.isNotEmpty) {
+      try {
+        await _auth.sendPasswordResetEmail(email: emailController.text);
+        Fluttertoast.showToast(msg: 'Password reset email sent');
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+      }
+    } else {
+      Fluttertoast.showToast(msg: 'Please enter your email address');
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Password Reset'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: emailController,
+              decoration: InputDecoration(
+                hintText: "Enter Email Address",
+                labelText: "Email",
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => onPressedPasswordReset(context),
+              child: Text('Reset Password'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 
