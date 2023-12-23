@@ -44,7 +44,7 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     User? user = _auth.currentUser;
 
     CampaignModel campaignModel = CampaignModel(
-      id: '1',
+      // id: '1',
       title: titleController.text,
       description: descriptionController.text,
       niche: selectedNiches.toString(),

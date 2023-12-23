@@ -23,6 +23,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   // firebase
   final _auth = FirebaseAuth.instance;
+  bool _isPasswordVisible = false;
+
 
   // Function of on press buttons
   void onPressed(BuildContext context) {
@@ -74,10 +76,22 @@ class _LoginPageState extends State<LoginPage> {
                     // Password Textfield
                     TextFormField(
                       controller: passwordController,
-                      obscureText: true,
+                      obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
                         hintText: "Enter Password",
                         labelText: "Password",
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                          child: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        ),
                       ),
                     ),
                   ],

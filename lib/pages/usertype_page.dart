@@ -13,8 +13,8 @@ class UsertypePage extends StatelessWidget {
           children: <Widget>[
             Image.asset(
               'assets/images/logo.png',
-              width: 300,
-              height: 300,
+              width: 200,
+              height: 200,
             ),
             SizedBox(height: 20),
 
