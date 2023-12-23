@@ -1,12 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendmasterass2/model/campaign_model.dart';
+
+import 'company_success_page.dart';
 
 class CompanyLocationPage extends StatefulWidget {
+  CampaignModel campaignModel;
+  CompanyLocationPage({required this.campaignModel});
+
   @override
   _CompanyLocationPageState createState() => _CompanyLocationPageState();
 }
 
 class _CompanyLocationPageState extends State<CompanyLocationPage> {
   String selectedLocation = '';
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   List<Map<String, dynamic>> getLocationList() {
     return [
@@ -20,6 +32,32 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       {'name': 'Dhading', 'color': Colors.teal[300]},
       {'name': 'Nagarkot', 'color': Colors.teal[300]},
     ];
+  }
+
+  postDetailsToFirebase() async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    CampaignModel campaignModel = CampaignModel(
+      id: '1',
+      title: widget.campaignModel.title ,
+      description: widget.campaignModel.description,
+      niche: widget.campaignModel.niche,
+      count: widget.campaignModel.count,
+      budget: widget.campaignModel.budget,
+      location: selectedLocation.toString(),
+    );
+    await firebaseFirestore
+        .collection("campaign_details")
+        .doc(user?.uid)
+        .set(campaignModel.toMap());
+
+    Fluttertoast.showToast(msg: "Campaign Created Successfully.");
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder:(context) => CompanySuccessPage()),
+    );
+
   }
 
   @override
@@ -82,11 +120,8 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
               FractionallySizedBox(
                 widthFactor: 0.55, // Adjust this value according to your requirement
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => LoginPage()),
-                    // );
+                  onPressed: () async{
+                   await postDetailsToFirebase();
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                   child: Text("Continue"),

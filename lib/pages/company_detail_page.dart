@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
 
@@ -45,7 +46,18 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     CampaignModel campaignModel = CampaignModel(
       id: '1',
       title: titleController.text,
+      description: descriptionController.text,
+      niche: selectedNiches.toString(),
+    );
+    // await firebaseFirestore
+    //     .collection("campaign_details")
+    //     .doc(user?.uid)
+    //     .set(campaignModel.toMap());
 
+    Fluttertoast.showToast(msg: "You are almost there");
+
+    Navigator.of(context).push(
+        MaterialPageRoute(builder:(context) => Budget(campaignModel:campaignModel)),
     );
   }
 
@@ -182,11 +194,8 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                 child: FractionallySizedBox(
                   widthFactor: 0.55, // Adjust this value according to your requirement
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Budget()),
-                      );
+                    onPressed: () async{
+                      await postDetailsToFirestore();
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                     child: Text("Continue"),

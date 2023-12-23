@@ -1,3 +1,4 @@
+//This class is for creator registration
 class UserModel {
   String? uid;
   String? firstName;
@@ -65,6 +66,7 @@ class UserModel {
   }
 }
 
+//This class is for company registration
 class CompanyModel{
   String? uid;
   String? name;
