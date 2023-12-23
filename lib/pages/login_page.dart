@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:trendmasterass2/pages/company_detail_page.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/creator_homepage.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
@@ -143,7 +144,9 @@ class _LoginPageState extends State<LoginPage> {
                         FractionallySizedBox(
                           widthFactor: 0.97,
                           child: ElevatedButton(
-                            onPressed: () => onPressed(context),
+                            onPressed: () =>  Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => AddDetailsPage()),
+                            ),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                             child: Text("Sign up with Facebook"),
                           ),

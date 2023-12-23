@@ -29,8 +29,6 @@ class _CompanyRegistrationScreenState
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-  // firebaseAppCheck.installAppCheckProviderFactory(AppCheckProviderFactory.getInstance());
 
   Widget companyInformation(){
     return Column(
