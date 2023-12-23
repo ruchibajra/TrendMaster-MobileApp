@@ -35,6 +35,7 @@ class CompanyHomePage extends StatelessWidget {
     'assets/images/company_h1.png',
     // Add more images as needed
   ];
+  // Assuming a common radius value, you can customize this based on your design const double imageRadius = 10.0;
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +58,15 @@ class CompanyHomePage extends StatelessWidget {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 30,
+                      radius: 40, // Increase the radius as per your design
+                      backgroundColor: Colors.cyan,
                       backgroundImage: AssetImage('assets/images/companyProfile.png'),
                     ),
+
                     SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Khusbu Jaiswal',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -78,21 +74,25 @@ class CompanyHomePage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 35,
-                color: Color(0xFFD9D9D9),
+                width: MediaQuery.of(context).size.width * 10,
+                height: 50, // Increased height
+                decoration: BoxDecoration(
+                  color: Color(0xFFD9D9D9),
+                  borderRadius: BorderRadius.circular(10), // Added border radius
+                ),
                 child: Row(
                   children: [
-                    Icon(Icons.search, color: Colors.grey), // Search Icon
-                    SizedBox(width: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 5),
+                      child: Icon(Icons.search, color: Colors.grey), // Search Icon
+                    ),
                     Container(
-                      width: 150,
-                      height: 20,
+                      width: 190,
                       child: TextField(
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration.collapsed(
                           hintText: "Search a Creator",
-                          hintStyle: TextStyle(color: Colors.white),
+                          hintStyle: TextStyle(color: Colors.grey),
                         ),
                       ),
                     ),
@@ -100,8 +100,6 @@ class CompanyHomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10),
-
-
               // Intro Image Swipe Section
               Container(
                 color: Colors.red,
@@ -136,14 +134,78 @@ class CompanyHomePage extends StatelessWidget {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    SmallContainer(text: 'Motivation'),
-                    SizedBox(width: 15),
-                    SmallContainer(text: 'Lifestyle'),
-                    SizedBox(width: 15),
-                    SmallContainer(text: 'Education'),
-                    SizedBox(width: 15),
-                    SmallContainer(text: 'Fashion'),
-
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.only(right: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Motivation',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.only(right: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Lifestyle',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.only(right: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Education',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.only(right: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Fashion',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -168,6 +230,7 @@ class CompanyHomePage extends StatelessWidget {
                       height: 150,
                       width: 350,
                       color: Color(0xFFD2EBE7),
+
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center

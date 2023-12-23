@@ -7,7 +7,8 @@ import 'package:trendmasterass2/pages/usertype_page.dart';
 import 'company_registration.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -21,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   // firebase
   final _auth = FirebaseAuth.instance;
 
+  bool _obscurePassword = true;
+
   // Function of on press buttons
   void onPressed(BuildContext context) {
     signIn(emailController.text, passwordController.text);
@@ -28,12 +31,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void onPressedSignupType(BuildContext context) {
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => UsertypePage()));
+      MaterialPageRoute(builder: (context) => UsertypePage()),
+    );
   }
 
-  void onPressedSignupCompany(BuildContext context){
+  void onPressedSignupCompany(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder:(context) => CompanyRegistrationScreen()));
+      MaterialPageRoute(builder: (context) => CompanyRegistrationScreen()),
+    );
   }
 
   @override
@@ -71,10 +76,22 @@ class _LoginPageState extends State<LoginPage> {
                     // Password Textfield
                     TextFormField(
                       controller: passwordController,
-                      obscureText: true,
+                      // obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: "Enter Password",
                         labelText: "Password",
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -89,21 +106,25 @@ class _LoginPageState extends State<LoginPage> {
             // Login Button
             FractionallySizedBox(
               widthFactor: 0.85,
-
               child: ElevatedButton(
                 onPressed: () => onPressed(context),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                ),
                 child: Text("Login"),
               ),
             ),
             SizedBox(height: 10),
 
-            Text("Forgotten Password?", style: TextStyle(color: Colors.red)),
+            Text(
+              "Forgotten Password?",
+              style: TextStyle(color: Colors.red),
+            ),
 
             Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Container(
-                // color: Colors.green,
                 width: 330,
                 child: Column(
                   children: [
@@ -115,7 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                           widthFactor: 0.97,
                           child: ElevatedButton(
                             onPressed: () => onPressedSignupType(context),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                            ),
                             child: Text("CREATE NEW ACCOUNT"),
                           ),
                         ),
@@ -123,7 +147,10 @@ class _LoginPageState extends State<LoginPage> {
                           widthFactor: 0.97,
                           child: ElevatedButton(
                             onPressed: () => onPressedSignupCompany(context),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                            ),
                             child: Text("Sign up with Google"),
                           ),
                         ),
@@ -131,7 +158,10 @@ class _LoginPageState extends State<LoginPage> {
                           widthFactor: 0.97,
                           child: ElevatedButton(
                             onPressed: () => onPressed(context),
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                            ),
                             child: Text("Sign up with Facebook"),
                           ),
                         ),
@@ -142,26 +172,25 @@ class _LoginPageState extends State<LoginPage> {
               ),
             )
           ],
-        )
-
+        ),
       ),
     );
   }
-  //login function
- void signIn(String email, String password) async{
-    if(_formKey.currentState!.validate()){
+
+  // login function
+  void signIn(String email, String password) async {
+    if (_formKey.currentState!.validate()) {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((uid) => {
-            Fluttertoast.showToast(msg: "Login Successful"),
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CompanyHomePage())),
-      }).catchError((e) {
+        Fluttertoast.showToast(msg: "Login Successful"),
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => CompanyHomePage()),
+        ),
+      })
+          .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
       });
     }
- }
-
+  }
 }
-
-
-

@@ -11,10 +11,15 @@ class UsertypePage extends StatelessWidget {
       body: Center(
         child: Column(
           children: <Widget>[
-            Image.asset(
-              'assets/images/logo.png',
-              width: 300,
-              height: 300,
+            SizedBox(height: 70), // Add this SizedBox to move the logo down
+
+            // Circular Logo
+            ClipOval(
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: 200,
+                height: 200,
+              ),
             ),
             SizedBox(height: 20),
 
@@ -53,7 +58,7 @@ class UsertypePage extends StatelessWidget {
 
             // Button One Section
             Container(
-              width: MediaQuery.of(context).size.width * 0.9, // Set the desired width (80% of screen width in this example)
+              width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 gradient: LinearGradient(
@@ -125,7 +130,7 @@ class UsertypePage extends StatelessWidget {
 
             // Button Two Section
             Container(
-              width: MediaQuery.of(context).size.width * 0.9, // Set the desired width (80% of screen width in this example)
+              width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 gradient: LinearGradient(
@@ -142,7 +147,6 @@ class UsertypePage extends StatelessWidget {
               ),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-
                 child: MaterialButton(
                   onPressed: () {
                     Navigator.push(
