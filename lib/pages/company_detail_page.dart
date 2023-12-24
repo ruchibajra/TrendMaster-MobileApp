@@ -8,8 +8,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
+import 'dart:core';
 
-import 'login_page.dart';
+import 'check_image.dart';
 
 class AddDetailsPage extends StatefulWidget {
   @override
@@ -17,19 +18,14 @@ class AddDetailsPage extends StatefulWidget {
 }
 
 class _AddDetailsPageState extends State<AddDetailsPage> {
-
-
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController budgetController = TextEditingController();
   TextEditingController creatorNoController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   List<String> selectedNiches = [];
-
   List<Map<String, dynamic>> getNicheList() {
     return [
       {'niche': 'Fashion', 'color': Colors.teal},
@@ -44,42 +40,59 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     ];
   }
 
+  CollectionReference _reference = FirebaseFirestore.instance.collection('trendmasterass2');
+  String imageUrl = '';
+
   postDetailsToFirestore() async{
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
+    try {
+      CampaignModel campaignModel = CampaignModel(
+        id: '1',
+        title: titleController.text,
+        description: descriptionController.text,
+        niche: selectedNiches.toString(),
+        image: imageUrl.toString(),
+      );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel)),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Navigation error: $e");
+    }
 
-    CampaignModel campaignModel = CampaignModel(
-      // id: '1',
-      title: titleController.text,
-      description: descriptionController.text,
-      niche: selectedNiches.toString(),
-    );
-    // await firebaseFirestore
-    //     .collection("campaign_details")
-    //     .doc(user?.uid)
-    //     .set(campaignModel.toMap());
 
-    Fluttertoast.showToast(msg: "You are almost there");
 
-    Navigator.of(context).push(
-        MaterialPageRoute(builder:(context) => Budget(campaignModel:campaignModel)),
-    );
+    // try {
+    //   CampaignModel campaignModel = CampaignModel(
+    //     id: '1',
+    //     title: titleController.text,
+    //     description: descriptionController.text,
+    //     niche: selectedNiches.toString(),
+    //     image: imageUrl,
+    //   );
+    //   Fluttertoast.showToast(msg: "You are almost there");
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel)),
+    //   );
+    // } catch (e) {
+    //   Fluttertoast.showToast(msg: "Navigation error: $e");
+    // }
   }
-
   //some initial image upload initialization code
   File? _image;
   final imagePicker = ImagePicker();
   String? downloadUrl;
 
-
   //image picking from our device
   Future imagePickerMethod()async{
-    //picking the file
-    final pick = await imagePicker.pickImage(source: ImageSource.gallery);
+    ImagePicker imagePicker = ImagePicker();
+    XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    print('${localFile?.path}');
 
     setState(() {
-      if(pick != null){
-        _image = File(pick.path);
+      if(localFile != null){
+        _image = File(localFile.path);
         Fluttertoast.showToast(msg: " Selected");
       }else
         {
@@ -88,19 +101,36 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     });
   }
 
-  //uploading image to the firebase
-  Future uploadPicture() async{
-    Reference ref = FirebaseStorage.instance.ref().child('images');
-    await ref.putFile(_image!);
-    downloadUrl = await ref.getDownloadURL();
-    print(downloadUrl);
+  Future<String?> uploadPicture() async{
+    // Get the file name from the path
+    String fileName = _image!.path.split('/').last;
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+    // Create a reference to storage root
+    Reference referenceImageToUpload = referenceDirImages.child(fileName);
+    try{
+      //Store the file
+      await referenceImageToUpload.putFile(_image!);
+      imageUrl= await referenceImageToUpload.getDownloadURL();
+      // Add a small delay
+      await Future.delayed(Duration(seconds: 1));
+      await postDetailsToFirestore();
 
+      // // Navigate to the new page and pass the imageUrl
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
+      //   ),
+      // );
+
+    }catch(error){
+      print('Error uploading image: $error');
+      Fluttertoast.showToast(msg: "Upload Picture Function Failed");
+      return null;
+    }
 
   }
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,25 +282,25 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                   widthFactor: 0.55, // Adjust this value according to your requirement
                   child: ElevatedButton(
                     onPressed: () async{
-                      await postDetailsToFirestore();
+                      await uploadPicture();
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                     child: Text("Continue"),
                   ),
                 ),
               ),
-              Center(
-                child: FractionallySizedBox(
-                  widthFactor: 0.55, // Adjust this value according to your requirement
-                  child: ElevatedButton(
-                    onPressed: () async{
-                      await uploadPicture();
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                    child: Text("Upload Image"),
-                  ),
-                ),
-              ),
+              // Center(
+              //   child: FractionallySizedBox(
+              //     widthFactor: 0.55, // Adjust this value according to your requirement
+              //     child: ElevatedButton(
+              //       onPressed: () async{
+              //         await uploadPicture();
+              //       },
+              //       style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+              //       child: Text("Upload Image"),
+              //     ),
+              //   ),
+              // ),
 
             ],
           ),

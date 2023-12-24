@@ -51,6 +51,7 @@ class _BudgetState extends State<Budget> {
       title: widget.campaignModel.title ,
       description: widget.campaignModel.description,
       niche: widget.campaignModel.niche,
+      image: widget.campaignModel.image,
       budget: budgetController.text,
       count: count,
     );

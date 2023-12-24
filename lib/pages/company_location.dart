@@ -44,6 +44,7 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       description: widget.campaignModel.description,
       niche: widget.campaignModel.niche,
       count: widget.campaignModel.count,
+      image: widget.campaignModel.image,
       budget: widget.campaignModel.budget,
       location: selectedLocation.toString(),
     );
