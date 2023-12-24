@@ -35,9 +35,7 @@ class CompanyHomePage extends StatelessWidget {
     'assets/images/influencers2.png',
     'assets/images/homepage1.png',
     'assets/images/influencers1.jpg',
-    // Add more images as needed
   ];
-  // Assuming a common radius value, you can customize this based on your design const double imageRadius = 10.0;
 
   @override
   Widget build(BuildContext context) {

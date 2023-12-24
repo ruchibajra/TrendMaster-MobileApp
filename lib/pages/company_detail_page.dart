@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
 
@@ -13,6 +17,7 @@ class AddDetailsPage extends StatefulWidget {
 }
 
 class _AddDetailsPageState extends State<AddDetailsPage> {
+
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -61,6 +66,41 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     );
   }
 
+  //some initial image upload initialization code
+  File? _image;
+  final imagePicker = ImagePicker();
+  String? downloadUrl;
+
+
+  //image picking from our device
+  Future imagePickerMethod()async{
+    //picking the file
+    final pick = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if(pick != null){
+        _image = File(pick.path);
+        Fluttertoast.showToast(msg: " Selected");
+      }else
+        {
+          Fluttertoast.showToast(msg: "No File Selected");
+        }
+    });
+  }
+
+  //uploading image to the firebase
+  Future uploadPicture() async{
+    Reference ref = FirebaseStorage.instance.ref().child('images');
+    await ref.putFile(_image!);
+    downloadUrl = await ref.getDownloadURL();
+    print(downloadUrl);
+
+
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,12 +137,29 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
               SizedBox(height: 5),
 
               //Upload Photo Section
-              Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.red,
+              GestureDetector(
+                onTap: (){
+                  imagePickerMethod();
+                },
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: _image == null
+                    ? const Center(
+                       child: Text("No Image Selected ok"),
+                    ) : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      _image!,
+                      fit: BoxFit.cover, // Set the fit property to cover the entire container
+                    ),
+                  ),
+
+
                 ),
               ),
               SizedBox(height: 10),
@@ -202,6 +259,19 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                   ),
                 ),
               ),
+              Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.55, // Adjust this value according to your requirement
+                  child: ElevatedButton(
+                    onPressed: () async{
+                      await uploadPicture();
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                    child: Text("Upload Image"),
+                  ),
+                ),
+              ),
+
             ],
           ),
         ),
