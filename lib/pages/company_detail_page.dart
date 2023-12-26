@@ -10,9 +10,13 @@ import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
 import 'dart:core';
 
+import '../model/user_model.dart';
 import 'check_image.dart';
 
 class AddDetailsPage extends StatefulWidget {
+  final CompanyModel companyModel;
+  AddDetailsPage({required this.companyModel});
+
   @override
   _AddDetailsPageState createState() => _AddDetailsPageState();
 }
@@ -129,7 +133,6 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
       Fluttertoast.showToast(msg: "Upload Picture Function Failed");
       return null;
     }
-
   }
   @override
   Widget build(BuildContext context) {
@@ -180,7 +183,7 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                   ),
                   child: _image == null
                     ? const Center(
-                       child: Text("No Image Selected ok"),
+                       child: Text("Upload \n Image"),
                     ) : ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.file(
@@ -188,12 +191,9 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                       fit: BoxFit.cover, // Set the fit property to cover the entire container
                     ),
                   ),
-
-
                 ),
               ),
               SizedBox(height: 10),
-
               //Campaign Title Section
               Text(
                 'Campaign Title*',

@@ -8,6 +8,7 @@ import 'company_location.dart';
 class Budget extends StatefulWidget {
   final CampaignModel campaignModel;
   Budget({required this.campaignModel});
+
   @override
   _BudgetState createState() => _BudgetState();
 }

@@ -77,7 +77,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Khusbu Jaiswal',
+                            ' Ruchi',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

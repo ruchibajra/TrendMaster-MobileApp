@@ -58,7 +58,6 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
     Navigator.of(context).push(
       MaterialPageRoute(builder:(context) => CompanySuccessPage()),
     );
-
   }
 
   @override

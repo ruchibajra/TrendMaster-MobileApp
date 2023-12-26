@@ -1,34 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/promote_page.dart';
+import '../model/user_model.dart';
 
-class SmallContainer extends StatelessWidget {
-  final String text;
-
-  const SmallContainer({required this.text});
+class CompanyHomePage extends StatefulWidget {
+  final CompanyModel companyModel;
+  CompanyHomePage({Key? key, required this.companyModel}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 40,
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.blue,
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+  State<CompanyHomePage> createState() => _CompanyHomePageState();
 }
 
-class CompanyHomePage extends StatelessWidget {
+class _CompanyHomePageState extends State<CompanyHomePage> {
   int currentIndex = 0;
   final PageController _pageController = PageController();
   final List<String> images = [
@@ -40,7 +22,6 @@ class CompanyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       //App Bar Start
       appBar: AppBar(
         // Add the hamburger icon to open the drawer
@@ -72,7 +53,7 @@ class CompanyHomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Khusbu Jaiswal',
+                            'Hello \n ${widget.companyModel.name}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -87,7 +68,7 @@ class CompanyHomePage extends StatelessWidget {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Bhaktapur',
+                                '${widget.companyModel.address}',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -125,10 +106,10 @@ class CompanyHomePage extends StatelessWidget {
                       ),
                       ListTile(
                         leading: Icon(Icons.menu_book, size: 30, color: Colors.grey),
-                        title: Text('Explore', style: TextStyle(color: Colors.black)),
+                        title: Text('Promote', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
-                        },
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)));},
                       ),
                       ListTile(
                         leading: Icon(Icons.notifications, size: 30, color: Colors.grey),
@@ -152,7 +133,6 @@ class CompanyHomePage extends StatelessWidget {
             )
           ],
         ),
-
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -175,7 +155,7 @@ class CompanyHomePage extends StatelessWidget {
                     ),
                     Container(
                       width: 190,
-                      child: TextField(
+                      child: const TextField(
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration.collapsed(
                           hintText: "Search a Creator",
@@ -864,28 +844,11 @@ class CompanyHomePage extends StatelessWidget {
           ),
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: const <BottomNavigationBarItem>[
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.message, size: 30, color: Colors.grey),
-      //       label: 'Messages',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home, size: 30, color: Colors.grey),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
-      //       label: 'Notifications',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.person, size: 30, color: Colors.grey),
-      //       label: 'Profile',
-      //     ),
-      //   ],
-      // ),
     );
   }
+
+
+
 // Function to show logout confirmation dialog in the center
   void _showLogoutPopup(BuildContext context) {
     showDialog(
@@ -934,7 +897,6 @@ class CompanyHomePage extends StatelessWidget {
       },
     );
   }
-
-
-
 }
+
+
