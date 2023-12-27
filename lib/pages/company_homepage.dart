@@ -1,77 +1,145 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/promote_page.dart';
+import '../model/user_model.dart';
 
-class SmallContainer extends StatelessWidget {
-  final String text;
-
-  const SmallContainer({required this.text});
+class CompanyHomePage extends StatefulWidget {
+  final CompanyModel companyModel;
+  CompanyHomePage({Key? key, required this.companyModel}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 40,
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.blue,
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+  State<CompanyHomePage> createState() => _CompanyHomePageState();
 }
 
-class CompanyHomePage extends StatelessWidget {
+class _CompanyHomePageState extends State<CompanyHomePage> {
+  int currentIndex = 0;
+  final PageController _pageController = PageController();
   final List<String> images = [
-    'assets/images/company_h1.png',
-    'assets/images/company_h1.png',
-    'assets/images/company_h1.png',
+    'assets/images/influencers2.png',
+    'assets/images/homepage1.png',
+    'assets/images/influencers1.jpg',
     // Add more images as needed
   ];
-  // Assuming a common radius value, you can customize this based on your design const double imageRadius = 10.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       //App Bar Start
       appBar: AppBar(
-        title: Text("Home"),
-        centerTitle: true,
+        // Add the hamburger icon to open the drawer
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            color: Colors.white, // Set the color to white
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                // Container for profile name and location
+                Container(
+                  color: Colors.teal,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: AssetImage('assets/images/companyProfile.png'),
+                      ),
+                      SizedBox(width: 10, height: 200,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello \n ${widget.companyModel.name}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                '${widget.companyModel.address}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Add space between the two containers
+                SizedBox(height: 20),
+
+                // Container for list icons and names
+                Container(
+                  // color: Colors.white, // You can use any color you prefer
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.person, size: 30, color: Colors.grey),
+                        title: Text('Profile', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          // Add your navigation logic here
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.home, size: 30, color: Colors.grey),
+                        title: Text('Home', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          // Add your navigation logic here
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.menu_book, size: 30, color: Colors.grey),
+                        title: Text('Promote', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)));},
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.notifications, size: 30, color: Colors.grey),
+                        title: Text('Notifications', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          // Add your navigation logic here
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout, size: 30, color: Colors.grey),
+                        title: Text('logout', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          // Show logout confirmation dialog
+                          _showLogoutPopup(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
           child: Column(
             children: [
-
-              // Profile Section
-              Container(
-                // color: Colors.orange,
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 40, // Increase the radius as per your design
-                      backgroundColor: Colors.cyan,
-                      backgroundImage: AssetImage('assets/images/companyProfile.png'),
-                    ),
-
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      ],
-                    ),
-                  ],
-                ),
-              ),
               SizedBox(height: 10),
               Container(
                 width: MediaQuery.of(context).size.width * 10,
@@ -100,6 +168,8 @@ class CompanyHomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10),
+
+              Text('${widget.companyModel.uid}'),
               // Intro Image Swipe Section
               Container(
                 color: Colors.red,
@@ -777,26 +847,59 @@ class CompanyHomePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
+    );
+  }
+
+
+
+// Function to show logout confirmation dialog in the center
+  void _showLogoutPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "Yes" button
+                      ),
+                      onPressed: () {
+                        // Add your logout logic here
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "No" button
+                      ),
+                      onPressed: () {
+                        // Cancel the logout action
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
-            label: 'Profile',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
+
+

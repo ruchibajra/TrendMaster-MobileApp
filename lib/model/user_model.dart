@@ -1,3 +1,4 @@
+//This class is for creator registration
 class UserModel {
   String? uid;
   String? firstName;
@@ -62,5 +63,59 @@ class UserModel {
         'description': description,
         'userType': userType,
     };
+  }
+}
+
+//This class is for company registration
+class CompanyModel{
+  String? uid;
+  String? name;
+  String? address;
+  String? email;
+  String? phone;
+  String? website;
+  String? facebook;
+  String? twitter;
+  String? linkedin;
+  String? description;
+  String? userType;
+
+  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType});
+
+  // receiving data from server
+  factory CompanyModel.fromMap(map){
+    return CompanyModel(
+      uid: map['uid'],
+      name: map['name'],
+      address: map['address'],
+      email: map['email'],
+      phone: map['phone'],
+      website: map['website'],
+      facebook: map['facebook'],
+      twitter: map['twitter'],
+      linkedin: map['linkedin'],
+      description: map['description'],
+      userType: map['userType'],
+    );
+  }
+
+  // sending data to server
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'address': address,
+      'email': email,
+      'phone': phone,
+      'website': website,
+      'facebook': facebook,
+      'twitter': twitter,
+      'linkedin': linkedin,
+      'description': description,
+      'userType': userType,
+    };
+  }
+
+  void updateUid(String newUid){
+    uid = newUid;
   }
 }
