@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendmasterass2/model/user_model.dart';
 import '../model/campaign_model.dart';
 import 'company_location.dart';
 
 class Budget extends StatefulWidget {
   final CampaignModel campaignModel;
-  Budget({required this.campaignModel});
+  final CompanyModel companyModel;
+  Budget({required this.campaignModel, required this.companyModel});
 
   @override
   _BudgetState createState() => _BudgetState();
@@ -47,8 +49,11 @@ class _BudgetState extends State<Budget> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
+    // Retrieve existing campaign details
+    // DocumentSnapshot campaignSnapshot =
+    // await firebaseFirestore.collection("campaign_details").doc(user?.uid).get();
+
     CampaignModel campaignModel = CampaignModel(
-      id: '1',
       title: widget.campaignModel.title ,
       description: widget.campaignModel.description,
       niche: widget.campaignModel.niche,
@@ -64,7 +69,7 @@ class _BudgetState extends State<Budget> {
     Fluttertoast.showToast(msg: "You are almost there");
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder:(context) => CompanyLocationPage(campaignModel:campaignModel)),
+      MaterialPageRoute(builder:(context) => CompanyLocationPage(campaignModel: campaignModel, companyModel: widget.companyModel,)),
     );
   }
 
@@ -99,7 +104,7 @@ class _BudgetState extends State<Budget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Let\'s start with your budget for this campaign.',
+                        'Let\'s start ${widget.companyModel.name} your budget for this campaign.',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.black87,

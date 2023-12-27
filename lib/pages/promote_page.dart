@@ -51,7 +51,7 @@ class _PromotionPageState extends State<PromotionPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Special Offer Just for You!',
+                  'Special Offer Just for  ${widget.companyModel.name}!',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),

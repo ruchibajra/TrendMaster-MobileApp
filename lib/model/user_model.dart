@@ -115,5 +115,7 @@ class CompanyModel{
     };
   }
 
-
+  void updateUid(String newUid){
+    uid = newUid;
+  }
 }

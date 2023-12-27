@@ -193,8 +193,6 @@ class _LoginPageState extends State<LoginPage> {
 
   //login function
   void signIn(String email, String password) async {
-
-
     if (_formKey.currentState!.validate()) {
       try{
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -204,12 +202,13 @@ class _LoginPageState extends State<LoginPage> {
         User? user = userCredential.user;
 
         if(user != null){
+
+          print('User UID: ${user.uid}'); // Add this line to check UID
+
           DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
               .get();
-
-
 
           if (userSnapshot.exists){
             String userType = userSnapshot['userType'];
@@ -218,6 +217,7 @@ class _LoginPageState extends State<LoginPage> {
 
             if(userType == 'Company'){
               CompanyModel companyModel = CompanyModel.fromMap(userSnapshot.data()!);
+              companyModel.updateUid(user!.uid);
 
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: companyModel)),

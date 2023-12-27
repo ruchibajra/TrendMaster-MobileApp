@@ -167,6 +167,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                 ),
               ),
               SizedBox(height: 10),
+
+              Text('${widget.companyModel.uid}'),
               // Intro Image Swipe Section
               Container(
                 color: Colors.red,

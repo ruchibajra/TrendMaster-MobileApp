@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 
+import '../model/user_model.dart';
 import 'company_success_page.dart';
 
 class CompanyLocationPage extends StatefulWidget {
   CampaignModel campaignModel;
-  CompanyLocationPage({required this.campaignModel});
+  CompanyModel companyModel;
+  CompanyLocationPage({required this.campaignModel, required this.companyModel});
 
   @override
   _CompanyLocationPageState createState() => _CompanyLocationPageState();
@@ -38,8 +40,10 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
+    // DocumentSnapshot campaignSnapshot =
+    // await firebaseFirestore.collection("campaign_details").doc(user?.uid).get();
+
     CampaignModel campaignModel = CampaignModel(
-      id: '1',
       title: widget.campaignModel.title ,
       description: widget.campaignModel.description,
       niche: widget.campaignModel.niche,
@@ -47,10 +51,11 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       image: widget.campaignModel.image,
       budget: widget.campaignModel.budget,
       location: selectedLocation.toString(),
+      userId: widget.companyModel.uid,
     );
     await firebaseFirestore
         .collection("campaign_details")
-        .doc(user?.uid)
+        .doc()
         .set(campaignModel.toMap());
 
     Fluttertoast.showToast(msg: "Campaign Created Successfully.");
@@ -80,7 +85,8 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
             children: [
               // Descriptions
               Text(
-                "Where do you want your creators to be located at?",
+                "${widget.companyModel.name
+                } do you want your creators to be located at?",
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),

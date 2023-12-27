@@ -44,44 +44,27 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     ];
   }
 
-  CollectionReference _reference = FirebaseFirestore.instance.collection('trendmasterass2');
+  CollectionReference _reference = FirebaseFirestore.instance.collection('campaign_details');
   String imageUrl = '';
 
   postDetailsToFirestore() async{
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
+
     try {
       CampaignModel campaignModel = CampaignModel(
-        id: '1',
         title: titleController.text,
         description: descriptionController.text,
         niche: selectedNiches.toString(),
         image: imageUrl.toString(),
+        userId: user?.uid,
       );
       Navigator.of(context).push(
-        MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel)),
+        MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel, companyModel: widget.companyModel)),
       );
     } catch (e) {
       Fluttertoast.showToast(msg: "Navigation error: $e");
     }
-
-
-
-    // try {
-    //   CampaignModel campaignModel = CampaignModel(
-    //     id: '1',
-    //     title: titleController.text,
-    //     description: descriptionController.text,
-    //     niche: selectedNiches.toString(),
-    //     image: imageUrl,
-    //   );
-    //   Fluttertoast.showToast(msg: "You are almost there");
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel)),
-    //   );
-    // } catch (e) {
-    //   Fluttertoast.showToast(msg: "Navigation error: $e");
-    // }
   }
   //some initial image upload initialization code
   File? _image;
