@@ -159,6 +159,12 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
             return Text('ERROR: ${snapshot.error}');
           } else {
             List<UserModel> creators = snapshot.data ?? [];
+
+            if (creators.isEmpty){
+              return Text('data is empty');
+            }
+
+            List<UserModel> creatorList =creators.where((creator) => creator.userType == 'Creator').toList();
             return Column(
               children: [
                 //Search Bar Start
@@ -347,7 +353,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
                           children: [
-
                             // Creators Niche
                             Container(
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
@@ -424,21 +429,34 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                   ),
                 ),
 
-
-
                 // Display Campaigns
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: creators.length,
+                    itemCount: creatorList.length,
                     itemBuilder: (context, index) {
-                      UserModel creator = creators[index];
+                      UserModel creator = creatorList[index];
                       // Use campaign data to create UI elements
                       // Example: Text(campaign.title), Image.network(campaign.image), etc.
-                      return ListTile(
-                        title: Text(creator.email ?? ''),
-                        subtitle: Text(creator.firstName ?? ''),
-                      );
+                        return ListTile(
+
+                          subtitle: Container(
+                            height: 150,
+                            width: 350,
+                            color: Color(0xFFD2EBE7),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(creator.niche ?? ''),
+                                Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
+                                Text("${creator.facebookSubscriber ?? ''} ${creator.youtubeSubscriber ?? ''} ${creator.instagramSubscriber
+                                    ?? ''}"),
+                              ],
+                            ),
+                          ),
+                        );
+
+
                     },
                   ),
                 ),
