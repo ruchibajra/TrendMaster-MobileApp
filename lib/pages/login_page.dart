@@ -91,9 +91,9 @@ class _LoginPageState extends State<LoginPage> {
               // Login Button
               FractionallySizedBox(
                 widthFactor: 0.85,
-
                 child: ElevatedButton(
                   onPressed: () => onPressed(context),
+
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                   child: Text("Login"),
                 ),
