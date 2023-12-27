@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/campaign_model.dart';
@@ -15,23 +14,25 @@ class CompanyHomePage extends StatefulWidget {
 
 class _CompanyHomePageState extends State<CompanyHomePage> {
   int currentIndex = 0;
+  final PageController _pageController = PageController();
   final List<String> images = [
     'assets/images/influencers2.png',
     'assets/images/homepage1.png',
     'assets/images/influencers1.jpg',
   ];
 
-  Future<List<UserModel>> getCreatorData() async {
+  Future<List<CampaignModel>> getCampaignData() async {
     var snapshot = await FirebaseFirestore.instance
-        .collection('users')
+        .collection('campaign_details')
         .get();
 
-    List<UserModel> creators = [];
+    List<CampaignModel> campaigns = [];
 
     for (var doc in snapshot.docs) {
-      creators.add(UserModel.fromMap(doc.data() as Map<String, dynamic>));
+      campaigns.add(CampaignModel.fromMap(doc.data() as Map<String, dynamic>));
     }
-    return creators;
+
+    return campaigns;
   }
 
   @override
@@ -150,15 +151,15 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
         ),
       ),
 
-      body: FutureBuilder<List<UserModel>>(
-        future: getCreatorData(),
+      body: FutureBuilder<List<CampaignModel>>(
+        future: getCampaignData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('ERROR: ${snapshot.error}');
           } else {
-            List<UserModel> creators = snapshot.data ?? [];
+            List<CampaignModel> campaigns = snapshot.data ?? [];
             return Column(
               children: [
                 //Search Bar Start
@@ -430,14 +431,17 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: creators.length,
+                    itemCount: campaigns.length,
                     itemBuilder: (context, index) {
-                      UserModel creator = creators[index];
+                      CampaignModel campaign = campaigns[index];
                       // Use campaign data to create UI elements
                       // Example: Text(campaign.title), Image.network(campaign.image), etc.
                       return ListTile(
-                        title: Text(creator.email ?? ''),
-                        subtitle: Text(creator.firstName ?? ''),
+
+                        
+
+                        title: Text(campaign.niche ?? ''),
+                        subtitle: Text(campaign.description ?? ''),
                       );
                     },
                   ),
