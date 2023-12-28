@@ -6,16 +6,16 @@ class CreatorProfile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Set the color to white
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          "Influencer Profile",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: Text("Profile"),
+        centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -161,68 +161,64 @@ class CreatorProfile extends StatelessWidget {
               // Social Media Details Section
               Container(
                 color: Colors.grey.shade200,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start, // Align to the left
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              "80k",
-                              style: TextStyle(
-                                fontSize: 35,
-                                fontWeight: FontWeight.bold,
-                              ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Add space evenly
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(width: 10),
+                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Container(
+                          child: Text(
+                            "80k",
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Image.asset('assets/images/profile.png',
-                              height: 80, width: 80),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start, // Align to the left
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              "50k",
-                              style: TextStyle(
-                                fontSize: 35,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(width: 10),
+                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Container(
+                          child: Text(
+                            "50k",
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Image.asset('assets/images/profile.png',
-                              height: 80, width: 80),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start, // Align to the left
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              "40k",
-                              style: TextStyle(
-                                fontSize: 35,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(width: 10),
+                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Container(
+                          child: Text(
+                            "40k",
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Image.asset('assets/images/profile.png',
-                              height: 80, width: 80),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
+
               SizedBox(height: 10,),
 
               // Worked With Companies
@@ -347,8 +343,8 @@ class CreatorProfile extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
+            icon: Icon(Icons.menu_book, size: 30, color: Colors.grey),
+            label: 'Explore',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30, color: Colors.grey),

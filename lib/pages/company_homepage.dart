@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/creator_profile.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
+import 'package:trendmasterass2/pages/notification_page.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/user_model.dart';
 
@@ -16,8 +17,9 @@ class CompanyHomePage extends StatefulWidget {
 class _CompanyHomePageState extends State<CompanyHomePage> {
   int currentIndex = 0;
   final List<String> images = [
-    'assets/images/marketing_pic1.png',
     'assets/images/img.png',
+
+    'assets/images/marketing_pic1.png',
   ];
 
   Future<List<UserModel>> getCreatorData() async {
@@ -46,7 +48,10 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
             color: Colors.white, // Set the color to white
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
+
         ),
+        title: Text("Home"),
+        centerTitle: true, // Center the title
       ),
       drawer: Drawer(
         child: ListView(
@@ -132,8 +137,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         leading: Icon(Icons.notifications, size: 30, color: Colors.grey),
                         title: Text('Notification', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
-                        },
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => NotificationPage()));                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.logout, size: 30, color: Colors.grey),
