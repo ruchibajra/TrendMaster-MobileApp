@@ -12,8 +12,7 @@ import '../model/user_model.dart';
 import 'company_registration.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
+  const LoginPage({super.key});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -26,25 +25,6 @@ class _LoginPageState extends State<LoginPage> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-
-  bool _obscurePassword = true;
-
-  // Function of on press buttons
-  void onPressed(BuildContext context) {
-    signIn(emailController.text, passwordController.text);
-  }
-
-  void onPressedSignupType(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => UsertypePage()),
-    );
-  }
-
-  void onPressedSignupCompany(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => CompanyRegistrationScreen()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,19 +88,17 @@ class _LoginPageState extends State<LoginPage> {
 
               // Button Section
 
-            // Login Button
-            FractionallySizedBox(
-              widthFactor: 0.85,
-              child: ElevatedButton(
-                onPressed: () => onPressed(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
+              // Login Button
+              FractionallySizedBox(
+                widthFactor: 0.85,
+
+                child: ElevatedButton(
+                  onPressed: () => onPressed(context),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                  child: Text("Login"),
                 ),
-                child: Text("Login"),
               ),
-            ),
-            SizedBox(height: 10),
+              SizedBox(height: 10),
 
               // Forgotten Password
               Container(

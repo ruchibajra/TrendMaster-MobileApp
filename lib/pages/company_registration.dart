@@ -31,7 +31,10 @@ class _CompanyRegistrationScreenState
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Widget companyInformation(){
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
+
+  Widget companyInformation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -79,19 +82,47 @@ class _CompanyRegistrationScreenState
         SizedBox(height: 10),
         TextFormField(
           controller: passwordController,
-          obscureText: true,
+          obscureText: !isPasswordVisible,
           decoration: InputDecoration(
             labelText: 'Password',
             border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(
+                isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  // Toggle the visibility of the password
+                  isPasswordVisible = !isPasswordVisible;
+                });
+              },
+            ),
           ),
         ),
         SizedBox(height: 20),
         TextFormField(
           controller: confirmPasswordController,
-          obscureText: true,
+          obscureText: !isConfirmPasswordVisible,
           decoration: InputDecoration(
             labelText: 'Confirm Password',
             border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(
+                isConfirmPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  // Toggle the visibility of the confirm password
+                  isConfirmPasswordVisible = !isConfirmPasswordVisible;
+                });
+              },
+            ),
           ),
         ),
         SizedBox(height: 20),
@@ -100,7 +131,7 @@ class _CompanyRegistrationScreenState
   }
 
   //Online Presence
-  Widget onlinePresence(){
+  Widget onlinePresence() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -132,11 +163,10 @@ class _CompanyRegistrationScreenState
         SizedBox(height: 20),
       ],
     );
-
   }
 
   //Social Media Profiles
-  Widget socialMediaProfile(){
+  Widget socialMediaProfile() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -205,7 +235,8 @@ class _CompanyRegistrationScreenState
   //Signup Function
   void signUp(String email, String password) async {
     // if (_formKey.currentState!.validate)
-    await _auth.createUserWithEmailAndPassword(email: email, password: password)
+    await _auth
+        .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => postDetailsToFirestore());
   }
 
@@ -235,49 +266,55 @@ class _CompanyRegistrationScreenState
     Fluttertoast.showToast(msg: "Account Created Successfully!");
 
     Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => LoginPage()), (
-        route) => false);
+        (context),
+        MaterialPageRoute(builder: (context) => LoginPage()),
+            (route) => false);
   }
 
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Influencer Registration'),
-        backgroundColor: Colors.teal,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text("Company Registration"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Form(
           child: Padding(
             padding: const EdgeInsets.all(9.0),
-            child: Column(
-                children: <Widget>[
-                  companyInformation(),
-                  onlinePresence(),
-                  socialMediaProfile(),
-                  buildDescription(),
-                  SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        signUp(emailController.text, passwordController.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
-                        minimumSize: Size(150, 50),
-                      ),
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                        ),
-                      ),
+            child: Column(children: <Widget>[
+              companyInformation(),
+              onlinePresence(),
+              socialMediaProfile(),
+              buildDescription(),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    signUp(emailController.text, passwordController.text);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.teal,
+                    minimumSize: Size(150, 50),
+                  ),
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
                     ),
                   ),
-                ]
-            ),
+                ),
+              ),
+            ]),
           ),
         ),
       ),

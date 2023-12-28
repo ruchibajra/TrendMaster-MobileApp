@@ -51,6 +51,9 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     ];
   }
 
+  bool passwordObscure = true;
+  bool confirmPasswordObscure = true;
+
   //Personal Info Section
   Widget buildPersonalInformation() {
     return Column(
@@ -163,19 +166,41 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         TextFormField(
           controller: passwordController,
-          obscureText: true,
+          obscureText: passwordObscure,
           decoration: InputDecoration(
             labelText: 'Password',
             border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(
+                passwordObscure ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  passwordObscure = !passwordObscure;
+                });
+              },
+            ),
           ),
         ),
         SizedBox(height: 10,),
         TextFormField(
           controller: confirmPasswordController,
-          obscureText: true,
+          obscureText: confirmPasswordObscure,
           decoration: InputDecoration(
             labelText: 'Confirm Password',
             border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(
+                confirmPasswordObscure ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  confirmPasswordObscure = !confirmPasswordObscure;
+                });
+              },
+            ),
           ),
         ),
       ],
@@ -367,7 +392,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
 
 
   void signUp(String email, String password) async {
-    // if (_formKey.currentState!.validate)
     await _auth.createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => postDetailsToFirestore());
   }
@@ -412,8 +436,17 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Influencer Registration'),
-        backgroundColor: Colors.teal,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text("Creators Registration"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
@@ -450,9 +483,4 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       ),
     );
   }
-
-
-
 }
-
-

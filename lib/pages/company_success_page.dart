@@ -3,20 +3,12 @@ import 'package:flutter/material.dart';
 import 'login_page.dart';
 
 class CompanySuccessPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Column(
         children: [
-          Container(
-            child: Image.asset(
-              'assets/images/logo.png',
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(height: 40,),
+          SizedBox(height: 230),
 
           Container(
             width: 130,
@@ -34,12 +26,13 @@ class CompanySuccessPage extends StatelessWidget {
             ),
           ),
           Text(
-            'Congratulations', style: TextStyle(fontSize: 38, color: Colors.teal , fontWeight: FontWeight.bold),
+            'Congratulations',
+            style: TextStyle(fontSize: 38, color: Colors.teal, fontWeight: FontWeight.bold),
           ),
-          Text('Your campaign is successfully created', style: TextStyle(fontSize: 18),),
+          Text('Your campaign is successfully created', style: TextStyle(fontSize: 18)),
           SizedBox(height: 5),
 
-          SizedBox(height: 150),
+          SizedBox(height: 100),
           Center(
             child: FractionallySizedBox(
               widthFactor: 0.55, // Adjust this value according to your requirement
@@ -56,8 +49,7 @@ class CompanySuccessPage extends StatelessWidget {
             ),
           ),
         ],
-
-      )
+      ),
     );
   }
 }

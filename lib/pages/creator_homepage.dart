@@ -156,10 +156,6 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                 ),
               ],
             )
-
-
-
-
           ],
         ),
       ),

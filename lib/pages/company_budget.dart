@@ -79,17 +79,16 @@ class _BudgetState extends State<Budget> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Set the color to white
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          'Add Budget',
-          // 'Campaign Title: ${widget.campaignModel.title}',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: Text("Add Budget"),
+        centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -127,12 +126,16 @@ class _BudgetState extends State<Budget> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: NumberCounter(
-                          count: count,
-                          increment: increment,
-                          decrement: decrement,
+                        child: Container(
+                          width: 150, // Set the desired width
+                          child: NumberCounter(
+                            count: count,
+                            increment: increment,
+                            decrement: decrement,
+                          ),
                         ),
                       ),
+
                       SizedBox(height: 10),
                       Text(
                         'Your Budget',
@@ -210,8 +213,8 @@ class _BudgetState extends State<Budget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
+            icon: Icon(Icons.menu_book, size: 30, color: Colors.grey),
+            label: 'Promote',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30, color: Colors.grey),

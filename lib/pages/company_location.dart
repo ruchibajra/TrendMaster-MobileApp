@@ -70,12 +70,15 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Set the color to white
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text("Location"),
+        title: Text("Add Location"),
         centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
@@ -140,8 +143,8 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
+            icon: Icon(Icons.menu_book, size: 30, color: Colors.grey),
+            label: 'Promote',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30, color: Colors.grey),

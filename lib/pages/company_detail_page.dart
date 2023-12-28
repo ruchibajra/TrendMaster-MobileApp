@@ -121,9 +121,14 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       //app bar
+      // ... (existing code)
+
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Set the color to white
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -131,6 +136,9 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
         title: Text("Add Details"),
         centerTitle: true, // Center the title
       ),
+
+// ... (existing code)
+
 
       body: SingleChildScrollView(
         child: Padding(
