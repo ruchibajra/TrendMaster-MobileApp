@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/campaign_model.dart';
@@ -15,25 +14,26 @@ class CompanyHomePage extends StatefulWidget {
 
 class _CompanyHomePageState extends State<CompanyHomePage> {
   int currentIndex = 0;
+  final PageController _pageController = PageController();
   final List<String> images = [
     'assets/images/influencers2.png',
     'assets/images/homepage1.png',
     'assets/images/influencers1.jpg',
   ];
 
-  Future<List<UserModel>> getCreatorData() async {
+  Future<List<CampaignModel>> getCampaignData() async {
     var snapshot = await FirebaseFirestore.instance
-        .collection('users')
+        .collection('campaign_details')
         .get();
 
-    List<UserModel> creators = [];
+    List<CampaignModel> campaigns = [];
 
     for (var doc in snapshot.docs) {
-      creators.add(UserModel.fromMap(doc.data() as Map<String, dynamic>));
+      campaigns.add(CampaignModel.fromMap(doc.data() as Map<String, dynamic>));
     }
-    return creators;
-  }
 
+    return campaigns;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,22 +151,15 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
         ),
       ),
 
-      body: FutureBuilder<List<UserModel>>(
-        future: getCreatorData(),
+      body: FutureBuilder<List<CampaignModel>>(
+        future: getCampaignData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('ERROR: ${snapshot.error}');
           } else {
-            List<UserModel> creators = snapshot.data ?? [];
-
-            if (creators.isEmpty){
-              return Text('data is empty');
-            }
-
-
-            List<UserModel> creatorList =creators.where((creator) => creator.userType == 'Creator').toList();
+            List<CampaignModel> campaigns = snapshot.data ?? [];
             return Column(
               children: [
                 //Search Bar Start
@@ -323,139 +316,133 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                 ),
                 //Creator Title Text Section End
 
+                // Creator
+                Container(
+                  height: 150,
+                  width: 350,
+                  color: Color(0xFFD2EBE7),
+
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+
+                        //Image of Creator
+                        child: Container(
+                          color: Colors.white,
+                          height: 110,
+                          width: 100,
+
+                          child:
+                          Image.asset('assets/images/foodie_nepal.jpg'),),
+                      ),
+                      SizedBox(width: 10,),
+
+                      //Details of Creators
+                      Container(
+                        // color: Colors.white,
+                        height: 130,
+                        width: 210,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
+                          children: [
+
+                            // Creators Niche
+                            Container(
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Text("Food", style: TextStyle(fontSize:12, color: Colors.white),),
+                                )),
+                            SizedBox(height: 2,),
+
+                            // Creators Name
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Mr. Foodie Nepal"),
+                                  SizedBox(height: 5,),
+
+                                  Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/foodie_nepal.jpg',
+                                            fit: BoxFit.cover,
+                                            height: 25,
+                                            width: 25,
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("232K", style: TextStyle(fontSize: 12),),
+                                        ],
+                                      ),
+                                      SizedBox(width: 8,),
+
+                                      Column(
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/foodie_nepal.jpg',
+                                            fit: BoxFit.cover,
+                                            height: 25,
+                                            width: 25,
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("350K",style: TextStyle(fontSize: 12),),
+                                        ],
+                                      ),
+                                      SizedBox(width: 8,),
+
+                                      Column(
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/foodie_nepal.jpg',
+                                            fit: BoxFit.cover,
+                                            height: 25,
+                                            width: 25,
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("190K",style: TextStyle(fontSize: 12),),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5,),
+
+                                  Container(
+                                    child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+
+
                 // Display Campaigns
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: creatorList.length,
+                    itemCount: campaigns.length,
                     itemBuilder: (context, index) {
-                      UserModel creator = creatorList[index];
-
+                      CampaignModel campaign = campaigns[index];
                       // Use campaign data to create UI elements
                       // Example: Text(campaign.title), Image.network(campaign.image), etc.
-                        return ListTile(
+                      return ListTile(
 
+                        
 
-
-
-                        subtitle: Container(
-                            // height: 150,
-                            width: 350,
-                            color: Color(0xFFD2EBE7),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Row(
-
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 15),
-
-                                      //Image of Creator
-                                      child: Container(
-                                        color: Colors.white,
-                                        height: 110,
-                                        width: 100,
-
-                                        child:
-                                        Image.asset('assets/images/foodie_nepal.jpg'),),
-                                    ),
-                                    SizedBox(width: 10,),
-
-                                    //Details of Creators
-                                    Container(
-                                      width: 210,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
-                                        children: [
-                                          // Creators Niche
-                                          Container(
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(3.0),
-                                                child: Text(
-                                                   " ${creator.niche ?? ''}",
-                                                  style: TextStyle(fontSize: 12, color: Colors.white),
-                                                ),
-                                              )),
-                                          SizedBox(height: 2,),
-
-                                          // Creators Name
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
-                                                SizedBox(height: 5,),
-
-                                                Row(
-                                                  children: [
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.facebookSubscriber.toString(), style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(width: 8,),
-
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.instagramSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(width: 8,),
-
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.youtubeSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 5,),
-
-                                                Container(
-                                                  child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                // Text(creator.niche ?? ''),
-                                // Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
-                                // Text("${creator.facebookSubscriber ?? ''} ${creator.youtubeSubscriber ?? ''} ${creator.instagramSubscriber
-                                //     ?? ''}"),
-                              ],
-                            ),
-                          ),
-                        );
+                        title: Text(campaign.niche ?? ''),
+                        subtitle: Text(campaign.description ?? ''),
+                      );
                     },
                   ),
                 ),

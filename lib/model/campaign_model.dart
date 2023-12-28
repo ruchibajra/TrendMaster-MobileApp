@@ -41,6 +41,6 @@ class CampaignModel{
       'userId': userId,
     };
   }
-
-
 }
+
+

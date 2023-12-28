@@ -272,19 +272,6 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                   ),
                 ),
               ),
-              // Center(
-              //   child: FractionallySizedBox(
-              //     widthFactor: 0.55, // Adjust this value according to your requirement
-              //     child: ElevatedButton(
-              //       onPressed: () async{
-              //         await uploadPicture();
-              //       },
-              //       style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-              //       child: Text("Upload Image"),
-              //     ),
-              //   ),
-              // ),
-
             ],
           ),
         ),
