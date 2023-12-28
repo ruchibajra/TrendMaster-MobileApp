@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/company_profile.dart';
 import 'package:trendmasterass2/pages/creator_profile.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 import 'package:trendmasterass2/pages/notification_page.dart';
@@ -73,7 +74,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello \n ${widget.companyModel.name}',
+                            'Welcome Back, \n ${widget.companyModel.name}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -114,8 +115,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         leading: Icon(Icons.person, size: 30, color: Colors.grey),
                         title: Text('Profile', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
-                        },
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => CompanyProfile()));                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.home, size: 30, color: Colors.grey),
@@ -466,6 +467,55 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
             );
           }
         },
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.teal, // Color when item is selected
+        unselectedItemColor: Colors.grey, // Color when item is not selected
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+
+          // Handle navigation based on the index
+          if (index == 0) {
+            // Navigate to Home
+          } else if (index == 1) {
+            // Navigate to Promote
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)),
+            );
+          } else if (index == 2) {
+            // Navigate to Notification
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => NotificationPage()),
+            );
+          } else if (index == 3){
+            // Navigate to Notification
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CompanyProfile()),
+            );
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book),
+            label: 'Promote',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notification',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
