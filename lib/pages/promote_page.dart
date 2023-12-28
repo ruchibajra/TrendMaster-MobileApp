@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trendmasterass2/pages/company_detail_page.dart';
 
 import '../model/user_model.dart';
+import 'company_detail_page.dart';
 
 class PromotionPage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -14,6 +14,12 @@ class PromotionPage extends StatefulWidget {
 class _PromotionPageState extends State<PromotionPage> {
   bool isPromotionClaimed = false;
   double rating = 0.0;
+
+  void _showClaimedDialog() {
+    setState(() {
+      isPromotionClaimed = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +40,16 @@ class _PromotionPageState extends State<PromotionPage> {
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[200], // Set the desired background color
       body: Column(
         children: [
-          SizedBox(height: 50),
+          SizedBox(height: 110),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
-              'assets/images/logo.png',
-              width: 250,
-              height: 250,
+              'assets/images/mic1.png',
+              width: 200,
+              height: 200,
             ),
           ),
           Center(
@@ -51,7 +57,7 @@ class _PromotionPageState extends State<PromotionPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Special Offer Just for  ${widget.companyModel.name}!',
+                  'Special Offer Just for You!',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
@@ -59,28 +65,32 @@ class _PromotionPageState extends State<PromotionPage> {
                   'Grab this special opportunity now!',
                   style: TextStyle(fontSize: 18),
                 ),
-                SizedBox(height: 30),
-
-                 GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
+                SizedBox(height: 40),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
-                    },
-                    child: Container(
-                      height: 30,
-                      width: 150,
-                      decoration: BoxDecoration(
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.teal, // Set the background color to teal
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
                       ),
-                      child: Center(
-                        child: Text(
-                          'Claim Promotion',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Claim Promotion',
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
                       ),
                     ),
                   ),
+                ),
+                SizedBox(height: 10),
               ],
             ),
           ),
