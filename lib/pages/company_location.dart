@@ -61,7 +61,7 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
     Fluttertoast.showToast(msg: "Campaign Created Successfully.");
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder:(context) => CompanySuccessPage()),
+      MaterialPageRoute(builder:(context) => CompanySuccessPage(companyModel: widget.companyModel)),
     );
   }
 

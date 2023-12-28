@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/creator_profile.dart';
+import 'package:trendmasterass2/pages/login_page.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
-import '../model/campaign_model.dart';
 import '../model/user_model.dart';
 
 class CompanyHomePage extends StatefulWidget {
@@ -16,9 +16,8 @@ class CompanyHomePage extends StatefulWidget {
 class _CompanyHomePageState extends State<CompanyHomePage> {
   int currentIndex = 0;
   final List<String> images = [
-    'assets/images/influencers2.png',
-    'assets/images/homepage1.png',
-    'assets/images/influencers1.jpg',
+    'assets/images/marketing_pic1.png',
+    'assets/images/img.png',
   ];
 
   Future<List<UserModel>> getCreatorData() async {
@@ -40,7 +39,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     return Scaffold(
       //App Bar Start
       appBar: AppBar(
-        // Add the hamburger icon to open the drawer
+        // title: Center(child: Text("Home")),
         leading: Builder(
           builder: (context) => IconButton(
             icon: Icon(Icons.menu),
@@ -117,26 +116,28 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         leading: Icon(Icons.home, size: 30, color: Colors.grey),
                         title: Text('Home', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
+                          Navigator.of(context).pop(); // Close the sidebar
+
                         },
+
                       ),
                       ListTile(
                         leading: Icon(Icons.menu_book, size: 30, color: Colors.grey),
                         title: Text('Promote', style: TextStyle(color: Colors.black)),
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)));},
+                              MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)));},
                       ),
                       ListTile(
                         leading: Icon(Icons.notifications, size: 30, color: Colors.grey),
-                        title: Text('Notifications', style: TextStyle(color: Colors.black)),
+                        title: Text('Notification', style: TextStyle(color: Colors.black)),
                         onTap: () {
                           // Add your navigation logic here
                         },
                       ),
                       ListTile(
                         leading: Icon(Icons.logout, size: 30, color: Colors.grey),
-                        title: Text('logout', style: TextStyle(color: Colors.black)),
+                        title: Text('Logout', style: TextStyle(color: Colors.black)),
                         onTap: () {
                           // Show logout confirmation dialog
                           _showLogoutPopup(context);
@@ -164,302 +165,299 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
             if (creators.isEmpty){
               return Text('data is empty');
             }
-
-
             List<UserModel> creatorList =creators.where((creator) => creator.userType == 'Creator').toList();
-            return Column(
-              children: [
-                //Search Bar Start
-                Container(
-                  width: MediaQuery.of(context).size.width * 10,
-                  height: 50, // Increased height
-                  decoration: BoxDecoration(
-                    color: Color(0xFFD9D9D9),
-                    borderRadius: BorderRadius.circular(10), // Added border radius
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 5),
-                        child: Icon(Icons.search, color: Colors.white), // Search Icon
-                      ),
-                      Container(
-                        width: 190,
-                        child: const TextField(
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration.collapsed(
-                            hintText: "Search a Creator",
-                            hintStyle: TextStyle(color: Colors.white),
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView(
+                physics: AlwaysScrollableScrollPhysics(),
+                children: [
+                  //Search Bar Start
+                  Container(
+                    // width: MediaQuery.of(context).size.width * 10,
+                    height: 50, // Increased height
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD9D9D9),
+                      borderRadius: BorderRadius.circular(10), // Added border radius
+                    ),
+
+
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 5),
+                          child: Icon(Icons.search, color: Colors.white), // Search Icon
+                        ),
+                        Container(
+                          width: 190,
+                          child: const TextField(
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration.collapsed(
+                              hintText: "Search a Creator",
+                              hintStyle: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+
                   ),
+                  SizedBox(height: 10),
 
-                ),
-                //Search Bar End
+                  //Search Bar End
 
-                //Image Slide Start
-                Container(
-                  color: Colors.red,
-                  height: 180,
+                  Container(
+                    color: Colors.red,
+                    height: 180,
 
-                  child: PageView.builder(
-                    itemCount: images.length,
-                    itemBuilder: (context, index) {
-                      return Image.asset(images[index], fit: BoxFit.cover,
-                      );
+                    child: PageView.builder(
+                      itemCount: images.length,
+                      itemBuilder: (context, index) {
+                        return Image.asset(images[index], fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  //Image Slide End
+
+                  //Category Text Section
+                  Center(
+                    child: Text(
+                      'Categories', // Add the location here
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  //Category Text Section
+
+                  //Category List Slide Section Start
+                  Container(
+                    height: 60,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8.0),
+                          margin: EdgeInsets.only(right: 15.0),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Motivation',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(8.0),
+                          margin: EdgeInsets.only(right: 15.0),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Lifestyle',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(8.0),
+                          margin: EdgeInsets.only(right: 15.0),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Education',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(8.0),
+                          margin: EdgeInsets.only(right: 15.0),
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Fashion',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  //Category List Slide Section End
+
+                  //Creator Title Text Section Start
+                  Text(
+                    'Creators', // Add the location here
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  //Creator Title Text Section End
+
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => CreatorProfile()));
                     },
-                  ),
-                ),
-                SizedBox(height: 10),
-                //Image Slide End
+                    child: Container(
+                      color: Colors.grey,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: creatorList.length,
+                        itemBuilder: (context, index) {
+                          UserModel creator = creatorList[index];
 
-                //Category Text Section
-                Text(
-                  'Categories', // Add the location here
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 10),
-                //Category Text Section
+                          // Use campaign data to create UI elements
+                          // Example: Text(campaign.title), Image.network(campaign.image), etc.
+                          return ListTile(
 
-                //Category List Slide Section Start
-                Container(
-                  height: 60,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(8.0),
-                        margin: EdgeInsets.only(right: 15.0),
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Motivation',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(8.0),
-                        margin: EdgeInsets.only(right: 15.0),
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Lifestyle',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(8.0),
-                        margin: EdgeInsets.only(right: 15.0),
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Education',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(8.0),
-                        margin: EdgeInsets.only(right: 15.0),
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Fashion',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10),
-                //Category List Slide Section End
+                            subtitle: Container(
+                              color: Color(0xFFD2EBE7),
 
-                //Creator Title Text Section Start
-                Text(
-                  'Creators', // Add the location here
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                //Creator Title Text Section End
-
-                // Display Campaigns
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: creatorList.length,
-                    itemBuilder: (context, index) {
-                      UserModel creator = creatorList[index];
-
-                      // Use campaign data to create UI elements
-                      // Example: Text(campaign.title), Image.network(campaign.image), etc.
-                        return ListTile(
-
-
-
-
-                        subtitle: Container(
-                            // height: 150,
-                            width: 350,
-                            color: Color(0xFFD2EBE7),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Row(
-
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 15),
-
-                                      //Image of Creator
-                                      child: Container(
-                                        color: Colors.white,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
+                                    children: [
+                                      //Profile Image
+                                      Container(
+                                        // color: Colors.white,
                                         height: 110,
                                         width: 100,
-
                                         child:
                                         Image.asset('assets/images/foodie_nepal.jpg'),),
-                                    ),
-                                    SizedBox(width: 10,),
+                                      SizedBox(width: 10,),
 
-                                    //Details of Creators
-                                    Container(
-                                      width: 210,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
-                                        children: [
-                                          // Creators Niche
-                                          Container(
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(3.0),
+                                      //Details of Creators
+                                      Container(
+                                        width: 210,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
+                                          children: [
+                                            // Creators Niche
+                                            Container(
+                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
                                                 child: Text(
-                                                   " ${creator.niche ?? ''}",
+                                                  " ${creator.niche ?? ''}",
                                                   style: TextStyle(fontSize: 12, color: Colors.white),
-                                                ),
-                                              )),
-                                          SizedBox(height: 2,),
+                                                )),
+                                            SizedBox(height: 2,),
 
-                                          // Creators Name
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
-                                                SizedBox(height: 5,),
+                                            // Creators Name
+                                            Container(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
+                                                  SizedBox(height: 5,),
 
-                                                Row(
-                                                  children: [
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.facebookSubscriber.toString(), style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(width: 8,),
+                                                  Row(
+                                                    children: [
+                                                      Column(
+                                                        children: [
+                                                          Image.asset(
+                                                            'assets/images/fb_logo.png',
+                                                            fit: BoxFit.cover,
+                                                            height: 25,
+                                                            width: 25,
+                                                          ),
+                                                          SizedBox(height: 5,),
+                                                          Text(creator.facebookSubscriber.toString(), style: TextStyle(fontSize: 12),),
+                                                        ],
+                                                      ),
+                                                      SizedBox(width: 8,),
 
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.instagramSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(width: 8,),
+                                                      Column(
+                                                        children: [
+                                                          Image.asset(
+                                                            'assets/images/insta_logo.png',
+                                                            fit: BoxFit.cover,
+                                                            height: 25,
+                                                            width: 25,
+                                                          ),
+                                                          SizedBox(height: 5,),
+                                                          Text(creator.instagramSubscriber.toString(),style: TextStyle(fontSize: 12),),
+                                                        ],
+                                                      ),
+                                                      SizedBox(width: 8,),
 
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(
-                                                          'assets/images/foodie_nepal.jpg',
-                                                          fit: BoxFit.cover,
-                                                          height: 25,
-                                                          width: 25,
-                                                        ),
-                                                        SizedBox(height: 5,),
-                                                        Text(creator.youtubeSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 5,),
+                                                      Column(
+                                                        children: [
+                                                          Image.asset(
+                                                            'assets/images/youtube_logo.png',
+                                                            fit: BoxFit.cover,
+                                                            height: 25,
+                                                            width: 25,
+                                                          ),
+                                                          SizedBox(height: 5,),
+                                                          Text(creator.youtubeSubscriber.toString(),style: TextStyle(fontSize: 12),),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 5,),
 
-                                                Container(
-                                                  child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                // Text(creator.niche ?? ''),
-                                // Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
-                                // Text("${creator.facebookSubscriber ?? ''} ${creator.youtubeSubscriber ?? ''} ${creator.instagramSubscriber
-                                //     ?? ''}"),
-                              ],
+                                                  Container(
+                                                    child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  // Display Campaigns
+
+                ],
+              ),
             );
           }
         },
@@ -493,6 +491,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                       onPressed: () {
                         // Add your logout logic here
                         Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => LoginPage()));
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
@@ -503,7 +503,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                       onPressed: () {
                         // Cancel the logout action
                         Navigator.of(context).pop();
-                      },
+                       },
+
                       child: Text('No', style: TextStyle(color: Colors.white)),
                     ),
                   ],
@@ -516,5 +517,3 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     );
   }
 }
-
-

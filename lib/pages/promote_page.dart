@@ -82,7 +82,7 @@ class _PromotionPageState extends State<PromotionPage> {
                     ),
                     child: Center(
                       child: Text(
-                        'Claim Promotion',
+                        'Promote',
                         style: TextStyle(
                           color: Colors.white,
                         ),

@@ -14,12 +14,12 @@ class UserModel {
   int? instagramSubscriber;
   int? youtubeSubscriber;
   int? facebookSubscriber;
-  List<String> niche = [];
+  String? niche;
   String? description;
   String? userType;
 
   UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,
-  this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, dynamic niche, this.description, this.userType});
+  this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description, this.userType});
 
   // receiving data from server
   factory UserModel.fromMap(map){
@@ -38,7 +38,7 @@ class UserModel {
       instagramSubscriber: map['instagramSubscriber'],
       youtubeSubscriber: map['youtubeSubscriber'],
       facebookSubscriber: map['facebookSubscriber'],
-      niche: (map['niche'] is List<String>) ? map['niche'] : [map['niche']],
+      niche:  map['niche'],
       description: map['description'],
       userType: map['userType'],
     );
@@ -59,7 +59,7 @@ class UserModel {
         'instagramSubscriber' : instagramSubscriber,
         'youtubeSubscriber': youtubeSubscriber,
         'facebookSubscriber' : facebookSubscriber,
-        'niche': niche.join(', '),
+        'niche': niche,
         'description': description,
         'userType': userType,
     };
