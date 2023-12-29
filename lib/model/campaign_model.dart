@@ -11,6 +11,7 @@ class CampaignModel{
   String? image;
   String? userId;
 
+
   CampaignModel({this.id, this.title, this.description, this.niche, this.budget, this.count, this.location, this.image, this.userId});
 
   //receiving data from the server

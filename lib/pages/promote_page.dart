@@ -125,7 +125,7 @@ class _PromotionPageState extends State<PromotionPage> {
           } else if (index == 3){
             // Navigate to Notification
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CompanyProfile()),
+              MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel,)),
             );
           }
         },

@@ -79,8 +79,9 @@ class CompanyModel{
   String? linkedin;
   String? description;
   String? userType;
+  int? follower;
 
-  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType});
+  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType, this.follower});
 
   // receiving data from server
   factory CompanyModel.fromMap(map){
@@ -96,6 +97,7 @@ class CompanyModel{
       linkedin: map['linkedin'],
       description: map['description'],
       userType: map['userType'],
+      follower: map['follower'],
     );
   }
 
@@ -112,6 +114,7 @@ class CompanyModel{
       'linkedin': linkedin,
       'description': description,
       'userType': userType,
+      'follower': follower,
     };
   }
 

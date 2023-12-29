@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CreatorProfile extends StatelessWidget {
+
+class CreatorProfile extends StatefulWidget {
+  @override
+  State<CreatorProfile> createState() => _CreatorProfileState();
+}
+
+class _CreatorProfileState extends State<CreatorProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -363,3 +369,4 @@ class CreatorProfile extends StatelessWidget {
     );
   }
 }
+

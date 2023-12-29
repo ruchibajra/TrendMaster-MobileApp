@@ -36,20 +36,17 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     return creators;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //App Bar Start
       appBar: AppBar(
-        // title: Center(child: Text("Home")),
         leading: Builder(
           builder: (context) => IconButton(
             icon: Icon(Icons.menu),
             color: Colors.white, // Set the color to white
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-
         ),
         title: Text("Home"),
         centerTitle: true, // Center the title
@@ -102,13 +99,10 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                     ],
                   ),
                 ),
-
-                // Add space between the two containers
                 SizedBox(height: 20),
 
                 // Container for list icons and names
                 Container(
-                  // color: Colors.white, // You can use any color you prefer
                   child: Column(
                     children: [
                       ListTile(
@@ -116,13 +110,13 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         title: Text('Profile', style: TextStyle(color: Colors.black)),
                         onTap: () {
                           Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => CompanyProfile()));                        },
+                              MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel)));                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.home, size: 30, color: Colors.grey),
                         title: Text('Home', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          Navigator.of(context).pop(); // Close the sidebar
+                          Navigator.of(context).pop();
 
                         },
 
@@ -180,7 +174,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                 children: [
                   //Search Bar Start
                   Container(
-                    // width: MediaQuery.of(context).size.width * 10,
                     height: 50, // Increased height
                     decoration: BoxDecoration(
                       color: Color(0xFFD9D9D9),
@@ -350,8 +343,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         itemBuilder: (context, index) {
                           UserModel creator = creatorList[index];
 
-                          // Use campaign data to create UI elements
-                          // Example: Text(campaign.title), Image.network(campaign.image), etc.
                           return ListTile(
 
                             subtitle: Container(
@@ -494,7 +485,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
           } else if (index == 3){
             // Navigate to Notification
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CompanyProfile()),
+              MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel,)),
             );
           }
         },
