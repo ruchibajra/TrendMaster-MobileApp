@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../model/user_model.dart';
+
 class CompanyProfile extends StatefulWidget {
+  final CompanyModel companyModel;
+  CompanyProfile({Key? key, required this.companyModel}) : super(key: key);
+
   @override
   _CompanyProfileState createState() => _CompanyProfileState();
 }
-
 class _CompanyProfileState extends State<CompanyProfile> {
   int followersCount = 10000; // Initial followers count
   List<Widget> galleryImages = [
@@ -83,18 +87,15 @@ class _CompanyProfileState extends State<CompanyProfile> {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.business_center,
-                            size: 24,
-                            color: Colors.teal,
-                          ),
+                          // Add your logo here
+                          Icon(Icons.business_center, size: 24, color: Colors.teal),
                           SizedBox(width: 8),
                           Text(
-                            "Khusbu Jaiswal",
+                            ' ${widget.companyModel.name}',
                             style: TextStyle(
+                              color: Colors.black,
                               fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ],
@@ -108,7 +109,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            "Kathmandu, Nepal",
+                            ' ${widget.companyModel.address}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
@@ -117,7 +118,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           ),
                         ],
                       ),
-                      // Text Below Logo
                       Row(
                         children: [
                           Icon(
@@ -127,7 +127,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            "$followersCount Followers",
+                            ' ${widget.companyModel.follower}',
                             style: TextStyle(
                               fontSize: 15,
                             ),
@@ -140,11 +140,11 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 ),
               ],
             ),
-            Text("kcjjkcjkfjdfhfhjdb"),
-
+            Text(' ${widget.companyModel.description}',
+            ),
             SizedBox(height: 50),
 
-            // Line above Gallery
+
             Divider(
               color: Colors.black87,
               thickness: 1,
@@ -152,10 +152,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
               indent: 0,
               endIndent: 0,
             ),
-
-            // Gallery Section
             SizedBox(height: 20),
-
             // Gallery Section
             SizedBox(height: 20),
             Center(
@@ -188,47 +185,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 );
               },
             ),
-            // SizedBox(height: 10),
-            // GridView.builder(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //     crossAxisCount: 3, // Set the number of columns
-            //     crossAxisSpacing: 8.0, // Set the spacing between columns
-            //     mainAxisSpacing: 8.0, // Set the spacing between rows
-            //   ),
-            //   itemCount: galleryImages.length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return Container(
-            //       color: Colors.teal, // Set the background color
-            //       child: Image.asset(
-            //         'assets/images/company_h1.png', // Replace with the actual image path
-            //         fit: BoxFit.cover, // Choose the appropriate fit
-            //       ),
-            //     );
-            //   },
-            // ),
-            // SizedBox(height: 10),
-            // GridView.builder(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //     crossAxisCount: 3, // Set the number of columns
-            //     crossAxisSpacing: 8.0, // Set the spacing between columns
-            //     mainAxisSpacing: 8.0, // Set the spacing between rows
-            //   ),
-            //   itemCount: galleryImages.length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return Container(
-            //       color: Colors.teal, // Set the background color
-            //       child: Image.asset(
-            //         'assets/images/company_h1.png', // Replace with the actual image path
-            //         fit: BoxFit.cover, // Choose the appropriate fit
-            //       ),
-            //     );
-            //   },
-            // ),
-
           ],
         ),
       ),
@@ -259,6 +215,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
 void main() {
   runApp(MaterialApp(
-    home: CompanyProfile(),
+    // home: CompanyProfile(),
   ));
 }

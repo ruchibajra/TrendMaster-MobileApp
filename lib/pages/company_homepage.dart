@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/user_model.dart';
+import 'company_profile.dart';
 
 class CompanyHomePage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -95,14 +96,14 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         leading: Icon(Icons.person, size: 30, color: Colors.grey),
                         title: Text('Profile', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
-                        },
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel)));},
                       ),
                       ListTile(
                         leading: Icon(Icons.home, size: 30, color: Colors.grey),
                         title: Text('Home', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
+
                         },
                       ),
                       ListTile(

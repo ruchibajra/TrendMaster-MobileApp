@@ -18,6 +18,8 @@ class UserModel {
   String? description;
   String? userType;
 
+
+
   UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,
   this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description, this.userType});
 
@@ -41,6 +43,7 @@ class UserModel {
       niche: map['niche'],
       description: map['description'],
       userType: map['userType'],
+
     );
   }
     // sending data to server
@@ -79,8 +82,9 @@ class CompanyModel{
   String? linkedin;
   String? description;
   String? userType;
+  int? follower;
 
-  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType});
+  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType, this.follower});
 
   // receiving data from server
   factory CompanyModel.fromMap(map){
@@ -96,6 +100,7 @@ class CompanyModel{
       linkedin: map['linkedin'],
       description: map['description'],
       userType: map['userType'],
+      follower: map['follower']
     );
   }
 
@@ -112,6 +117,8 @@ class CompanyModel{
       'linkedin': linkedin,
       'description': description,
       'userType': userType,
+      'follower' : follower,
+
     };
   }
 
