@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../model/user_model.dart';
 
 class InfluencerProfile extends StatefulWidget {
-  // final UserModel userModel;
-  // InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
+  final UserModel userModel;
+
+  InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
 
   @override
   State<InfluencerProfile> createState() => _InfluencerProfileState();
@@ -18,14 +19,14 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.white, // Set the color to white
+            color: Colors.white,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text("Creator's Profile"),
-        centerTitle: true, // Center the title
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -36,62 +37,56 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
               Container(
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
-                    // Profile Image, Name, Location, and Edit Option
-                    Center(
-                      child: Column(
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage:
+                      AssetImage('assets/images/logo.png'),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Image
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage:
-                            AssetImage('assets/images/logo.png'),
+                          Icon(
+                            Icons.location_on,
+                            size: 20,
+                            color: Colors.red,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          // Influencer name and Location
                           Text(
-                            'Khush',
+                            "${widget.userModel.address}",
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                               color: Colors.black87,
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 20,
-                                  color: Colors.red,
-                                ),
-                                Text(
-                                  'Kathmandu, Nepal ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 8),
-
-                    // Multiline text centered
                     Center(
                       child: Text(
-                        'I make motivational, news and facts video and my audience are from 15 to 32 age group. '
-                            'I guarantee 25k views and will make more videos if it dont reach the target views. ',
+                        '${widget.userModel.description}',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -99,58 +94,56 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(height: 2),
-
-                    // Area of Expertise Section
+                    SizedBox(height: 10),
                     Container(
                       margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
+                        color: Colors.grey[200],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      child: Column(
                         children: [
                           Text(
                             'Area of Expertise',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               color: Colors.black87,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                          SizedBox(height: 5),
                           Container(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            child: Text('Motivation'),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(25),
+                            child: Text(
+                              '${widget.userModel.niche}',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
                             ),
-                            child: Text('Lifestyle'),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 5),
-
+                    SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         color: Colors.teal[100],
                       ),
                       height: 60,
-                      padding: EdgeInsets.all(5),
+                      width: 250,
+
+                      padding: EdgeInsets.all(10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Lets work together",
+                            "Let's work together",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -158,82 +151,45 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                           ),
                           Text(
                             "Creators Rate Per Creative: Rs. 5000/-",
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 10),
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
 
               // Social Media Details Section
               Container(
-                color: Colors.grey.shade200,
+                color: Colors.grey[200],
+                padding: EdgeInsets.all(20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Add space evenly
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 10),
-                        Image.asset('assets/images/logo.png', height: 80, width: 80),
-                        Container(
-                          child: Text(
-                            "80k",
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                    _buildSocialMediaColumn(
+                      'assets/images/fb_logo.png',
+                      '${widget.userModel.facebookSubscriber}',
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 10),
-                        Image.asset('assets/images/logo.png', height: 80, width: 80),
-                        Container(
-                          child: Text(
-                            "50k",
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                    _buildSocialMediaColumn(
+                      'assets/images/insta_logo.png',
+                      '${widget.userModel.instagramSubscriber}',
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 10),
-                        Image.asset('assets/images/logo.png', height: 80, width: 80),
-                        Container(
-                          child: Text(
-                            "40k",
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
+                    _buildSocialMediaColumn(
+                      'assets/images/youtube_logo.png',
+                      '${widget.userModel.youtubeSubscriber}',
                     ),
                   ],
                 ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(height: 20),
 
               // Worked With Companies
               Container(
-                color: Colors.grey.shade200,
+                color: Colors.grey[200],
+                padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Text(
@@ -244,47 +200,41 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
+                        _buildCompanyLogo('assets/images/logo.png'),
+                        _buildCompanyLogo('assets/images/logo.png'),
+                        _buildCompanyLogo('assets/images/logo.png'),
+                        _buildCompanyLogo('assets/images/logo.png'),
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 20),
                     Container(
-                      height: 26,
-                      width: 120,
+                      height: 36,
+                      width: 140,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.teal,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: Center(
                         child: Text(
                           "ADD MORE",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, color: Colors.white),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10,),
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 20),
 
               // Gallery
               Container(
-                color: Colors.grey.shade200,
+                color: Colors.grey[200],
+                padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Text(
@@ -295,52 +245,40 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
+                        _buildGalleryImage('assets/images/logo.png'),
+                        _buildGalleryImage('assets/images/logo.png'),
+                        _buildGalleryImage('assets/images/logo.png'),
                       ],
                     ),
-                    SizedBox(height: 10,),
-
+                    SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
-                        Image.asset('assets/images/logo.png',
-                            height: 80, width: 80),
+                        _buildGalleryImage('assets/images/logo.png'),
+                        _buildGalleryImage('assets/images/logo.png'),
+                        _buildGalleryImage('assets/images/logo.png'),
                       ],
                     ),
-                    SizedBox(height: 10,),
-
+                    SizedBox(height: 20),
                     Container(
-                      height: 26,
-                      width: 120,
+                      height: 36,
+                      width: 140,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.teal,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: Center(
                         child: Text(
                           "ADD MORE",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, color: Colors.white),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10,),
                   ],
                 ),
               ),
@@ -348,29 +286,32 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
           ),
         ),
       ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book, size: 30, color: Colors.grey),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
-}
 
+  Widget _buildSocialMediaColumn(String imagePath, String followers) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset(imagePath, height: 50, width: 50),
+        SizedBox(height: 10),
+        Text(
+          followers,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompanyLogo(String imagePath) {
+    return Image.asset(imagePath, height: 80, width: 80);
+  }
+
+  Widget _buildGalleryImage(String imagePath) {
+    return Image.asset(imagePath, height: 80, width: 80);
+  }
+}

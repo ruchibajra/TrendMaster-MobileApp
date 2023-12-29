@@ -330,126 +330,129 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                   ),
                   //Creator Title Text Section End
 
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => InfluencerProfile()));
-                    },
-                    child: Container(
-                      color: Colors.grey,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: creatorList.length,
-                        itemBuilder: (context, index) {
-                          UserModel creator = creatorList[index];
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: creatorList.length,
+                    itemBuilder: (context, index) {
 
-                          return ListTile(
+                      //UserModel is Creator's Data
+                      UserModel creator = creatorList[index];
 
-                            subtitle: Container(
-                              color: Color(0xFFD2EBE7),
-
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
-                                    children: [
-                                      //Profile Image
-                                      Container(
-                                        // color: Colors.white,
-                                        height: 110,
-                                        width: 100,
-                                        child:
-                                        Image.asset('assets/images/foodie_nepal.jpg'),),
-                                      SizedBox(width: 10,),
-
-                                      //Details of Creators
-                                      Container(
-                                        width: 210,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
-                                          children: [
-                                            // Creators Niche
-                                            Container(
-                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
-                                                child: Text(
-                                                  " ${creator.uid ?? ''}",
-                                                  style: TextStyle(fontSize: 12, color: Colors.white),
-                                                )),
-                                            SizedBox(height: 2,),
-
-                                            // Creators Name
-                                            Container(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
-                                                  SizedBox(height: 5,),
-
-                                                  Row(
-                                                    children: [
-                                                      Column(
-                                                        children: [
-                                                          Image.asset(
-                                                            'assets/images/fb_logo.png',
-                                                            fit: BoxFit.cover,
-                                                            height: 25,
-                                                            width: 25,
-                                                          ),
-                                                          SizedBox(height: 5,),
-                                                          Text(creator.facebookSubscriber.toString(), style: TextStyle(fontSize: 12),),
-                                                        ],
-                                                      ),
-                                                      SizedBox(width: 8,),
-
-                                                      Column(
-                                                        children: [
-                                                          Image.asset(
-                                                            'assets/images/insta_logo.png',
-                                                            fit: BoxFit.cover,
-                                                            height: 25,
-                                                            width: 25,
-                                                          ),
-                                                          SizedBox(height: 5,),
-                                                          Text(creator.instagramSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                        ],
-                                                      ),
-                                                      SizedBox(width: 8,),
-
-                                                      Column(
-                                                        children: [
-                                                          Image.asset(
-                                                            'assets/images/youtube_logo.png',
-                                                            fit: BoxFit.cover,
-                                                            height: 25,
-                                                            width: 25,
-                                                          ),
-                                                          SizedBox(height: 5,),
-                                                          Text(creator.youtubeSubscriber.toString(),style: TextStyle(fontSize: 12),),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 5,),
-
-                                                  Container(
-                                                    child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                      return GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InfluencerProfile(userModel:creator), // Pass the UserModel to the new page
                             ),
                           );
                         },
+                        child:ListTile(
+                        subtitle: Container(
+                          color: Color(0xFFD2EBE7),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center, // Align vertically to the center
+                                children: [
+                                  //Profile Image
+                                  Container(
+                                    // color: Colors.white,
+                                    height: 110,
+                                    width: 100,
+                                    child:
+                                    Image.asset('assets/images/foodie_nepal.jpg'),),
+                                  SizedBox(width: 10,),
+
+                                  //Details of Creators
+                                  Container(
+                                    width: 210,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start, // Align the text horizontally to the start
+                                      children: [
+                                        // Creators Niche
+                                        Container(
+                                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
+                                            child: Text(
+                                              " ${creator.niche ?? ''}",
+                                              style: TextStyle(fontSize: 12, color: Colors.white),
+                                            )),
+                                        SizedBox(height: 2,),
+
+                                        // Creators Name
+                                        Container(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("${creator.firstName ?? ''} ${creator.middleName ?? ''} ${creator.lastName ?? ''}"),
+                                              SizedBox(height: 5,),
+
+                                              Row(
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Image.asset(
+                                                        'assets/images/fb_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        height: 25,
+                                                        width: 25,
+                                                      ),
+                                                      SizedBox(height: 5,),
+                                                      Text(creator.facebookSubscriber.toString(), style: TextStyle(fontSize: 12),),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 8,),
+
+                                                  Column(
+                                                    children: [
+                                                      Image.asset(
+                                                        'assets/images/insta_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        height: 25,
+                                                        width: 25,
+                                                      ),
+                                                      SizedBox(height: 5,),
+                                                      Text(creator.instagramSubscriber.toString(),style: TextStyle(fontSize: 12),),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 8,),
+
+                                                  Column(
+                                                    children: [
+                                                      Image.asset(
+                                                        'assets/images/youtube_logo.png',
+                                                        fit: BoxFit.cover,
+                                                        height: 25,
+                                                        width: 25,
+                                                      ),
+                                                      SizedBox(height: 5,),
+                                                      Text(creator.youtubeSubscriber.toString(),style: TextStyle(fontSize: 12),),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 5,),
+
+                                              Container(
+                                                child: Text("Rs.30,000 for 50.0K impressions", style: TextStyle(fontSize: 13),),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      );
+
+
+                    },
                   ),
                 ],
               ),

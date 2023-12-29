@@ -17,10 +17,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  // text editing controllers
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // firebase
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
@@ -81,24 +84,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
-              // Button Section
 
               // Login Button
               FractionallySizedBox(
                 widthFactor: 0.85,
                 child: ElevatedButton(
                   onPressed: () => onPressed(context),
-
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                   child: Text("Login"),
                 ),
               ),
               SizedBox(height: 10),
 
-              // Forgotten Password
+              // Forgotten Password Section
               Container(
                 child: TextButton(
                   onPressed: () =>  Navigator.of(context).push(
@@ -108,10 +107,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
+              // Create new account section
               Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: Container(
-                  // color: Colors.green,
                   width: 330,
                   child: Column(
                     children: [
@@ -159,38 +158,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  //Button Press Function
+  // Login Button Function
   void onPressed(BuildContext context) {
     signIn(emailController.text, passwordController.text);
   }
 
-  void onPressedSignupType(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => UsertypePage()));
-  }
-
-  void onPressedSignupCompany(BuildContext context){
-    Navigator.of(context).push(
-        MaterialPageRoute(builder:(context) => CompanyRegistrationScreen()));
-  }
-
-
-  //Sign in with
-
-
-  signInWithGoogle() async{
-
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken ,
-    );
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    print(userCredential.user?.displayName);
-  }
-
-  //login function
+  // login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try{
@@ -235,9 +208,27 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
+  // Usertype Page Call Funciton
+  void onPressedSignupType(BuildContext context) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => UsertypePage()));
+  }
+
+  //Sign in with google function
+  signInWithGoogle() async{
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken ,
+    );
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+  }
 }
 
-//password rest
+// Password Reset Screen
 class PasswordResetScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
