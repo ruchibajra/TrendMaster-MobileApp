@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/model/user_model.dart';
+
+import 'creators_profile.dart';
 
 class CreatorHomePage extends StatefulWidget {
+  final UserModel userModel;
+  CreatorHomePage({Key? key, required this.userModel}) : super(key: key);
+
   @override
   _CreatorHomePageState createState() => _CreatorHomePageState();
 }
@@ -77,7 +83,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ' Ruchi',
+                            ' Hello ${widget.userModel.firstName}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -92,7 +98,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Bhaktapur',
+                                '${widget.userModel.address}',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -118,8 +124,9 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                         leading: Icon(Icons.person, size: 30, color: Colors.grey),
                         title: Text('Profile', style: TextStyle(color: Colors.black)),
                         onTap: () {
-                          // Add your navigation logic here
-                        },
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => InfluencerProfile(userModel: widget.userModel)));
+                          },
                       ),
                       ListTile(
                         leading: Icon(Icons.home, size: 30, color: Colors.grey),

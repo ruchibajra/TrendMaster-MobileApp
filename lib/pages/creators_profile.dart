@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/model/user_model.dart';
 
-class InfluencerProfile extends StatelessWidget {
+class InfluencerProfile extends StatefulWidget {
+  final UserModel userModel;
+  InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
+
+  @override
+  State<InfluencerProfile> createState() => _InfluencerProfileState();
+}
+
+class _InfluencerProfileState extends State<InfluencerProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +23,9 @@ class InfluencerProfile extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: Text("Influencer Profile"),
+        title: Text(
+            'Influencer Profile'
+        ),
         centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
@@ -46,7 +57,7 @@ class InfluencerProfile extends StatelessWidget {
                           ),
                           // Influencer name and Location
                           Text(
-                            "Khusbu Kumari",
+                            '${widget.userModel.firstName}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -63,7 +74,7 @@ class InfluencerProfile extends StatelessWidget {
                                   color: Colors.red,
                                 ),
                                 Text(
-                                  'Kathmandu, Nepal ',
+                                  '${widget.userModel.address}',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.black87,
@@ -80,8 +91,7 @@ class InfluencerProfile extends StatelessWidget {
                     // Multiline text centered
                     Center(
                       child: Text(
-                        'I make motivational, news and facts video and my audience are from 15 to 32 age group. '
-                            'I guarantee 25k views and will make more videos if it dont reach the target views. ',
+                        '${widget.userModel.description} ',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -91,7 +101,6 @@ class InfluencerProfile extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
 
-                    // Area of Expertise Section
                     Container(
                       margin: EdgeInsets.all(10),
                       padding: EdgeInsets.all(5),
@@ -108,51 +117,20 @@ class InfluencerProfile extends StatelessWidget {
                               color: Colors.black87,
                             ),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Text('Motivation'),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Text('Lifestyle'),
-                          ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 5),
-
                     Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.teal[100],
-                      ),
-                      height: 60,
                       padding: EdgeInsets.all(5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Lets work together",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "Creators Rate Per Creative: Rs. 5000/-",
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                    )
+                      child: Text(
+                        '${widget.userModel.niche}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: 5),
                   ],
                 ),
               ),
@@ -172,7 +150,7 @@ class InfluencerProfile extends StatelessWidget {
                         Image.asset('assets/images/profile.png', height: 80, width: 80),
                         Container(
                           child: Text(
-                            "80k",
+                            "${widget.userModel.youtube}",
                             style: TextStyle(
                               fontSize: 35,
                               fontWeight: FontWeight.bold,
@@ -189,7 +167,7 @@ class InfluencerProfile extends StatelessWidget {
                         Image.asset('assets/images/profile.png', height: 80, width: 80),
                         Container(
                           child: Text(
-                            "50k",
+                            "${widget.userModel.facebook}",
                             style: TextStyle(
                               fontSize: 35,
                               fontWeight: FontWeight.bold,
@@ -206,7 +184,7 @@ class InfluencerProfile extends StatelessWidget {
                         Image.asset('assets/images/profile.png', height: 80, width: 80),
                         Container(
                           child: Text(
-                            "40k",
+                            "${widget.userModel.instagram}",
                             style: TextStyle(
                               fontSize: 35,
                               fontWeight: FontWeight.bold,
@@ -363,3 +341,5 @@ class InfluencerProfile extends StatelessWidget {
     );
   }
 }
+
+

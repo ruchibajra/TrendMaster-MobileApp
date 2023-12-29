@@ -10,6 +10,7 @@ import 'package:trendmasterass2/pages/promote_page.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import '../model/user_model.dart';
 import 'company_registration.dart';
+import 'creator_registration.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -177,6 +178,11 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(builder:(context) => CompanyRegistrationScreen()));
   }
 
+  void onPressedSignupCreator(BuildContext context){
+    Navigator.of(context).push(
+        MaterialPageRoute(builder:(context) => CreatorRegistration()));
+  }
+
 
   //Sign in with Google
   signInWithGoogle() async{
@@ -223,8 +229,9 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: companyModel)),
               );
             } else if(userType == 'Creator'){
+              UserModel usermodel = UserModel.fromMap(userSnapshot.data()!);
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CreatorHomePage()),
+                MaterialPageRoute(builder: (context) => CreatorHomePage(userModel:usermodel)),
               );
             }else{
               Fluttertoast.showToast(msg: 'User details not found');
