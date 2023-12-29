@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../model/user_model.dart';
 
-class CreatorProfile extends StatefulWidget {
+class InfluencerProfile extends StatefulWidget {
+  // final UserModel userModel;
+  // InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
+
   @override
-  State<CreatorProfile> createState() => _CreatorProfileState();
+  State<InfluencerProfile> createState() => _InfluencerProfileState();
 }
 
-class _CreatorProfileState extends State<CreatorProfile> {
+class _InfluencerProfileState extends State<InfluencerProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +24,7 @@ class _CreatorProfileState extends State<CreatorProfile> {
             Navigator.pop(context);
           },
         ),
-        title: Text("Profile"),
+        title: Text("Creator's Profile"),
         centerTitle: true, // Center the title
       ),
       body: SingleChildScrollView(
@@ -45,14 +49,14 @@ class _CreatorProfileState extends State<CreatorProfile> {
                           CircleAvatar(
                             radius: 40,
                             backgroundImage:
-                            AssetImage('assets/images/profile.png'),
+                            AssetImage('assets/images/logo.png'),
                           ),
                           SizedBox(
                             height: 10,
                           ),
                           // Influencer name and Location
                           Text(
-                            "Khusbu Kumari",
+                            'Khush',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -175,7 +179,7 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(width: 10),
-                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Image.asset('assets/images/logo.png', height: 80, width: 80),
                         Container(
                           child: Text(
                             "80k",
@@ -192,7 +196,7 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(width: 10),
-                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Image.asset('assets/images/logo.png', height: 80, width: 80),
                         Container(
                           child: Text(
                             "50k",
@@ -209,7 +213,7 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(width: 10),
-                        Image.asset('assets/images/profile.png', height: 80, width: 80),
+                        Image.asset('assets/images/logo.png', height: 80, width: 80),
                         Container(
                           child: Text(
                             "40k",
@@ -245,13 +249,13 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
                       ],
                     ),
@@ -296,11 +300,11 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
                       ],
                     ),
@@ -310,11 +314,11 @@ class _CreatorProfileState extends State<CreatorProfile> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
-                        Image.asset('assets/images/profile.png',
+                        Image.asset('assets/images/logo.png',
                             height: 80, width: 80),
                       ],
                     ),

@@ -7,6 +7,7 @@ import 'login_page.dart';
 
 class CompanySuccessPage extends StatefulWidget {
   CompanyModel companyModel;
+
   CompanySuccessPage({required this.companyModel});
 
 

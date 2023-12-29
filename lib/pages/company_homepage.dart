@@ -333,7 +333,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                   GestureDetector(
                     onTap: (){
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => CreatorProfile()));
+                          MaterialPageRoute(builder: (context) => InfluencerProfile()));
                     },
                     child: Container(
                       color: Colors.grey,
@@ -373,7 +373,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                             Container(
                                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.teal),
                                                 child: Text(
-                                                  " ${creator.niche ?? ''}",
+                                                  " ${creator.uid ?? ''}",
                                                   style: TextStyle(fontSize: 12, color: Colors.white),
                                                 )),
                                             SizedBox(height: 2,),
@@ -451,8 +451,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                       ),
                     ),
                   ),
-                  // Display Campaigns
-
                 ],
               ),
             );
