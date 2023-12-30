@@ -156,7 +156,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
         future: getCreatorData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Text('ERROR: ${snapshot.error}');
           } else {
@@ -343,7 +343,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => InfluencerProfile(userModel:creator), // Pass the UserModel to the new page
+                              builder: (context) => InfluencerProfile(userModel:creator, workRequestSent: false ,), // Pass the UserModel to the new page
                             ),
                           );
                         },

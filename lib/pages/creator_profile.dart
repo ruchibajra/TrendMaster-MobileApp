@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../model/user_model.dart';
 
-bool workRequestSent = false;
+
 
 
 class InfluencerProfile extends StatefulWidget {
   final UserModel userModel;
+  final bool workRequestSent;
 
-
-  InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
+  InfluencerProfile({Key? key, required this.userModel, required this.workRequestSent}) : super(key: key);
 
   @override
   State<InfluencerProfile> createState() => _InfluencerProfileState();
 }
 
 class _InfluencerProfileState extends State<InfluencerProfile> {
+  bool _workRequestSent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _workRequestSent = widget.workRequestSent;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,21 +154,28 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
                       padding: EdgeInsets.all(10),
                       child: GestureDetector(
-                        onTap: (){
-                          _showLogoutPopup(context);
+                        onTap: () {
+                          if (!_workRequestSent) {
+                            _showConfirmationPopup(context, "Are you sure you want to work with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
+                          } else {
+                            // Toggle back to "Let's work together" when clicked again
+                            setState(() {
+                              _showCancellationPopup(context, "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
+                            });
+                          }
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              workRequestSent ? "Work Request Sent" : "Let's work together",
+                              _workRequestSent ? "Work Request Sent" : "Let's work together",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              workRequestSent
+                              _workRequestSent
                                   ? ""
                                   : "Creators Rate Per Creative: Rs. 5000/-",
                               style: TextStyle(fontSize: 10),
@@ -327,8 +344,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     return Image.asset(imagePath, height: 80, width: 80);
   }
 
-  // Function to show logout confirmation dialog in the center
-  void _showLogoutPopup(BuildContext context) {
+  // Function to show cancellation confirmation dialog in the center
+  void _showCancellationPopup(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -339,7 +356,61 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Are you sure you want to work with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?',
+                  message,
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+
+                        setState(() {
+                          _workRequestSent = false;
+                        });
+                        Navigator.of(context).pop();
+                        _showToast("Work request cancelled successfully"); // Show toast here
+
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "No" button
+                      ),
+                      onPressed: () {
+
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to show confirmation dialog in the center
+  void _showConfirmationPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  message,
                   style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 SizedBox(height: 20),
@@ -352,9 +423,11 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                       ),
                       onPressed: () {
                         setState(() {
-                          workRequestSent = true;
+                          _workRequestSent = true;
                         });
                         Navigator.of(context).pop();
+                        _showToast("Work request sent successfully"); // Show toast here
+
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
@@ -363,14 +436,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         primary: Colors.teal, // Teal color for the "No" button
                       ),
                       onPressed: () {
-                          // Toggle back to "Let's work together" when clicked "No"
-                          setState(() {
-                            workRequestSent = false;
-                          });
-                          Navigator.of(context).pop();
-
+                        Navigator.of(context).pop();
                       },
-
                       child: Text('No', style: TextStyle(color: Colors.white)),
                     ),
                   ],
@@ -383,3 +450,17 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     );
   }
 }
+
+// Function to show FlutterToast
+void _showToast(String message) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.teal,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}
+
