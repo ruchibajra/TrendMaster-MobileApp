@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../model/user_model.dart';
 
+bool workRequestSent = false;
+
+
 class InfluencerProfile extends StatefulWidget {
   final UserModel userModel;
+
 
   InfluencerProfile({Key? key, required this.userModel}) : super(key: key);
 
@@ -139,22 +143,30 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                       width: 250,
 
                       padding: EdgeInsets.all(10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Let's work together",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      child: GestureDetector(
+                        onTap: (){
+                          _showLogoutPopup(context);
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              workRequestSent ? "Work Request Sent" : "Let's work together",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Creators Rate Per Creative: Rs. 5000/-",
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ],
+                            Text(
+                              workRequestSent
+                                  ? ""
+                                  : "Creators Rate Per Creative: Rs. 5000/-",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
+                        ),
                       ),
+
                     ),
                   ],
                 ),
@@ -313,5 +325,61 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   Widget _buildGalleryImage(String imagePath) {
     return Image.asset(imagePath, height: 80, width: 80);
+  }
+
+  // Function to show logout confirmation dialog in the center
+  void _showLogoutPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to work with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          workRequestSent = true;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "No" button
+                      ),
+                      onPressed: () {
+                          // Toggle back to "Let's work together" when clicked "No"
+                          setState(() {
+                            workRequestSent = false;
+                          });
+                          Navigator.of(context).pop();
+
+                      },
+
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
