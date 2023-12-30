@@ -1,4 +1,4 @@
-class CampaignModel{
+class CampaignModel {
   String? id;
   String? title;
   String? description;
@@ -6,33 +6,43 @@ class CampaignModel{
   String? niche;
   String? creator_no;
   String? budget;
+  String? image; // Add this line
 
-  CampaignModel({this.id, this.title, this.description, this.location, this.niche, this.creator_no, this.budget});
+  CampaignModel({
+    this.id,
+    this.title,
+    this.description,
+    this.location,
+    this.niche,
+    this.creator_no,
+    this.budget,
+    this.image, // Add this line
+  });
 
-  //receiving data from the server
-  factory CampaignModel.fromMap(map){
+  // receiving data from the server
+  factory CampaignModel.fromMap(map) {
     return CampaignModel(
-        id: map['id'],
-        title: map['title'],
-        description: map['description'],
-        location: map['location'],
-        niche: map['niche'],
-        creator_no: map['creator_no'],
-        budget: map['budget']
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      location: map['location'],
+      niche: map['niche'],
+      creator_no: map['creator_no'],
+      budget: map['budget'],
+      image: map['image'],
     );
   }
 
-  //sending data from the server
-  Map <String, dynamic> toMap(){
-    return{
+  // sending data from the server
+  Map<String, dynamic> toMap() {
+    return {
       'title': title,
       'description': description,
       'location': location,
       'niche': niche,
       'creator_no': creator_no,
       'budget': budget,
+      'image': image,
     };
   }
-
-
 }
