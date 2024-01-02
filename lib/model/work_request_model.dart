@@ -1,13 +1,15 @@
 class WorkRequestModel{
+  String? uid;
   String? senderId;
   String? receiverId;
   String? status;
 
-  WorkRequestModel({ this.senderId, this.receiverId, this.status});
+  WorkRequestModel({ this.uid, this.senderId, this.receiverId, this.status});
 
   //receiving data from server
   factory WorkRequestModel.fromMap(map){
     return WorkRequestModel(
+      uid: map['uid'],
       senderId: map['senderId'],
       receiverId: map['receiverId'],
       status: map['status']

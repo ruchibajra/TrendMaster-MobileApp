@@ -9,10 +9,9 @@ import '../model/user_model.dart';
 class InfluencerProfile extends StatefulWidget {
   final UserModel userModel;
   final CompanyModel companyModel;
-  final bool workRequestSent;
 
   InfluencerProfile(
-      {Key? key, required this.userModel, required this.companyModel, required this.workRequestSent})
+      {Key? key, required this.userModel, required this.companyModel})
       : super(key: key);
 
   @override
@@ -28,11 +27,15 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   @override
   void initState() {
     super.initState();
-    _fetchWorkRequestData();
-    _workRequestSent = widget.workRequestSent;
+    _fetchWorkRequestData().then((workRequestDoc) {
+      _updateWorkRequestSent(workRequestDoc);
+    });
+    // _workRequestSent = widget.workRequestSent;
   }
 
-  void _fetchWorkRequestData() async {
+
+
+  Future<DocumentSnapshot?> _fetchWorkRequestData() async {
     try {
       // Get a reference to the 'work_requests' collection
       CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
@@ -59,6 +62,13 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
       print('Error fetching work request data: $e');
     }
   }
+
+  void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
+    setState(() {
+      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -421,8 +431,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   postDetailsToFirestore() async {
 
-    User? user = _auth.currentUser;
-
     WorkRequestModel workRequestModel = WorkRequestModel(
       senderId: widget.companyModel.email,
       receiverId: widget.userModel.email,
@@ -456,48 +464,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
       print('Error updating work request status: $e');
     }
   }
-
-
-
-  // Function to update the status in Firestore based on conditions
-  void _updateWorkRequestStatus(String newStatus) async {
-    Fluttertoast.showToast(msg: 'out function');
-
-    if (_workRequestSent == true) {
-      Fluttertoast.showToast(msg: 'inside the function');
-      Text('hello');
-      try {
-        CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
-
-        // Use the where clause to filter the documents based on creator and company emails
-        QuerySnapshot workRequestsQuery = await workRequestsCollection
-            .where('receiverId', isEqualTo: widget.userModel.email)
-            .where('senderId', isEqualTo: widget.companyModel.email)
-            .get();
-
-        // Check if there are any matching documents
-        if (workRequestsQuery.docs.isNotEmpty) {
-          // Assuming you only expect one document, you can access the first one
-          DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
-
-          // Update the document with the new status
-          await workRequestsCollection
-              .doc(workRequestDoc.id)
-              .update({'status': "newStatus"});
-
-          // Optional: You can also update the local state if needed
-          setState(() {
-            _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
-          });
-        } else {
-          print('No matching work request found');
-        }
-      } catch (e) {
-        print('Error updating work request status: $e');
-      }
-    }
-  }
-
 
   // Function to show cancellation confirmation dialog in the center
   void _showCancellationPopup(BuildContext context, String message) {
@@ -616,6 +582,45 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
         );
       },
     );
+  }
+
+  // Function to update the status in Firestore based on conditions
+  void _updateWorkRequestStatus(String newStatus) async {
+    Fluttertoast.showToast(msg: 'out function');
+
+    if (_workRequestSent == true) {
+      Fluttertoast.showToast(msg: 'inside the function');
+      Text('hello');
+      try {
+        CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+
+        // Use the where clause to filter the documents based on creator and company emails
+        QuerySnapshot workRequestsQuery = await workRequestsCollection
+            .where('receiverId', isEqualTo: widget.userModel.email)
+            .where('senderId', isEqualTo: widget.companyModel.email)
+            .get();
+
+        // Check if there are any matching documents
+        if (workRequestsQuery.docs.isNotEmpty) {
+          // Assuming you only expect one document, you can access the first one
+          DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+          // Update the document with the new status
+          await workRequestsCollection
+              .doc(workRequestDoc.id)
+              .update({'status': newStatus});
+
+          // Optional: You can also update the local state if needed
+          setState(() {
+            _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+          });
+        } else {
+          print('No matching work request found');
+        }
+      } catch (e) {
+        print('Error updating work request status: $e');
+      }
+    }
   }
 }
 

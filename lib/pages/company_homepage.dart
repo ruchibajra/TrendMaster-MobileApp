@@ -343,7 +343,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => InfluencerProfile(companyModel: widget.companyModel, userModel:creator, workRequestSent: false ,), // Pass the UserModel to the new page
+                              builder: (context) => InfluencerProfile(companyModel: widget.companyModel, userModel:creator),
                             ),
                           );
                         },

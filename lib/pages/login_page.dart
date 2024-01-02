@@ -195,8 +195,10 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: companyModel)),
               );
             } else if(userType == 'Creator'){
+              UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
+
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CreatorHomePage()),
+                MaterialPageRoute(builder: (context) => CreatorHomePage(userModel: userModel)),
               );
             }else{
               Fluttertoast.showToast(msg: 'User details not found');
