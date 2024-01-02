@@ -717,19 +717,19 @@ class CompanyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
+            icon: Icon(Icons.message, size: 30, color: Colors.black),
             label: 'Messages',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
+            icon: Icon(Icons.home, size: 30, color: Colors.black),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
+            icon: Icon(Icons.notifications, size: 30, color: Colors.black),
             label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
+            icon: Icon(Icons.person, size: 30, color: Colors.black),
             label: 'Profile',
           ),
         ],
