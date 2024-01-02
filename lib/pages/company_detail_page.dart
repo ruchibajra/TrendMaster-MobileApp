@@ -1,29 +1,33 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
-
-import 'login_page.dart';
+import 'dart:core';
+import '../model/user_model.dart';
 
 class AddDetailsPage extends StatefulWidget {
+  final CompanyModel companyModel;
+  AddDetailsPage({required this.companyModel});
+
   @override
   _AddDetailsPageState createState() => _AddDetailsPageState();
 }
 
 class _AddDetailsPageState extends State<AddDetailsPage> {
-
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController budgetController = TextEditingController();
   TextEditingController creatorNoController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   List<String> selectedNiches = [];
-
   List<Map<String, dynamic>> getNicheList() {
     return [
       {'niche': 'Fashion', 'color': Colors.teal},
@@ -38,17 +42,79 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     ];
   }
 
+  CollectionReference _reference = FirebaseFirestore.instance.collection('campaign_details');
+  String imageUrl = '';
+
   postDetailsToFirestore() async{
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
-    CampaignModel campaignModel = CampaignModel(
-      id: '1',
-      title: titleController.text,
+    try {
+      CampaignModel campaignModel = CampaignModel(
+        title: titleController.text,
+        description: descriptionController.text,
+        niche: selectedNiches.toString(),
+        image: imageUrl.toString(),
+        userId: user?.uid,
+      );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder:(context) => Budget(campaignModel: campaignModel, companyModel: widget.companyModel)),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Navigation error: $e");
+    }
+  }
+  //some initial image upload initialization code
+  File? _image;
+  final imagePicker = ImagePicker();
+  String? downloadUrl;
 
-    );
+  //image picking from our device
+  Future imagePickerMethod()async{
+    ImagePicker imagePicker = ImagePicker();
+    XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    print('${localFile?.path}');
+
+    setState(() {
+      if(localFile != null){
+        _image = File(localFile.path);
+        Fluttertoast.showToast(msg: " Selected");
+      }else
+        {
+          Fluttertoast.showToast(msg: "No File Selected");
+        }
+    });
   }
 
+  Future<String?> uploadPicture() async{
+    // Get the file name from the path
+    String fileName = _image!.path.split('/').last;
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+    // Create a reference to storage root
+    Reference referenceImageToUpload = referenceDirImages.child(fileName);
+    try{
+      //Store the file
+      await referenceImageToUpload.putFile(_image!);
+      imageUrl= await referenceImageToUpload.getDownloadURL();
+      // Add a small delay
+      await Future.delayed(Duration(seconds: 1));
+      await postDetailsToFirestore();
+
+      // // Navigate to the new page and pass the imageUrl
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
+      //   ),
+      // );
+
+    }catch(error){
+      print('Error uploading image: $error');
+      Fluttertoast.showToast(msg: "Upload Picture Function Failed");
+      return null;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,16 +151,30 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
               SizedBox(height: 5),
 
               //Upload Photo Section
-              Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.red,
+              GestureDetector(
+                onTap: (){
+                  imagePickerMethod();
+                },
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: _image == null
+                    ? const Center(
+                       child: Text("Upload \n Image"),
+                    ) : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      _image!,
+                      fit: BoxFit.cover, // Set the fit property to cover the entire container
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 10),
-
               //Campaign Title Section
               Text(
                 'Campaign Title*',
@@ -182,11 +262,8 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                 child: FractionallySizedBox(
                   widthFactor: 0.55, // Adjust this value according to your requirement
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Budget()),
-                      );
+                    onPressed: () async{
+                      await uploadPicture();
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                     child: Text("Continue"),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/company_registration.dart';
 import 'package:trendmasterass2/pages/creator_registration.dart';
-import 'package:trendmasterass2/pages/login_page.dart';
 
 class UsertypePage extends StatelessWidget {
   @override
@@ -13,8 +11,8 @@ class UsertypePage extends StatelessWidget {
           children: <Widget>[
             Image.asset(
               'assets/images/logo.png',
-              width: 300,
-              height: 300,
+              width: 200,
+              height: 200,
             ),
             SizedBox(height: 20),
 

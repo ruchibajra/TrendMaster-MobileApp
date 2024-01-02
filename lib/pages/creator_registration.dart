@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendmasterass2/model/user_model.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/login_page.dart';
 
 enum Gender { Male, Female }
 
@@ -403,7 +404,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     Fluttertoast.showToast(msg: "Account Created Successfully!");
 
     Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => CompanyHomePage()), (
+        (context), MaterialPageRoute(builder: (context) => LoginPage()), (
         route) => false);
   }
 
@@ -449,6 +450,9 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       ),
     );
   }
+
+
+
 }
 
 

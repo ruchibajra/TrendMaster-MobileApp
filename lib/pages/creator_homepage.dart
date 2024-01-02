@@ -194,98 +194,98 @@ class CampaignDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         title: Text("Campaign Details"),
-    ),
-    body: SingleChildScrollView(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-    Container(
-    height: 200,
-    width: double.infinity,
-    decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(15.0),
-    boxShadow: [
-    BoxShadow(
-    color: Colors.white.withOpacity(0.5),
-    spreadRadius: 3,
-    blurRadius: 7,
-    offset: Offset(0, 3),
-    ),
-    ],
-    ),
-    child: ClipRRect(
-    borderRadius: BorderRadius.circular(15.0),
-    child: CachedNetworkImage(
-    imageUrl: campaignData['image'] as String? ?? '',
-    fit: BoxFit.cover,
-    ),
-    ),
-    ),
-    SizedBox(height: 24.0),
-    Text(
-    campaignData['title'] as String? ?? '',
-    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-    ),
-    SizedBox(height: 16.0),
-    Text(
-    'Description: ${campaignData['description'] as String? ?? ''}',
-    style: TextStyle(fontSize: 18),
-    textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 8.0),
-    Text(
-    'Location: ${campaignData['location'] as String? ?? ''}',
-    style: TextStyle(fontSize: 18),
-    textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 8.0),
-    Text(
-    'Niche: ${campaignData['niche'] as String? ?? ''}',
-    style: TextStyle(fontSize: 18),
-    textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 8.0),
-    Text(
-    'Creator Number: ${campaignData['creator_no'] as String? ?? ''}',
-    style: TextStyle(fontSize: 18),
-    textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 8.0),
-    Text(
-    'Budget: ${campaignData['budget'] as String? ?? ''}',
-    style: TextStyle(fontSize: 18),
-    textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 24.0),
-    ElevatedButton(
-    onPressed: () {
-    // Implement the logic for accepting the campaign here.
-    // You can use the campaignData to perform actions related to the accepted campaign.
-    // For example, you may want to update the database or perform other operations.
-    // Customize this logic based on your requirements.
-    },
-    style: ElevatedButton.styleFrom(
-    primary: Colors.white,
-    onPrimary: Colors.teal,
-    shape:
-    RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          'Accept Campaign',
-          style: TextStyle(fontSize: 18),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: CachedNetworkImage(
+                  imageUrl: campaignData['image'] as String? ?? '',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(height: 24.0),
+            Text(
+              campaignData['title'] as String? ?? '',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Description: ${campaignData['description'] as String? ?? ''}',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Location: ${campaignData['location'] as String? ?? ''}',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Niche: ${campaignData['niche'] as String? ?? ''}',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Creator Number: ${campaignData['creator_no'] as String? ?? ''}',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Budget: ${campaignData['budget'] as String? ?? ''}',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24.0),
+            ElevatedButton(
+              onPressed: () {
+                // Implement the logic for accepting the campaign here.
+                // You can use the campaignData to perform actions related to the accepted campaign.
+                // For example, you may want to update the database or perform other operations.
+                // Customize this logic based on your requirements.
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.white,
+                onPrimary: Colors.teal,
+                shape:
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'Accept Campaign',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-    ),
-    ],
-    ),
-    ),
     );
   }
 }

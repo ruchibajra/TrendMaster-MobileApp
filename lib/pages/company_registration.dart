@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/user_model.dart';
+import 'package:trendmasterass2/pages/login_page.dart';
 
 import 'company_homepage.dart';
 
@@ -234,7 +235,7 @@ class _CompanyRegistrationScreenState
     Fluttertoast.showToast(msg: "Account Created Successfully!");
 
     Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => CompanyHomePage()), (
+        (context), MaterialPageRoute(builder: (context) => LoginPage()), (
         route) => false);
   }
 

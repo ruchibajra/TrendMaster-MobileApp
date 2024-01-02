@@ -1,35 +1,31 @@
-class CampaignModel {
+//This class is for company adding details to create campaign
+
+class CampaignModel{
   String? id;
   String? title;
   String? description;
-  String? location;
   String? niche;
-  String? creator_no;
   String? budget;
-  String? image; // Add this line
+  String? location;
+  int? count;
+  String? image;
+  String? userId;
 
-  CampaignModel({
-    this.id,
-    this.title,
-    this.description,
-    this.location,
-    this.niche,
-    this.creator_no,
-    this.budget,
-    this.image, // Add this line
-  });
+
+  CampaignModel({this.id, this.title, this.description, this.niche, this.budget, this.count, this.location, this.image, this.userId});
 
   // receiving data from the server
   factory CampaignModel.fromMap(map) {
     return CampaignModel(
-      id: map['id'],
-      title: map['title'],
-      description: map['description'],
-      location: map['location'],
-      niche: map['niche'],
-      creator_no: map['creator_no'],
-      budget: map['budget'],
-      image: map['image'],
+        id: map['id'],
+        title: map['title'],
+        description: map['description'],
+        niche: map['niche'],
+        budget: map['budget'],
+        count: map['count'],
+        location: map['location'],
+        image: map['image'],
+        userId: map['userId']
     );
   }
 
@@ -38,11 +34,13 @@ class CampaignModel {
     return {
       'title': title,
       'description': description,
-      'location': location,
       'niche': niche,
-      'creator_no': creator_no,
       'budget': budget,
+      'count': count,
+      'location': location,
       'image': image,
+      'userId': userId,
     };
   }
 }
+

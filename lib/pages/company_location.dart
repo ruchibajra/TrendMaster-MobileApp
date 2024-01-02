@@ -1,12 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendmasterass2/model/campaign_model.dart';
+
+import '../model/user_model.dart';
+import 'company_success_page.dart';
 
 class CompanyLocationPage extends StatefulWidget {
+  CampaignModel campaignModel;
+  CompanyModel companyModel;
+  CompanyLocationPage({required this.campaignModel, required this.companyModel});
+
   @override
   _CompanyLocationPageState createState() => _CompanyLocationPageState();
 }
 
 class _CompanyLocationPageState extends State<CompanyLocationPage> {
   String selectedLocation = '';
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   List<Map<String, dynamic>> getLocationList() {
     return [
@@ -20,6 +34,35 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       {'name': 'Dhading', 'color': Colors.teal[300]},
       {'name': 'Nagarkot', 'color': Colors.teal[300]},
     ];
+  }
+
+  postDetailsToFirebase() async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    // DocumentSnapshot campaignSnapshot =
+    // await firebaseFirestore.collection("campaign_details").doc(user?.uid).get();
+
+    CampaignModel campaignModel = CampaignModel(
+      title: widget.campaignModel.title ,
+      description: widget.campaignModel.description,
+      niche: widget.campaignModel.niche,
+      count: widget.campaignModel.count,
+      image: widget.campaignModel.image,
+      budget: widget.campaignModel.budget,
+      location: selectedLocation.toString(),
+      userId: widget.companyModel.uid,
+    );
+    await firebaseFirestore
+        .collection("campaign_details")
+        .doc()
+        .set(campaignModel.toMap());
+
+    Fluttertoast.showToast(msg: "Campaign Created Successfully.");
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder:(context) => CompanySuccessPage(companyModel: widget.companyModel)),
+    );
   }
 
   @override
@@ -42,7 +85,8 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
             children: [
               // Descriptions
               Text(
-                "Where do you want your creators to be located at?",
+                "${widget.companyModel.name
+                } do you want your creators to be located at?",
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -82,11 +126,8 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
               FractionallySizedBox(
                 widthFactor: 0.55, // Adjust this value according to your requirement
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => LoginPage()),
-                    // );
+                  onPressed: () async{
+                   await postDetailsToFirebase();
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
                   child: Text("Continue"),

@@ -1,11 +1,79 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendmasterass2/model/user_model.dart';
+import '../model/campaign_model.dart';
 import 'company_location.dart';
 
-class Budget extends StatelessWidget {
+class Budget extends StatefulWidget {
+  final CampaignModel campaignModel;
+  final CompanyModel companyModel;
+  Budget({required this.campaignModel, required this.companyModel});
+
+  @override
+  _BudgetState createState() => _BudgetState();
+}
+
+class _BudgetState extends State<Budget> {
+  TextEditingController budgetController = TextEditingController();
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  int count = 0;
+  void increment() {
+    setState(() {
+      count++;
+      updateCountInFirebase(); // Debounce the update call
+    });
+  }
+
+  void decrement() {
+    if (count > 0) {
+      setState(() {
+        count--;
+        updateCountInFirebase();
+      });
+    }
+  }
+
+  void updateCountInFirebase() {
+    // Update count in Firebase Firestore
+    FirebaseFirestore.instance
+        .collection('counters')
+        .doc('your_document_id')
+        .update({'count': count});
+  }
+
+  postDetailsToFirestore() async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    // Retrieve existing campaign details
+    // DocumentSnapshot campaignSnapshot =
+    // await firebaseFirestore.collection("campaign_details").doc(user?.uid).get();
+
+    CampaignModel campaignModel = CampaignModel(
+      title: widget.campaignModel.title ,
+      description: widget.campaignModel.description,
+      niche: widget.campaignModel.niche,
+      image: widget.campaignModel.image,
+      budget: budgetController.text,
+      count: count,
+    );
+    // await firebaseFirestore
+    //     .collection("campaign_details")
+    //     .doc(user?.uid)
+    //     .set(campaignModel.toMap());
+
+    Fluttertoast.showToast(msg: "You are almost there");
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder:(context) => CompanyLocationPage(campaignModel: campaignModel, companyModel: widget.companyModel,)),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +85,8 @@ class Budget extends StatelessWidget {
           },
         ),
         title: Text(
-          "Add Your Budget",
+          'Add Budget',
+          // 'Campaign Title: ${widget.campaignModel.title}',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -35,7 +104,7 @@ class Budget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Let\'s start with your budget for this campaign.',
+                        'Let\'s start ${widget.companyModel.name} your budget for this campaign.',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.black87,
@@ -58,7 +127,11 @@ class Budget extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: NumberCounter(),
+                        child: NumberCounter(
+                          count: count,
+                          increment: increment,
+                          decrement: decrement,
+                        ),
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -83,6 +156,7 @@ class Budget extends StatelessWidget {
                       SizedBox(height: 20),
 
                       TextField(
+                        controller: budgetController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Enter your budget',
@@ -103,17 +177,15 @@ class Budget extends StatelessWidget {
                       SizedBox(height: 10),
                       Center(
                         child: SizedBox(
-                          width: 200, // Set the width of the button
-                          height: 50, // Set the height of the button
+                          width: 200,
+                          height: 50,
                           child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => CompanyLocationPage()),
-                              );
+                            onPressed: () async{
+                              await postDetailsToFirestore();
+
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.teal, // Set the button color to teal
+                              primary: Colors.teal,
                             ),
                             child: Text(
                               'Continue',
@@ -129,6 +201,7 @@ class Budget extends StatelessWidget {
                   ),
                 ),
               ),
+
               // Rest of your content
             ],
           ),
@@ -158,41 +231,16 @@ class Budget extends StatelessWidget {
   }
 }
 
-class NumberCounter extends StatefulWidget {
-  @override
-  _NumberCounterState createState() => _NumberCounterState();
-}
+class NumberCounter extends StatelessWidget {
+  final int count;
+  final VoidCallback increment;
+  final VoidCallback decrement;
 
-class _NumberCounterState extends State<NumberCounter> {
-  int count = 0;
-
-  void increment() {
-    setState(() {
-      count++;
-      debounceUpdateCountInFirebase(); // Debounce the update call
-    });
-  }
-
-  void decrement() {
-    if (count > 0) {
-      setState(() {
-        count--;
-        debounceUpdateCountInFirebase(); // Debounce the update call
-      });
-    }
-  }
-
-  void debounceUpdateCountInFirebase() {
-    // Debounce the update call using a timer
-    const duration = Duration(milliseconds: 500); // Adjust the duration as needed
-    Timer(duration, () {
-      // Update count in Firebase Firestore
-      FirebaseFirestore.instance
-          .collection('counters')
-          .doc('your_document_id')
-          .update({'count': count});
-    });
-  }
+  NumberCounter({
+    required this.count,
+    required this.increment,
+    required this.decrement,
+  });
 
   @override
   Widget build(BuildContext context) {
