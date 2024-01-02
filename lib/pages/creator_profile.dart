@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../model/user_model.dart';
-
-
-
 
 class InfluencerProfile extends StatefulWidget {
   final UserModel userModel;
   final bool workRequestSent;
 
-  InfluencerProfile({Key? key, required this.userModel, required this.workRequestSent}) : super(key: key);
+  InfluencerProfile(
+      {Key? key, required this.userModel, required this.workRequestSent})
+      : super(key: key);
 
   @override
   State<InfluencerProfile> createState() => _InfluencerProfileState();
@@ -24,7 +24,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     super.initState();
     _workRequestSent = widget.workRequestSent;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +65,7 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage:
-                      AssetImage('assets/images/logo.png'),
+                      backgroundImage: AssetImage('assets/images/logo.png'),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -151,16 +149,17 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                       ),
                       height: 60,
                       width: 250,
-
                       padding: EdgeInsets.all(10),
                       child: GestureDetector(
                         onTap: () {
                           if (!_workRequestSent) {
-                            _showConfirmationPopup(context, "Are you sure you want to work with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
+                            _showConfirmationPopup(context,
+                                "Are you sure you want to work with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
                           } else {
                             // Toggle back to "Let's work together" when clicked again
                             setState(() {
-                              _showCancellationPopup(context, "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
+                              _showCancellationPopup(context,
+                                  "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
                             });
                           }
                         },
@@ -168,7 +167,9 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              _workRequestSent ? "Work Request Sent" : "Let's work together",
+                              _workRequestSent
+                                  ? "Work Request Sent"
+                                  : "Let's work together",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -183,7 +184,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                           ],
                         ),
                       ),
-
                     ),
                   ],
                 ),
@@ -319,22 +319,47 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   }
 
   Widget _buildSocialMediaColumn(String imagePath, String followers) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset(imagePath, height: 50, width: 50),
-        SizedBox(height: 10),
-        Text(
-          followers,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: () {
+        if (imagePath.contains('fb_logo.png')) {
+          _launchSocialMedia('https://www.facebook.com/profile.php?id=100008392064480');
+        } else if (imagePath.contains('insta_logo.png')) {
+          _launchSocialMedia('https://www.instagram.com/ruuuchi.b/');
+        } else if (imagePath.contains('youtube_logo.png')) {
+          _launchSocialMedia('https://www.youtube.com/watch?v=4T7HwLGNiuw&ab_channel=ChillVibes');
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(imagePath, height: 50, width: 50),
+          SizedBox(height: 10),
+          Text(
+            followers,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+
+// Function to launch YouTube video
+  void _launchSocialMedia(String mediaUrl) async {
+    try {
+      await launch(
+        mediaUrl,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+    } catch (e) {
+      print('Error launching media url : $e');
+    }
+  }
+
 
   Widget _buildCompanyLogo(String imagePath) {
     return Image.asset(imagePath, height: 80, width: 80);
@@ -368,13 +393,12 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         primary: Colors.teal,
                       ),
                       onPressed: () {
-
                         setState(() {
                           _workRequestSent = false;
                         });
                         Navigator.of(context).pop();
-                        _showToast("Work request cancelled successfully"); // Show toast here
-
+                        _showToast(
+                            "Work request cancelled successfully"); // Show toast here
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
@@ -383,7 +407,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         primary: Colors.teal, // Teal color for the "No" button
                       ),
                       onPressed: () {
-
                         Navigator.of(context).pop();
                       },
                       child: Text('No', style: TextStyle(color: Colors.white)),
@@ -426,8 +449,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                           _workRequestSent = true;
                         });
                         Navigator.of(context).pop();
-                        _showToast("Work request sent successfully"); // Show toast here
-
+                        _showToast(
+                            "Work request sent successfully"); // Show toast here
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
@@ -463,4 +486,3 @@ void _showToast(String message) {
     fontSize: 16.0,
   );
 }
-

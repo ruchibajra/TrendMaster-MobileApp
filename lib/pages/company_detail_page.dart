@@ -9,9 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
 import 'dart:core';
-
 import '../model/user_model.dart';
-import 'check_image.dart';
 
 class AddDetailsPage extends StatefulWidget {
   final CompanyModel companyModel;
