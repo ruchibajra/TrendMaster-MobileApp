@@ -47,7 +47,7 @@ class _CompanySuccessPageState extends State<CompanySuccessPage> {
               ),
             ),
             Text(
-              '${widget.companyModel.uid}}', style: TextStyle(fontSize: 38, color: Colors.teal , fontWeight: FontWeight.bold),
+              'Congratulation', style: TextStyle(fontSize: 38, color: Colors.teal , fontWeight: FontWeight.bold),
             ),
             Text('Your campaign is successfully created', style: TextStyle(fontSize: 18),),
             SizedBox(height: 5),

@@ -13,7 +13,7 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  int currentIndex = 2; // Set the initial index to 2 for NotificationPage
+  int currentIndex = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +42,11 @@ class _NotificationPageState extends State<NotificationPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               NotificationItem(
-                title: 'New Message',
+                title: '${widget.companyModel.uid}',
                 subtitle: 'You have a new message from John Doe.',
                 timestamp: '2 hours ago',
                 image:
-                'assets/message_icon.png', // Replace with your image path
+                'assets/message_icon.png',
               ),
               SizedBox(height: 16),
               NotificationItem(
