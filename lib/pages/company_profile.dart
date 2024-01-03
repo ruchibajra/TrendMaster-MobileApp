@@ -6,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/imageModel.dart';
+import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/user_model.dart';
+import 'company_notification_page.dart';
+
 
 class CompanyProfile extends StatefulWidget {
   final CompanyModel companyModel;
@@ -15,128 +19,78 @@ class CompanyProfile extends StatefulWidget {
   @override
   _CompanyProfileState createState() => _CompanyProfileState();
 }
+
 class _CompanyProfileState extends State<CompanyProfile> {
   FirebaseAuth _auth = FirebaseAuth.instance;
-
-  int followersCount = 10000; // Initial followers count
+  int followersCount = 10000;
   List<Widget> galleryImages = [
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
-    Image.asset(
-      'assets/images/company_h1.png',
-      height: 80,
-      width: 80,
-    ),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
+    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
   ];
 
   String imageUrl = '';
-
-  postDetailsToFirestore() async{
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = _auth.currentUser;
-
-    try {
-      ImageModel imageModel = ImageModel(
-        email: widget.companyModel.email,
-        image: imageUrl. toString(),
-      );
-
-      await firebaseFirestore
-          .collection("image_store")
-          .doc()
-          .set(imageModel.toMap());
-
-      Fluttertoast.showToast(msg: "Image Uploaded Successfully.");
-
-    } catch (e) {
-      Fluttertoast.showToast(msg: "Navigation error: $e");
-    }
-  }
-
-  //some initial image upload initialization code
   File? _image;
   final imagePicker = ImagePicker();
   String? downloadUrl;
 
-  //image picking from our device
-  Future imagePickerMethod()async{
+  Future imagePickerMethod() async {
     ImagePicker imagePicker = ImagePicker();
     XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
-    print('${localFile?.path}');
 
     setState(() {
-      if(localFile != null){
+      if (localFile != null) {
         _image = File(localFile.path);
         uploadPicture();
         Fluttertoast.showToast(msg: "Selected");
-      }else
-      {
+      } else {
         Fluttertoast.showToast(msg: "No File Selected");
       }
     });
   }
 
-  Future<String?> uploadPicture() async{
-    // Get the file name from the path
+  Future<String?> uploadPicture() async {
     String fileName = _image!.path.split('/').last;
-    //Get a reference to storage root
     Reference referenceRoot = FirebaseStorage.instance.ref();
     Reference referenceDirImages = referenceRoot.child('images');
-    // Create a reference to storage root
     Reference referenceImageToUpload = referenceDirImages.child(fileName);
-    try{
-      //Store the file
+    try {
       await referenceImageToUpload.putFile(_image!);
-      imageUrl= await referenceImageToUpload.getDownloadURL();
-      // Add a small delay
+      imageUrl = await referenceImageToUpload.getDownloadURL();
       await Future.delayed(Duration(seconds: 1));
-      await postDetailsToFirestore();
-      Fluttertoast.showToast(msg: "Upload Picture Successful.");
-
-
-      // // Navigate to the new page and pass the imageUrl
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
-      //   ),
-      // );
-
-    }catch(error){
+      postDetailsToFirestore();
+      Fluttertoast.showToast(msg: "Upload Picture Successful");
+    } catch (error) {
       print('Error uploading image: $error');
       Fluttertoast.showToast(msg: "Upload Picture Function Failed");
       return null;
     }
   }
 
+  void postDetailsToFirestore() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
 
+    try {
+      ImageModel imageModel = ImageModel(
+        email: widget.companyModel.email,
+        image: imageUrl.toString(),
+      );
 
+      await firebaseFirestore.collection("image_store").doc().set(imageModel.toMap());
+
+      Fluttertoast.showToast(msg: "Image Uploaded Successfully");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Navigation error: $e");
+    }
+  }
 
   void _increaseFollowers() {
     setState(() {
-      followersCount += 100; // Increase followers count by 100
+      followersCount += 100;
     });
   }
 
@@ -147,24 +101,22 @@ class _CompanyProfileState extends State<CompanyProfile> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.white, // Set the color to white
+            color: Colors.white,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text("Company Profile"),
-        centerTitle: true, // Center the title
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo and Text Below Logo
             Row(
               children: [
-                //Upload Photo Section
                 GestureDetector(
                   onTap: () {
                     imagePickerMethod();
@@ -173,13 +125,9 @@ class _CompanyProfileState extends State<CompanyProfile> {
                     radius: 50,
                     backgroundImage: _image != null
                         ? FileImage(_image!) as ImageProvider<Object>?
-                        : null, // Set to null to remove the default logo
+                        : null,
                   ),
                 ),
-                SizedBox(width: 17),
-
-
-
                 SizedBox(width: 17),
                 Container(
                   margin: EdgeInsets.only(top: 10),
@@ -195,8 +143,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold
-                            ),
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -234,20 +181,15 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      SizedBox
+                        (height: 20),
                     ],
                   ),
                 ),
               ],
             ),
-            // Display the uploaded image
-
-
-            Text(' ${widget.companyModel.description}',
-            ),
+            Text(' ${widget.companyModel.description}'),
             SizedBox(height: 50),
-
-
             Divider(
               color: Colors.black87,
               thickness: 1,
@@ -255,8 +197,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
               indent: 0,
               endIndent: 0,
             ),
-            SizedBox(height: 20),
-            // Gallery Section
             SizedBox(height: 20),
             Center(
               child: Text(
@@ -268,23 +208,19 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 ),
               ),
             ),
-// GridView for Images
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // Set the number of columns
-                crossAxisSpacing: 6.0, // Set the spacing between columns
-                mainAxisSpacing: 6.0, // Set the spacing between rows
+                crossAxisCount: 3,
+                crossAxisSpacing: 6.0,
+                mainAxisSpacing: 6.0,
               ),
               itemCount: galleryImages.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  color: Colors.teal, // Set the background color
-                  child: Image.asset(
-                    'assets/images/food.png', // Replace with the actual image path
-                    fit: BoxFit.cover, // Choose the appropriate fit
-                  ),
+                  color: Colors.teal,
+                  child: galleryImages[index],
                 );
               },
             ),
@@ -292,32 +228,50 @@ class _CompanyProfileState extends State<CompanyProfile> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        currentIndex: 3,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index != 3) {
+            Navigator.of(context).pop();
+            switch (index) {
+              case 0:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel)), // Navigate to CompanyHomePage
+                );
+                break;
+              case 1:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)),
+                );
+                break;
+              case 2:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => NotificationPage(companyModel: widget.companyModel)),
+                );
+                break;
+            }
+          }
+        },
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book, size: 30, color: Colors.grey),
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
+            icon: Icon(Icons.menu_book),
+            label: 'Promotion',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
-            label: 'Profile',
+            icon: Icon(Icons.person),
+            label: 'profile',
           ),
         ],
       ),
-
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    // home: CompanyProfile(),
-  ));
 }

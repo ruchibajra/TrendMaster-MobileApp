@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/company_notification_page.dart';
 
 import '../model/user_model.dart';
 import 'company_detail_page.dart';
 import 'company_profile.dart';
-import 'company_notification_page.dart';
 
 class PromotionPage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -14,9 +15,15 @@ class PromotionPage extends StatefulWidget {
 }
 
 class _PromotionPageState extends State<PromotionPage> {
-  int currentIndex = 0;
+  int currentIndex = 1;
   bool isPromotionClaimed = false;
   double rating = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = 1;
+  }
 
   void _showClaimedDialog() {
     setState(() {
@@ -43,7 +50,7 @@ class _PromotionPageState extends State<PromotionPage> {
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.grey[200], // Set the desired background color
+      backgroundColor: Colors.grey[200],
       body: Column(
         children: [
           SizedBox(height: 110),
@@ -78,7 +85,7 @@ class _PromotionPageState extends State<PromotionPage> {
                     height: 50,
                     width: 150,
                     decoration: BoxDecoration(
-                      color: Colors.teal, // Set the background color to teal
+                      color: Colors.teal,
                       borderRadius: BorderRadius.all(
                         Radius.circular(10.0),
                       ),
@@ -99,34 +106,33 @@ class _PromotionPageState extends State<PromotionPage> {
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        selectedItemColor: Colors.teal, // Color when item is selected
-        unselectedItemColor: Colors.grey, // Color when item is not selected
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-
-          // Handle navigation based on the index
-          if (index == 0) {
-            // Navigate to Home
-          } else if (index == 1) {
-            // Navigate to Promote
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)),
-            );
-          } else if (index == 2) {
-            // Navigate to Notification
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => NotificationPage()),
-            );
-          } else if (index == 3){
-            // Navigate to Notification
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel,)),
-            );
+          if (index != currentIndex) {
+            Navigator.of(context).pop();
+            setState(() {
+              currentIndex = index;
+            });
+            switch (index) {
+              case 0:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel)),
+                );
+                break;
+              case 2:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => NotificationPage(companyModel: widget.companyModel)),
+                );
+                break;
+              case 3:
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => CompanyProfile(companyModel: widget.companyModel)),
+                );
+                break;
+            }
           }
         },
         items: [
@@ -136,14 +142,14 @@ class _PromotionPageState extends State<PromotionPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
-            label: 'Promote',
+            label: 'Promotion',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: 'Notification',
+            label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],

@@ -29,7 +29,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController youtubeSubscriberController = TextEditingController();
   TextEditingController facebookSubscriberController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController rateController = TextEditingController();
+  TextEditingController rateController = TextEditingController(); // Added rateController
 
   String? selectedGender;
   List<String> selectedNiches = [];
@@ -51,7 +51,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     ];
   }
 
-  //Personal Info Section
   Widget buildPersonalInformation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +66,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         TextFormField(
           controller: firstNameController,
           decoration: InputDecoration(
-            labelText: 'First Name*',
+            labelText: 'First Name',
             border: OutlineInputBorder(),
           ),
         ),
@@ -83,13 +82,13 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         TextFormField(
           controller: lastNameController,
           decoration: InputDecoration(
-            labelText: 'Last Name*',
+            labelText: 'Last Name',
             border: OutlineInputBorder(),
           ),
         ),
         SizedBox(height: 10),
         Text(
-          'Address*',
+          'Address',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -103,7 +102,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Gender*',
+          'Gender',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -128,7 +127,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Email*',
+          'Email',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -142,7 +141,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Phone*',
+          'Phone',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -156,7 +155,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
         ),
         SizedBox(height: 10),
         Text(
-          'Password*',
+          'Password',
           style: TextStyle(
             fontSize: 18,
           ),
@@ -182,7 +181,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     );
   }
 
-  //Social Media Section
   Widget buildSocialMediaProfiles() {
     return Column(
       children: [
@@ -278,12 +276,31 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             ),
           ],
         ),
+        SizedBox(height: 10,),
+
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: TextFormField(
+                  controller: rateController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Rate',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  // Niche Section
   Widget buildNicheSelection() {
+
     return Column(
       children: [
         SizedBox(height: 20),
@@ -294,9 +311,9 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height:10),
         Text(
-          'Select Niche*',
+          'Select Niche',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 5),
@@ -319,8 +336,8 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
                   child: Text(
                     location['niche'],
                     style: TextStyle(
-                      color: selectedNiches.contains(location['niche']) ? Colors
-                          .white : location['color'],
+                      color: selectedNiches.contains(location['niche'])
+                          ? Colors.white : location['color'],
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -340,7 +357,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     );
   }
 
-  // Description Section
   Widget buildDescription() {
     return Column(
       children: [
@@ -365,9 +381,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
     );
   }
 
-
   void signUp(String email, String password) async {
-    // if (_formKey.currentState!.validate)
     await _auth.createUserWithEmailAndPassword(email: email, password: password)
         .then((value) => postDetailsToFirestore());
   }
@@ -394,6 +408,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       facebookSubscriber: int.parse(facebookSubscriberController.text),
       niche: selectedNiches.toString(),
       description: descriptionController.text,
+      rate: double.parse(rateController.text),
     );
 
     await firebaseFirestore
@@ -450,9 +465,4 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       ),
     );
   }
-
-
-
 }
-
-

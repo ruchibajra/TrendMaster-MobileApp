@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import '../model/user_model.dart';
+import 'company_homepage.dart';
+import 'company_profile.dart';
+import 'promote_page.dart';
 
 class NotificationPage extends StatefulWidget {
-  // final String? userId;
-  // const NotificationPage({Key? key, required this.userId}) : super(key: key);
+  final CompanyModel companyModel;
+  NotificationPage({required this.companyModel});
 
   @override
-  State<NotificationPage> createState() => _NotificationPageState();
+  _NotificationPageState createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+  int currentIndex = 2; // Set the initial index to 2 for NotificationPage
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,16 +24,20 @@ class _NotificationPageState extends State<NotificationPage> {
           onPressed: () {
             Navigator.pop(context);
           },
+          color: Colors.white,
         ),
         title: Text(
-          "Notification",
-          style: TextStyle(color: Colors.white),
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -35,14 +45,16 @@ class _NotificationPageState extends State<NotificationPage> {
                 title: 'New Message',
                 subtitle: 'You have a new message from John Doe.',
                 timestamp: '2 hours ago',
-                image: 'assets/message_icon.png', // Replace with your image path
+                image:
+                'assets/message_icon.png', // Replace with your image path
               ),
               SizedBox(height: 16),
               NotificationItem(
                 title: 'Reminder',
                 subtitle: 'Don\'t forget to submit your project by tomorrow.',
                 timestamp: '1 day ago',
-                image: 'assets/reminder_icon.png', // Replace with your image path
+                image:
+                'assets/reminder_icon.png', // Replace with your image path
               ),
               SizedBox(height: 16),
               NotificationItem(
@@ -54,9 +66,11 @@ class _NotificationPageState extends State<NotificationPage> {
               SizedBox(height: 16),
               NotificationItem(
                 title: 'Discount Offer',
-                subtitle: 'Get 20% off on your next purchase with code: DISCOUNT20',
+                subtitle:
+                'Get 20% off on your next purchase with code: DISCOUNT20',
                 timestamp: '4 days ago',
-                image: 'assets/discount_icon.png', // Replace with your image path
+                image:
+                'assets/discount_icon.png', // Replace with your image path
               ),
               SizedBox(height: 16),
               NotificationItem(
@@ -71,21 +85,55 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index != currentIndex) {
+            Navigator.of(context).pop();
+            setState(() {
+              currentIndex = index; // Update currentIndex when navigating
+            });
+            switch (index) {
+              case 0:
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CompanyHomePage(companyModel: widget.companyModel)),
+                );
+                break;
+              case 1:
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PromotionPage(companyModel: widget.companyModel)),
+                );
+                break;
+              case 3:
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CompanyProfile(companyModel: widget.companyModel)),
+                );
+                break;
+            }
+          }
+        },
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
+            icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
+            icon: Icon(Icons.menu_book),
+            label: 'Promotion',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
+            icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
@@ -171,4 +219,12 @@ class NotificationItem extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: NotificationPage(
+      companyModel: CompanyModel(), // Pass your CompanyModel instance here
+    ),
+  ));
 }

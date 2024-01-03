@@ -432,9 +432,9 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   postDetailsToFirestore() async {
 
     WorkRequestModel workRequestModel = WorkRequestModel(
-      senderId: widget.companyModel.email,
-      receiverId: widget.userModel.email,
-      status: 'Pending'
+        senderId: widget.companyModel.email,
+        receiverId: widget.userModel.email,
+        status: 'Pending'
     );
 
     try {
