@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/company_registration.dart';
 import 'package:trendmasterass2/pages/creator_registration.dart';
-import 'package:trendmasterass2/pages/login_page.dart';
 
 class UsertypePage extends StatelessWidget {
   @override

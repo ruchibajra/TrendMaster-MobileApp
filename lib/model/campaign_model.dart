@@ -11,10 +11,11 @@ class CampaignModel{
   String? image;
   String? userId;
 
+
   CampaignModel({this.id, this.title, this.description, this.niche, this.budget, this.count, this.location, this.image, this.userId});
 
-  //receiving data from the server
-  factory CampaignModel.fromMap(map){
+  // receiving data from the server
+  factory CampaignModel.fromMap(map) {
     return CampaignModel(
         id: map['id'],
         title: map['title'],
@@ -28,9 +29,9 @@ class CampaignModel{
     );
   }
 
-  //sending data from the server
-  Map <String, dynamic> toMap(){
-    return{
+  // sending data from the server
+  Map<String, dynamic> toMap() {
+    return {
       'title': title,
       'description': description,
       'niche': niche,
@@ -41,6 +42,5 @@ class CampaignModel{
       'userId': userId,
     };
   }
-
-
 }
+

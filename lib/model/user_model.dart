@@ -19,7 +19,6 @@ class UserModel {
   String? userType;
 
 
-
   UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,
   this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description, this.userType});
 
@@ -40,10 +39,9 @@ class UserModel {
       instagramSubscriber: map['instagramSubscriber'],
       youtubeSubscriber: map['youtubeSubscriber'],
       facebookSubscriber: map['facebookSubscriber'],
-      niche: map['niche'],
+      niche:  map['niche'],
       description: map['description'],
       userType: map['userType'],
-
     );
   }
     // sending data to server
@@ -100,7 +98,7 @@ class CompanyModel{
       linkedin: map['linkedin'],
       description: map['description'],
       userType: map['userType'],
-      follower: map['follower']
+      follower: map['follower'],
     );
   }
 
@@ -117,8 +115,7 @@ class CompanyModel{
       'linkedin': linkedin,
       'description': description,
       'userType': userType,
-      'follower' : follower,
-
+      'follower': follower,
     };
   }
 
@@ -126,3 +123,5 @@ class CompanyModel{
     uid = newUid;
   }
 }
+
+

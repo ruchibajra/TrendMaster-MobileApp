@@ -1,5 +1,11 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:trendmasterass2/model/imageModel.dart';
 import '../model/user_model.dart';
 
 class CompanyProfile extends StatefulWidget {
@@ -10,6 +16,8 @@ class CompanyProfile extends StatefulWidget {
   _CompanyProfileState createState() => _CompanyProfileState();
 }
 class _CompanyProfileState extends State<CompanyProfile> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
   int followersCount = 10000; // Initial followers count
   List<Widget> galleryImages = [
     Image.asset(
@@ -44,6 +52,88 @@ class _CompanyProfileState extends State<CompanyProfile> {
     ),
   ];
 
+  String imageUrl = '';
+
+  postDetailsToFirestore() async{
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    try {
+      ImageModel imageModel = ImageModel(
+        email: widget.companyModel.email,
+        image: imageUrl. toString(),
+      );
+
+      await firebaseFirestore
+          .collection("image_store")
+          .doc()
+          .set(imageModel.toMap());
+
+      Fluttertoast.showToast(msg: "Image Uploaded Successfully.");
+
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Navigation error: $e");
+    }
+  }
+
+  //some initial image upload initialization code
+  File? _image;
+  final imagePicker = ImagePicker();
+  String? downloadUrl;
+
+  //image picking from our device
+  Future imagePickerMethod()async{
+    ImagePicker imagePicker = ImagePicker();
+    XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    print('${localFile?.path}');
+
+    setState(() {
+      if(localFile != null){
+        _image = File(localFile.path);
+        uploadPicture();
+        Fluttertoast.showToast(msg: "Selected");
+      }else
+      {
+        Fluttertoast.showToast(msg: "No File Selected");
+      }
+    });
+  }
+
+  Future<String?> uploadPicture() async{
+    // Get the file name from the path
+    String fileName = _image!.path.split('/').last;
+    //Get a reference to storage root
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('images');
+    // Create a reference to storage root
+    Reference referenceImageToUpload = referenceDirImages.child(fileName);
+    try{
+      //Store the file
+      await referenceImageToUpload.putFile(_image!);
+      imageUrl= await referenceImageToUpload.getDownloadURL();
+      // Add a small delay
+      await Future.delayed(Duration(seconds: 1));
+      await postDetailsToFirestore();
+      Fluttertoast.showToast(msg: "Upload Picture Successful.");
+
+
+      // // Navigate to the new page and pass the imageUrl
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
+      //   ),
+      // );
+
+    }catch(error){
+      print('Error uploading image: $error');
+      Fluttertoast.showToast(msg: "Upload Picture Function Failed");
+      return null;
+    }
+  }
+
+
+
+
   void _increaseFollowers() {
     setState(() {
       followersCount += 100; // Increase followers count by 100
@@ -74,11 +164,22 @@ class _CompanyProfileState extends State<CompanyProfile> {
             // Logo and Text Below Logo
             Row(
               children: [
-                // Company Logo
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/images/logo.png'),
+                //Upload Photo Section
+                GestureDetector(
+                  onTap: () {
+                    imagePickerMethod();
+                  },
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image != null
+                        ? FileImage(_image!) as ImageProvider<Object>?
+                        : null, // Set to null to remove the default logo
+                  ),
                 ),
+                SizedBox(width: 17),
+
+
+
                 SizedBox(width: 17),
                 Container(
                   margin: EdgeInsets.only(top: 10),
@@ -87,15 +188,14 @@ class _CompanyProfileState extends State<CompanyProfile> {
                     children: [
                       Row(
                         children: [
-                          // Add your logo here
                           Icon(Icons.business_center, size: 24, color: Colors.teal),
                           SizedBox(width: 8),
                           Text(
                             ' ${widget.companyModel.name}',
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
                             ),
                           ),
                         ],
@@ -140,6 +240,9 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 ),
               ],
             ),
+            // Display the uploaded image
+
+
             Text(' ${widget.companyModel.description}',
             ),
             SizedBox(height: 50),

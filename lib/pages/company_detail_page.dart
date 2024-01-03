@@ -9,9 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/campaign_model.dart';
 import 'package:trendmasterass2/pages/company_budget.dart';
 import 'dart:core';
-
 import '../model/user_model.dart';
-import 'check_image.dart';
 
 class AddDetailsPage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -275,19 +273,6 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                   ),
                 ),
               ),
-              // Center(
-              //   child: FractionallySizedBox(
-              //     widthFactor: 0.55, // Adjust this value according to your requirement
-              //     child: ElevatedButton(
-              //       onPressed: () async{
-              //         await uploadPicture();
-              //       },
-              //       style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-              //       child: Text("Upload Image"),
-              //     ),
-              //   ),
-              // ),
-
             ],
           ),
         ),

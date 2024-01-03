@@ -3,14 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:trendmasterass2/pages/company_detail_page.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/creator_homepage.dart';
-import 'package:trendmasterass2/pages/promote_page.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import '../model/user_model.dart';
 import 'company_registration.dart';
-import 'creator_registration.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,10 +17,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  // text editing controllers
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // firebase
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
@@ -84,15 +84,11 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
-              // Button Section
 
               // Login Button
               FractionallySizedBox(
                 widthFactor: 0.85,
-
                 child: ElevatedButton(
                   onPressed: () => onPressed(context),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
@@ -101,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10),
 
-              // Forgotten Password
+              // Forgotten Password Section
               Container(
                 child: TextButton(
                   onPressed: () =>  Navigator.of(context).push(
@@ -111,11 +107,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-
+              // Create new account section
               Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: Container(
-                  // color: Colors.green,
                   width: 330,
                   child: Column(
                     children: [
@@ -138,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                                 signInWithGoogle();
                               },
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                              child: Text("Sign In with Google"),
+                              child: Text("Sign up with Google"),
                             ),
                           ),
                           FractionallySizedBox(
@@ -148,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                                 MaterialPageRoute(builder: (context) => LoginPage()),
                               ),
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                              child: Text("Sign In with Facebook"),
+                              child: Text("Sign up with Facebook"),
                             ),
                           ),
                         ],
@@ -163,46 +158,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  //Button Press Function
+  // Login Button Function
   void onPressed(BuildContext context) {
     signIn(emailController.text, passwordController.text);
   }
 
-  void onPressedSignupType(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => UsertypePage()));
-  }
-
-  void onPressedSignupCompany(BuildContext context){
-    Navigator.of(context).push(
-        MaterialPageRoute(builder:(context) => CompanyRegistrationScreen()));
-  }
-
-  void onPressedSignupCreator(BuildContext context){
-    Navigator.of(context).push(
-        MaterialPageRoute(builder:(context) => CreatorRegistration()));
-  }
-
-
-  //Sign in with Google
-  signInWithGoogle() async{
-
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    Fluttertoast.showToast(msg: 'GOOGLE SIGN IS DONE');    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  //login function
+  // login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try{
@@ -234,9 +195,8 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: companyModel)),
               );
             } else if(userType == 'Creator'){
-              UserModel usermodel = UserModel.fromMap(userSnapshot.data()!);
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CreatorHomePage(userModel:usermodel)),
+                MaterialPageRoute(builder: (context) => CreatorHomePage()),
               );
             }else{
               Fluttertoast.showToast(msg: 'User details not found');
@@ -248,9 +208,27 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
+  // Usertype Page Call Funciton
+  void onPressedSignupType(BuildContext context) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => UsertypePage()));
+  }
+
+  //Sign in with google function
+  signInWithGoogle() async{
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken ,
+    );
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+  }
 }
 
-//password rest
+// Password Reset Screen
 class PasswordResetScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
