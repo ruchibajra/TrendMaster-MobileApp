@@ -586,11 +586,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   // Function to update the status in Firestore based on conditions
   void _updateWorkRequestStatus(String newStatus) async {
-    Fluttertoast.showToast(msg: 'out function');
 
     if (_workRequestSent == true) {
-      Fluttertoast.showToast(msg: 'inside the function');
-      Text('hello');
       try {
         CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
 

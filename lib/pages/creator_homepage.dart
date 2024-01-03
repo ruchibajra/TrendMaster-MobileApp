@@ -220,7 +220,6 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
     _fetchWorkRequestData().then((workRequestDoc) {
       _updateWorkRequestSent(workRequestDoc);
     });
-    // _workRequestSent = widget.workRequestSent;
   }
 
   Future<DocumentSnapshot?> _fetchWorkRequestData() async {
@@ -368,7 +367,10 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
     WorkRequestModel workRequestModel = WorkRequestModel(
         senderId: widget.userModel.email,
         receiverId:widget.campaignData['userId'] as String? ?? '',
-        status: 'Pending'
+        status: 'Pending',
+        fname: widget.userModel.firstName,
+        mname: widget.userModel.middleName,
+        lname: widget.userModel.lastName,
     );
 
     try {

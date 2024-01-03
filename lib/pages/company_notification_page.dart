@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/user_model.dart';
 import 'company_homepage.dart';
 import 'company_profile.dart';
@@ -14,6 +15,17 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   int currentIndex = 2;
+
+  // Function to fetch notification data from Firebase
+  Future<List<DocumentSnapshot>> getNotifications() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('campaign_requests')
+        .where('receiverId', isEqualTo: widget.companyModel.uid)
+        .where('status', isEqualTo: 'Pending')
+        .get();
+
+    return querySnapshot.docs;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,55 +46,47 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              NotificationItem(
-                title: '${widget.companyModel.uid}',
-                subtitle: 'You have a new message from John Doe.',
-                timestamp: '2 hours ago',
-                image:
-                'assets/message_icon.png',
+      body: FutureBuilder(
+        future: getNotifications(),
+        builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }else if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('${widget.companyModel.uid}'),
+            );
+          } else {
+            List<DocumentSnapshot> notifications = snapshot.data!;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Map Firebase data to NotificationItem widgets
+                    for (var notification in notifications)
+                      NotificationItem(
+                        fname: notification['fname'],
+                        mname: notification['mname'],
+                        lname: notification['lname'],
+                        status: notification['status'],
+                        image: notification['senderId'],
+                      ),
+                    SizedBox(height: 16),
+                    // Add more NotificationItems as needed
+                  ],
+                ),
               ),
-              SizedBox(height: 16),
-              NotificationItem(
-                title: 'Reminder',
-                subtitle: 'Don\'t forget to submit your project by tomorrow.',
-                timestamp: '1 day ago',
-                image:
-                'assets/reminder_icon.png', // Replace with your image path
-              ),
-              SizedBox(height: 16),
-              NotificationItem(
-                title: 'Event Invitation',
-                subtitle: 'You are invited to the company\'s annual party.',
-                timestamp: '3 days ago',
-                image: 'assets/event_icon.png', // Replace with your image path
-              ),
-              SizedBox(height: 16),
-              NotificationItem(
-                title: 'Discount Offer',
-                subtitle:
-                'Get 20% off on your next purchase with code: DISCOUNT20',
-                timestamp: '4 days ago',
-                image:
-                'assets/discount_icon.png', // Replace with your image path
-              ),
-              SizedBox(height: 16),
-              NotificationItem(
-                title: 'Product Update',
-                subtitle: 'Check out the latest features in our app update.',
-                timestamp: '5 days ago',
-                image: 'assets/update_icon.png', // Replace with your image path
-              ),
-              // Add more NotificationItems as needed
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -92,28 +96,34 @@ class _NotificationPageState extends State<NotificationPage> {
           if (index != currentIndex) {
             Navigator.of(context).pop();
             setState(() {
-              currentIndex = index; // Update currentIndex when navigating
+              currentIndex = index;
             });
             switch (index) {
               case 0:
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) =>
-                          CompanyHomePage(companyModel: widget.companyModel)),
+                    builder: (context) => CompanyHomePage(
+                      companyModel: widget.companyModel,
+                    ),
+                  ),
                 );
                 break;
               case 1:
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) =>
-                          PromotionPage(companyModel: widget.companyModel)),
+                    builder: (context) => PromotionPage(
+                      companyModel: widget.companyModel,
+                    ),
+                  ),
                 );
                 break;
               case 3:
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) =>
-                          CompanyProfile(companyModel: widget.companyModel)),
+                    builder: (context) => CompanyProfile(
+                      companyModel: widget.companyModel,
+                    ),
+                  ),
                 );
                 break;
             }
@@ -143,15 +153,18 @@ class _NotificationPageState extends State<NotificationPage> {
 }
 
 class NotificationItem extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String timestamp;
+  final String fname;
+  final String mname;
+  final String lname;
+  final String status;
   final String image;
 
+
   NotificationItem({
-    required this.title,
-    required this.subtitle,
-    required this.timestamp,
+    required this.fname,
+    required this.mname,
+    required this.lname,
+    required this.status,
     required this.image,
   });
 
@@ -164,46 +177,55 @@ class NotificationItem extends StatelessWidget {
           backgroundImage: AssetImage(image),
         ),
         title: Text(
-          title,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          "${fname} ${mname} ${lname}",
+
+            style: TextStyle(fontWeight: FontWeight.bold,),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 4),
-            Text(subtitle),
+            Text('wants to work with you'),
             SizedBox(height: 8),
             Text(
-              timestamp,
+              status,
               style: TextStyle(color: Colors.grey),
             ),
             SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your accept functionality here
-                    // You can use the context to perform any navigation or other actions
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Accepted: $title'),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
-                  ),
-                  child: Text('Accept'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     FirebaseFirestore.instance
+                //         .collection('campaign_requests')
+                //         .where('receiverId', isEqualTo: )
+                //         .update({'status': 'Accepted'})
+                //         .then((_) {
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         SnackBar(
+                //           content: Text('Accepted Work Request of: ${fname} ${mname} ${lname}'),
+                //         ),
+                //       );
+                //     }).catchError((error) {
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         SnackBar(
+                //           content: Text('Error updating status: $error'),
+                //         ),
+                //       );
+                //     });
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     primary: Colors.green,
+                //   ),
+                //   child: Text('Accept'),
+                // ),
                 SizedBox(width: 8),
                 OutlinedButton(
                   onPressed: () {
-                    // Add your decline functionality here
-                    // You can use the context to perform any navigation or other actions
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Declined: $title'),
+                        content: Text('Declined Work Request of: ${fname} ${mname} ${lname}'),
                       ),
                     );
                   },
@@ -224,7 +246,7 @@ class NotificationItem extends StatelessWidget {
 void main() {
   runApp(MaterialApp(
     home: NotificationPage(
-      companyModel: CompanyModel(), // Pass your CompanyModel instance here
+      companyModel: CompanyModel(),
     ),
   ));
 }
