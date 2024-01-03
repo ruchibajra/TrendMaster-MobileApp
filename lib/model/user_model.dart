@@ -1,4 +1,3 @@
-//This class is for creator registration
 class UserModel {
   String? uid;
   String? firstName;
@@ -17,13 +16,30 @@ class UserModel {
   String? niche;
   String? description;
   String? userType;
+  double? rate;
 
+  UserModel({
+    this.uid,
+    this.firstName,
+    this.middleName,
+    this.lastName,
+    this.address,
+    this.gender,
+    this.email,
+    this.phone,
+    this.instagram,
+    this.youtube,
+    this.facebook,
+    this.instagramSubscriber,
+    this.youtubeSubscriber,
+    this.facebookSubscriber,
+    this.niche,
+    this.description,
+    this.userType,
+    this.rate,
+  });
 
-  UserModel({this.uid, this.firstName, this.middleName, this.lastName, this.address, this.gender, this.email, this.phone, this.instagram,
-  this.youtube, this.facebook, this.instagramSubscriber, this.youtubeSubscriber, this.facebookSubscriber, this.niche, this.description, this.userType});
-
-  // receiving data from server
-  factory UserModel.fromMap(map){
+  factory UserModel.fromMap(map) {
     return UserModel(
       uid: map['uid'],
       firstName: map['firstName'],
@@ -39,36 +55,37 @@ class UserModel {
       instagramSubscriber: map['instagramSubscriber'],
       youtubeSubscriber: map['youtubeSubscriber'],
       facebookSubscriber: map['facebookSubscriber'],
-      niche:  map['niche'],
+      niche: map['niche'],
       description: map['description'],
       userType: map['userType'],
+      rate: map['rate'],
     );
   }
-    // sending data to server
-    Map<String, dynamic> toMap(){
-      return {
-        'firstName' : firstName,
-        if (middleName != null && middleName!.isNotEmpty) 'middleName': middleName,
-        'lastName' : lastName,
-        'address': address,
-        'gender' : gender,
-        'email': email,
-        'phone' : phone,
-        'instagram': instagram,
-        'youtube' : youtube,
-        'facebook': facebook,
-        'instagramSubscriber' : instagramSubscriber,
-        'youtubeSubscriber': youtubeSubscriber,
-        'facebookSubscriber' : facebookSubscriber,
-        'niche': niche,
-        'description': description,
-        'userType': userType,
+
+  Map<String, dynamic> toMap() {
+    return {
+      'firstName': firstName,
+      if (middleName != null && middleName!.isNotEmpty) 'middleName': middleName,
+      'lastName': lastName,
+      'address': address,
+      'gender': gender,
+      'email': email,
+      'phone': phone,
+      'instagram': instagram,
+      'youtube': youtube,
+      'facebook': facebook,
+      'instagramSubscriber': instagramSubscriber,
+      'youtubeSubscriber': youtubeSubscriber,
+      'facebookSubscriber': facebookSubscriber,
+      'niche': niche,
+      'description': description,
+      'userType': userType,
+      'rate': rate,
     };
   }
 }
 
-//This class is for company registration
-class CompanyModel{
+class CompanyModel {
   String? uid;
   String? name;
   String? address;
@@ -82,10 +99,22 @@ class CompanyModel{
   String? userType;
   int? follower;
 
-  CompanyModel({this.uid, this.name, this.address, this.email, this.phone, this.website, this.facebook, this.twitter, this.linkedin, this.description, this.userType, this.follower});
+  CompanyModel({
+    this.uid,
+    this.name,
+    this.address,
+    this.email,
+    this.phone,
+    this.website,
+    this.facebook,
+    this.twitter,
+    this.linkedin,
+    this.description,
+    this.userType,
+    this.follower,
+  });
 
-  // receiving data from server
-  factory CompanyModel.fromMap(map){
+  factory CompanyModel.fromMap(map) {
     return CompanyModel(
       uid: map['uid'],
       name: map['name'],
@@ -102,7 +131,6 @@ class CompanyModel{
     );
   }
 
-  // sending data to server
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -119,9 +147,7 @@ class CompanyModel{
     };
   }
 
-  void updateUid(String newUid){
+  void updateUid(String newUid) {
     uid = newUid;
   }
 }
-
-

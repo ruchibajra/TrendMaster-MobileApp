@@ -137,26 +137,7 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message, size: 30, color: Colors.grey),
-            label: 'Messages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30, color: Colors.grey),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, size: 30, color: Colors.grey),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30, color: Colors.grey),
-            label: 'Profile',
-          ),
-        ],
-      ),
+
     );
   }
 }
