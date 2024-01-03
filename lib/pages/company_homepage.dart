@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/company_profile.dart';
 import 'package:trendmasterass2/pages/creator_profile.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
-import 'package:trendmasterass2/pages/notification_page.dart';
+import 'package:trendmasterass2/pages/company_notification_page.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/user_model.dart';
 
@@ -71,7 +71,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Welcome Back, \n ${widget.companyModel.name}',
+                            'Welcome Back, \n ${widget.companyModel.uid}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

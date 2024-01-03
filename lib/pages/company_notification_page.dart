@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    MaterialApp(
-      home: NotificationPage(),
-    ),
-  );
+class NotificationPage extends StatefulWidget {
+  // final String? userId;
+  // const NotificationPage({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
-class NotificationPage extends StatelessWidget {
+class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

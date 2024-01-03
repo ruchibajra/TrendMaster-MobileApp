@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/user_model.dart';
 import 'company_detail_page.dart';
 import 'company_profile.dart';
-import 'notification_page.dart';
+import 'company_notification_page.dart';
 
 class PromotionPage extends StatefulWidget {
   final CompanyModel companyModel;
