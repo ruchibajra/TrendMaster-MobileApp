@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trendmasterass2/pages/company_profile.dart';
 import 'package:trendmasterass2/pages/creator_registration.dart';
 import 'package:trendmasterass2/pages/creators_profile.dart';
+import 'package:trendmasterass2/pages/google_signin.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import 'package:trendmasterass2/unused/welcome_page.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         //Route
         routes: <String, WidgetBuilder>{
           "/": (context) => LoginPage(),
+          // "/": (context) => SignInDemo(),
           // "/": (context) => CompanyProfile(),
           // "/": (context) => InfluencerProfile(),
 

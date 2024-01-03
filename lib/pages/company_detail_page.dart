@@ -120,9 +120,6 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //app bar
-      // ... (existing code)
-
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
@@ -136,8 +133,6 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
         title: Text("Add Details"),
         centerTitle: true, // Center the title
       ),
-
-// ... (existing code)
 
 
       body: SingleChildScrollView(

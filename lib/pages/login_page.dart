@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                                 signInWithGoogle();
                               },
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                              child: Text("Sign up with Google"),
+                              child: Text("Sign In with Google"),
                             ),
                           ),
                           FractionallySizedBox(
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                                 MaterialPageRoute(builder: (context) => LoginPage()),
                               ),
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                              child: Text("Sign up with Facebook"),
+                              child: Text("Sign In with Facebook"),
                             ),
                           ),
                         ],
@@ -187,14 +187,20 @@ class _LoginPageState extends State<LoginPage> {
   //Sign in with Google
   signInWithGoogle() async{
 
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    AuthCredential credential = GoogleAuthProvider.credential(
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken ,
+      idToken: googleAuth?.idToken,
     );
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    print(userCredential.user?.displayName);
+    Fluttertoast.showToast(msg: 'GOOGLE SIGN IS DONE');    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+
   }
 
   //login function
