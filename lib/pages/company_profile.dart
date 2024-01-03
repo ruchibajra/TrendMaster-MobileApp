@@ -116,23 +116,12 @@ class _CompanyProfileState extends State<CompanyProfile> {
       await postDetailsToFirestore();
       Fluttertoast.showToast(msg: "Upload Picture Successful.");
 
-
-      // // Navigate to the new page and pass the imageUrl
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
-      //   ),
-      // );
-
     }catch(error){
       print('Error uploading image: $error');
       Fluttertoast.showToast(msg: "Upload Picture Function Failed");
       return null;
     }
   }
-
-
-
 
   void _increaseFollowers() {
     setState(() {
