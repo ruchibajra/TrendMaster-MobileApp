@@ -29,11 +29,9 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     super.initState();
     _fetchWorkRequestData().then((workRequestDoc) {
       _updateWorkRequestSent(workRequestDoc);
+      Fluttertoast.showToast(msg: 'update afai');
     });
-    // _workRequestSent = widget.workRequestSent;
   }
-
-
 
   Future<DocumentSnapshot?> _fetchWorkRequestData() async {
     try {
@@ -46,12 +44,9 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
           .where('senderId', isEqualTo: widget.companyModel.email)
           .get();
 
-      // Check if there are any matching documents
       if (workRequestsQuery.docs.isNotEmpty) {
-        // Assuming you only expect one document, you can access the first one
         DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
 
-        // Convert the document data to a WorkRequestModel object
         setState(() {
           _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
         });
@@ -68,7 +63,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
       _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -434,6 +428,7 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     WorkRequestModel workRequestModel = WorkRequestModel(
         senderId: widget.companyModel.email,
         receiverId: widget.userModel.email,
+        fname: widget.companyModel.name,
         status: 'Pending'
     );
 

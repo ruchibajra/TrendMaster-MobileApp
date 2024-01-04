@@ -71,7 +71,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Welcome Back, \n ${widget.companyModel.uid}',
+                            'Hello \n ${widget.companyModel.name}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

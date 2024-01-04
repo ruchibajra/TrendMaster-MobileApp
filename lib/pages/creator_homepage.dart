@@ -7,23 +7,6 @@ import 'package:trendmasterass2/model/user_model.dart';
 
 import '../model/work_request_model.dart';
 
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.teal,
-//       ),
-//       home: CreatorHomePage(),
-//     );
-//   }
-// }
-
 class CreatorHomePage extends StatefulWidget {
   final UserModel userModel;
   CreatorHomePage({Key? key, required this.userModel}) : super(key: key);
@@ -38,10 +21,10 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("For You"),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: Text("For You"),
+      //   centerTitle: true,
+      // ),
       body: _buildBody(),
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -90,9 +73,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
       case 1:
         return ProfilePage();
       case 2:
-        return NotificationPage();
-      case 3:
-        return MessagePage();
+        return NotificationPage(userModel:widget.userModel);
       default:
         return Container();
     }
@@ -195,9 +176,6 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
   }
 }
 
-
-
-//starts here
 class CampaignDetailsPage extends StatefulWidget {
   UserModel userModel;
   final Map<String, dynamic> campaignData;
@@ -575,10 +553,6 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
 
 }
 
-
-
-
-
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -640,32 +614,262 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class MessagePage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
+  final UserModel userModel;
+  NotificationPage({Key? key, required this.userModel}) : super(key: key);
+
+
+  @override
+  State<NotificationPage> createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  Future<List<DocumentSnapshot>> getNotifications() async {
+    QuerySnapshot querySnapshot = await firebaseFirestore
+        .collection('work_requests')
+        .where('receiverId', isEqualTo: widget.userModel.email )
+        .get();
+    return querySnapshot.docs;
+  }
+
+  void refreshPage() {
+    setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Messages'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.white,
+        ),
+        title: Text(
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Text('Messages Page - Under Construction'),
+      body: FutureBuilder(
+        future: getNotifications(),
+        builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('data is empty'),
+            );
+          } else {
+            List<DocumentSnapshot> notifications = snapshot.data!;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var notification in notifications)
+                      NotificationItem(
+
+                        //name should come of company
+                        name: notification['fname'],
+                        status: notification['status'],
+                        userModel: widget.userModel,
+                        companyModel: CompanyModel(),
+                        firebaseFirestore: firebaseFirestore,
+                        refreshPage: refreshPage,
+                      ),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
       ),
+
     );
   }
 }
 
-class NotificationPage extends StatelessWidget {
+class NotificationItem extends StatelessWidget {
+  final String name;
+  final String status;
+  final UserModel userModel;
+  final CompanyModel companyModel;
+  final FirebaseFirestore firebaseFirestore;
+  final void Function() refreshPage;
+
+  NotificationItem({
+    required this.name,
+    required this.status,
+    required this.userModel,
+    required this.companyModel,
+    required this.firebaseFirestore,
+    required this.refreshPage,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('Notifications Page - Under Construction'),
+    bool isWorkRequestPending = status == 'Pending';
+    bool isWorkRequestAccepted = status == 'Accepted';
+    bool isWorkRequestDeclined = status == 'Declined';
+
+    return Card(
+      elevation: 2,
+      child: ListTile(
+        leading: CircleAvatar(
+          //profile image halnu parcha
+        ),
+        title: Text(
+          "${name}",
+          style: TextStyle(fontWeight: FontWeight.bold,),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 4),
+            Text(' Company wants to work with you'),
+            SizedBox(height: 8),
+            Text(
+              status,
+              style: TextStyle(color: Colors.grey),
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isWorkRequestPending)
+                  ElevatedButton(
+                    onPressed: () {
+                      _updateWorkRequestStatus('Accepted', context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Accepted Work Request of: ${name}'),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                    ),
+                    child: Text('Accept'),
+                  ),
+                SizedBox(width: 8),
+                if (isWorkRequestPending || isWorkRequestAccepted)
+                  OutlinedButton(
+                    onPressed: () {
+                      _showDeclineConfirmationDialog(context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Declined Work Request of: ${name}'),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.red),
+                    ),
+                    child: Text('Decline'),
+                  ),
+              ],
+            ),
+            SizedBox(height: 8),
+            // Add more widgets as needed...
+          ],
+        ),
       ),
     );
   }
+
+  void _showDeclineConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Decline Work Request'),
+          content: Text(
+            'You won\'t be able to accept the work request after declining. By tapping confirm, you will decline the work request sent by ${name}. Are you sure you want to decline?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updateWorkRequestStatus('Declined', context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Declined Work Request of: ${name}'),
+                  ),
+                );
+
+                Navigator.of(dialogContext).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+              ),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateWorkRequestStatus(String newStatus, BuildContext context) async {
+    try {
+      CollectionReference workRequestsCollection =
+      firebaseFirestore.collection('work_requests');
+
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: userModel.email)
+          .get();
+
+      if (workRequestsQuery.docs.isNotEmpty) {
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        String currentStatus = workRequestDoc['status'];
+
+        if (currentStatus != 'Declined') {
+          await workRequestsCollection
+              .doc(workRequestDoc.id)
+              .update({'status': newStatus});
+
+          // Refresh the page after updating the status
+          refreshPage();
+        } else {
+          // The work request has already been declined, notify the user or handle accordingly
+          print('Cannot accept a declined work request');
+        }
+      } else {
+        print('No matching work request found');
+      }
+    } catch (e) {
+      print('Error updating work request status: $e');
+    }
+  }
+
+
 }
