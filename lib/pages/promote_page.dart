@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/company_notification_page.dart';
@@ -43,7 +44,7 @@ class _PromotionPageState extends State<PromotionPage> {
           color: Colors.white,
         ),
         title: Text(
-          'Promotion',
+          'Promotions',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -51,61 +52,102 @@ class _PromotionPageState extends State<PromotionPage> {
         centerTitle: true,
       ),
       backgroundColor: Colors.grey[200],
-      body: Column(
-        children: [
-          SizedBox(height: 110),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Image.asset(
-              'assets/images/mic1.png',
-              width: 200,
-              height: 200,
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+
+
+      body:FutureBuilder<QuerySnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('campaign_details')
+            .where('userId', isEqualTo: widget.companyModel.uid)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Column(
               children: [
-                Text(
-                  'Special Offer Just for You!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Grab this special opportunity now!',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 40),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Promote',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                SizedBox(height: 110),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(
+                    'assets/images/mic1.png',
+                    width: 200,
+                    height: 200,
                   ),
                 ),
-                SizedBox(height: 10),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Special Offer Just for You!',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Grab this special opportunity now!',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      SizedBox(height: 40),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Promote',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var campaignData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              return Card(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              elevation: 5,
+              child: ListTile(
+              title: Text(campaignData['title'] ?? ''),
+              subtitle: Text(campaignData['description'] ?? ''),),
+              );
+            },
+          );
+        },
       ),
+
+
+
+
+
+
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         selectedItemColor: Colors.teal,

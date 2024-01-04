@@ -17,6 +17,8 @@ class CompanyHomePage extends StatefulWidget {
 }
 
 class _CompanyHomePageState extends State<CompanyHomePage> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   int currentIndex = 0;
   final List<String> images = [
     'assets/images/img.png',
@@ -36,6 +38,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    key: _scaffoldKey;
+
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -60,8 +64,9 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundImage:
-                        AssetImage('assets/images/companyProfile.png'),
+                        backgroundImage: widget.companyModel.profileImage != null
+                            ? NetworkImage(widget.companyModel.profileImage!)
+                            : AssetImage('assets/images/placeholder_image.png') as ImageProvider<Object>,
                       ),
                       SizedBox(
                         width: 10,
@@ -371,7 +376,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                                   height: 5,
                                                 ),
                                                 Text(
-                                                  "Rs.30,000 for 50.0K impressions",
+                                                  "Rs.${creator.rate ?? ''} for 10.0K impressions",
                                                   style: TextStyle(
                                                     fontSize: 13,
                                                   ),

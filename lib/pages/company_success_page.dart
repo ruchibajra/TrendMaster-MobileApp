@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/model/user_model.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
+import 'package:trendmasterass2/pages/promote_page.dart';
 
 import 'login_page.dart';
 
@@ -62,7 +63,7 @@ class _CompanySuccessPageState extends State<CompanySuccessPage> {
                     Navigator.push(
                       context,
 
-                      MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel,)),
+                      MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel,)),
                     );
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),

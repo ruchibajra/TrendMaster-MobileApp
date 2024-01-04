@@ -97,7 +97,7 @@ class CompanyModel {
   String? linkedin;
   String? description;
   String? userType;
-  int? follower;
+  String? profileImage;
 
   CompanyModel({
     this.uid,
@@ -111,7 +111,7 @@ class CompanyModel {
     this.linkedin,
     this.description,
     this.userType,
-    this.follower,
+    this.profileImage,
   });
 
   factory CompanyModel.fromMap(map) {
@@ -127,7 +127,7 @@ class CompanyModel {
       linkedin: map['linkedin'],
       description: map['description'],
       userType: map['userType'],
-      follower: map['follower'],
+      profileImage: map['profileImage'],
     );
   }
 
@@ -143,7 +143,7 @@ class CompanyModel {
       'linkedin': linkedin,
       'description': description,
       'userType': userType,
-      'follower': follower,
+      'profileImage': profileImage,
     };
   }
 

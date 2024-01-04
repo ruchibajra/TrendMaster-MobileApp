@@ -11,7 +11,6 @@ import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/user_model.dart';
 import 'company_notification_page.dart';
 
-
 class CompanyProfile extends StatefulWidget {
   final CompanyModel companyModel;
   CompanyProfile({Key? key, required this.companyModel}) : super(key: key);
@@ -23,22 +22,17 @@ class CompanyProfile extends StatefulWidget {
 class _CompanyProfileState extends State<CompanyProfile> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   int followersCount = 10000;
-  List<Widget> galleryImages = [
+  List<Widget> galleryImages = List.filled(
+    6,
     Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-    Image.asset('assets/images/company_h1.png', height: 80, width: 80),
-  ];
+  );
 
   String imageUrl = '';
   File? _image;
   final imagePicker = ImagePicker();
-  String? downloadUrl;
+  Key _imageKey = UniqueKey();
 
-  Future imagePickerMethod() async {
-    ImagePicker imagePicker = ImagePicker();
+  Future<void> imagePickerMethod() async {
     XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
@@ -57,6 +51,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
     Reference referenceRoot = FirebaseStorage.instance.ref();
     Reference referenceDirImages = referenceRoot.child('images');
     Reference referenceImageToUpload = referenceDirImages.child(fileName);
+
     try {
       await referenceImageToUpload.putFile(_image!);
       imageUrl = await referenceImageToUpload.getDownloadURL();
@@ -82,6 +77,18 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
       await firebaseFirestore.collection("image_store").doc().set(imageModel.toMap());
 
+      await user?.updateProfile(photoURL: imageUrl);
+
+      if (user != null) {
+        await firebaseFirestore.collection("users").doc(user.uid).update({
+          'profileImage': imageUrl,
+        });
+      }
+
+      setState(() {
+        _imageKey = UniqueKey(); // Force refresh the image
+      });
+
       Fluttertoast.showToast(msg: "Image Uploaded Successfully");
     } catch (e) {
       Fluttertoast.showToast(msg: "Navigation error: $e");
@@ -96,6 +103,8 @@ class _CompanyProfileState extends State<CompanyProfile> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = _auth.currentUser; // Define the user variable here
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -117,16 +126,50 @@ class _CompanyProfileState extends State<CompanyProfile> {
           children: [
             Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    imagePickerMethod();
-                  },
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _image != null
-                        ? FileImage(_image!) as ImageProvider<Object>?
-                        : null,
-                  ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2.0,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 5,
+                        backgroundImage: _image != null
+                            ? Image.file(_image!, key: _imageKey).image
+                            : user?.photoURL != null
+                            ? Image.network(user!.photoURL!, key: _imageKey).image
+                            : AssetImage('assets/images/company_h1.png') as ImageProvider<Object>?,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -4,
+                      right: -25,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                          shape: CircleBorder(),
+                        ),
+                        onPressed: () {
+                          imagePickerMethod();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(width: 17),
                 Container(
@@ -174,15 +217,14 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           ),
                           SizedBox(width: 8),
                           Text(
-                            ' ${widget.companyModel.follower}',
+                            ' ${widget.companyModel.website}',
                             style: TextStyle(
                               fontSize: 15,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox
-                        (height: 20),
+                      SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -237,7 +279,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
             switch (index) {
               case 0:
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel)), // Navigate to CompanyHomePage
+                  MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel)),
                 );
                 break;
               case 1:
