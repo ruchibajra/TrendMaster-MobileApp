@@ -4,25 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/user_model.dart';
-
+import 'package:trendmasterass2/pages/creator_profile_self.dart';
+import 'package:trendmasterass2/pages/promote_page.dart';
 import '../model/work_request_model.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.teal,
-//       ),
-//       home: CreatorHomePage(),
-//     );
-//   }
-// }
+import 'company_notification_page.dart';
+import 'creator_profile.dart';
+import 'login_page.dart';
 
 class CreatorHomePage extends StatefulWidget {
   final UserModel userModel;
@@ -39,8 +26,116 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            color: Colors.white,
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         title: Text("For You"),
         centerTitle: true,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                Container(
+                  color: Colors.teal,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage:
+                        AssetImage('assets/images/companyProfile.png'),
+                      ),
+                      SizedBox(
+                        width: 10,
+                        height: 200,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome Back, \n ${widget.userModel.firstName}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                '${widget.userModel.address}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.home, size: 30, color: Colors.grey),
+                        title:
+                        Text('Home', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ListTile(
+                        leading:
+                        Icon(Icons.person, size: 30, color: Colors.grey),
+                        title: Text('Profile',
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CreatorProfileSelf(
+                                  userModel: widget.userModel, companyModel: CompanyModel(),)));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.notifications,
+                            size: 30, color: Colors.grey),
+                        title: Text('Notification',
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => NotificationPage()));
+                        },
+                      ),
+                      ListTile(
+                        leading:
+                        Icon(Icons.logout, size: 30, color: Colors.grey),
+                        title: Text('Logout',
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          _showLogoutPopup(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
       body: _buildBody(),
       bottomNavigationBar: BottomAppBar(
@@ -79,7 +174,57 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+  void _showLogoutPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ),
+                        );
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -91,8 +236,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
         return ProfilePage();
       case 2:
         return NotificationPage();
-      case 3:
-        return MessagePage();
+
       default:
         return Container();
     }
@@ -194,8 +338,6 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
     });
   }
 }
-
-
 
 //starts here
 class CampaignDetailsPage extends StatefulWidget {
@@ -573,10 +715,6 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
 
 }
 
-
-
-
-
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -638,31 +776,127 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class MessagePage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
+  @override
+  State<NotificationPage> createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Messages'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "Notification",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Text('Messages Page - Under Construction'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              NotificationItem(
+                title: 'New Message',
+                subtitle: 'You have a new message from John Doe.',
+                timestamp: '2 hours ago',
+                image: 'assets/message_icon.png', // Replace with your image path
+                onAccept: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Accepted: New Message'),
+                    ),
+                  );
+                },
+                onDecline: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Declined: New Message'),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 16),
+              // Add more NotificationItems as needed
+            ],
+          ),
+        ),
       ),
+
     );
   }
 }
 
-class NotificationPage extends StatelessWidget {
+class NotificationItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String timestamp;
+  final String image;
+  final VoidCallback onAccept;
+  final VoidCallback onDecline;
+
+  NotificationItem({
+    required this.title,
+    required this.subtitle,
+    required this.timestamp,
+    required this.image,
+    required this.onAccept,
+    required this.onDecline,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('Notifications Page - Under Construction'),
+    return Card(
+      elevation: 2,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: AssetImage(image),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 4),
+            Text(subtitle),
+            SizedBox(height: 8),
+            Text(
+              timestamp,
+              style: TextStyle(color: Colors.grey),
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: onAccept,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                  ),
+                  child: Text('Accept'),
+                ),
+                SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: onDecline,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.red),
+                  ),
+                  child: Text('Decline'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

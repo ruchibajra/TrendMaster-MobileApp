@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
+import 'package:trendmasterass2/pages/search.dart';
 
 
 Future<void> main() async{
@@ -27,6 +28,8 @@ class MyApp extends StatelessWidget {
         //Route
         routes: <String, WidgetBuilder>{
           "/": (context) => LoginPage(),
+          // "/": (context) => SearchPage(),
+
         }
     );
   }
