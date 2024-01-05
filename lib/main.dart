@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         //Route
         routes: <String, WidgetBuilder>{
           "/": (context) => LoginPage(),
-          // "/": (context) => SearchPage(),
+          // "/": (context) => SearchScreen(),
 
         }
     );

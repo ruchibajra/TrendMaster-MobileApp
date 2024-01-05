@@ -1,64 +1,105 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:trendmasterass2/model/user_model.dart';
+import 'package:trendmasterass2/pages/creator_profile.dart';
 
 class SearchPage extends StatefulWidget {
+  final CompanyModel companyModel;
+
+  SearchPage({Key? key, required this.companyModel}) : super(key: key);
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  List<String> _data = [
-    'Apple',
-    'Banana',
-    'Orange',
-    'Mango',
-    'Pineapple',
-    'Grapes',
-    'Watermelon',
-    'Strawberry',
-    'Kiwi',
-    'Blueberry',
-  ];
+  List<UserModel> _data = [];
+  List<UserModel> _filteredData = [];
 
-  List<String> _filteredData = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _filteredData.addAll(_data);
+    fetchData();
     _searchController.addListener(_onSearchChanged);
+  }
+
+  void fetchData() async {
+    var querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+    setState(() {
+      _data = querySnapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 
   void _onSearchChanged() {
     String query = _searchController.text.toLowerCase();
-    List<String> filteredList = _data
-        .where((item) => item.toLowerCase().contains(query))
+    print(_searchController.text);
+    print("ye pehle ka data" + _data.toString());
+
+    List<UserModel> filteredList = _data
+        .where((user) =>
+    user.firstName?.toLowerCase().contains(query) == true ||
+        (user.lastName != null &&
+            user.lastName!.toLowerCase().contains(query)) ||
+        (user.niche != null &&
+            user.niche!.toLowerCase().contains(query)))
         .toList();
 
+    print("Filtered Data: $filteredList");
+
     setState(() {
-      _filteredData = filteredList;
+      _filteredData.clear();
+      _filteredData.addAll(filteredList);
     });
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Search...',
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _searchController,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Search...',
+              ),
+            ),
+          ],
         ),
+        iconTheme: IconThemeData(color: Colors.white), // Set the color of the back arrow icon
       ),
-      body: ListView.builder(
+      body: _searchController.text.isNotEmpty // Check if search query is not empty
+          ? (_filteredData.isNotEmpty
+          ? ListView.builder(
         itemCount: _filteredData.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_filteredData[index]),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfluencerProfile(
+                    companyModel: widget.companyModel,
+                    userModel: _filteredData[index],
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              title: Text('${_filteredData[index].firstName}'),
+              subtitle: Text(
+                  'Niche: ${_filteredData[index].niche ?? "Not available"}'),
+            ),
           );
         },
-      ),
+      )
+          : Container()) // Display an empty container when _filteredData is empty
+          : Container(), // Display an empty container when search query is empty
     );
   }
 }
