@@ -7,10 +7,10 @@ import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/creator_homepage.dart';
 import 'package:trendmasterass2/pages/usertype_page.dart';
 import '../model/user_model.dart';
-import 'company_registration.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -91,7 +91,9 @@ class _LoginPageState extends State<LoginPage> {
                 widthFactor: 0.85,
                 child: ElevatedButton(
                   onPressed: () => onPressed(context),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white),
                   child: Text("Login"),
                 ),
               ),
@@ -100,10 +102,13 @@ class _LoginPageState extends State<LoginPage> {
               // Forgotten Password Section
               Container(
                 child: TextButton(
-                  onPressed: () =>  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => PasswordResetScreen()),
-                  ),
-                  child: Text("Forgotten Password?", style: TextStyle(color: Colors.red)),
+                  onPressed: () =>
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => PasswordResetScreen()),
+                      ),
+                  child: Text("Forgotten Password?",
+                      style: TextStyle(color: Colors.red)),
                 ),
               ),
 
@@ -122,7 +127,9 @@ class _LoginPageState extends State<LoginPage> {
                             widthFactor: 0.97,
                             child: ElevatedButton(
                               onPressed: () => onPressedSignupType(context),
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white),
                               child: Text("CREATE NEW ACCOUNT"),
                             ),
                           ),
@@ -132,17 +139,23 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 signInWithGoogle();
                               },
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
-                              child: Text("Sign up with Google"),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white),
+                              child: Text("Sign in with Google"),
                             ),
                           ),
                           FractionallySizedBox(
                             widthFactor: 0.97,
                             child: ElevatedButton(
-                              onPressed: () =>  Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => LoginPage()),
-                              ),
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                              onPressed: () =>
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()),
+                                  ),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white),
                               child: Text("Sign up with Facebook"),
                             ),
                           ),
@@ -153,28 +166,25 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               )
             ],
-          )
-      ),
+          )),
     );
   }
 
   // Login Button Function
   void onPressed(BuildContext context) {
-    signIn(emailController.text, passwordController.text);
+    signInAcc(emailController.text, passwordController.text);
   }
 
   // login function
-  void signIn(String email, String password) async {
+  void signInAcc(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      try{
+      try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-            email: email,
-            password: password);
+            email: email, password: password);
 
         User? user = userCredential.user;
 
-        if(user != null){
-
+        if (user != null) {
           print('User UID: ${user.uid}'); // Add this line to check UID
 
           DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
@@ -182,28 +192,35 @@ class _LoginPageState extends State<LoginPage> {
               .doc(user.uid)
               .get();
 
-          if (userSnapshot.exists){
+          if (userSnapshot.exists) {
             String userType = userSnapshot['userType'];
             FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
             User? user = _auth.currentUser;
 
-            if(userType == 'Company'){
-              CompanyModel companyModel = CompanyModel.fromMap(userSnapshot.data()!);
+            if (userType == 'Company') {
+              CompanyModel companyModel =
+              CompanyModel.fromMap(userSnapshot.data()!);
               companyModel.updateUid(user!.uid);
 
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: companyModel)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CompanyHomePage(companyModel: companyModel)),
               );
-            } else if(userType == 'Creator'){
+            } else if (userType == 'Creator') {
+              UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
+
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => CreatorHomePage()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CreatorHomePage(userModel: userModel)),
               );
-            }else{
+            } else {
               Fluttertoast.showToast(msg: 'User details not found');
             }
           }
         }
-      } catch(e){
+      } catch (e) {
         Fluttertoast.showToast(msg: e.toString());
       }
     }
@@ -211,20 +228,47 @@ class _LoginPageState extends State<LoginPage> {
 
   // Usertype Page Call Funciton
   void onPressedSignupType(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => UsertypePage()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => UsertypePage()));
   }
 
   //Sign in with google function
-  signInWithGoogle() async{
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    AuthCredential credential = GoogleAuthProvider.credential(
+  // signInWithGoogle() async {
+  //   // Trigger the authentication flow
+  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //
+  //   // Obtain the auth details from the request
+  //   final GoogleSignInAuthentication? googleAuth = await googleUser
+  //       ?.authentication;
+  //
+  //   // Create a new credential
+  //   final credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth?.accessToken,
+  //     idToken: googleAuth?.idToken,
+  //   );
+  //   Fluttertoast.showToast(msg: 'test');
+  //   // Once signed in, return the UserCredential
+  //   return await FirebaseAuth.instance.signInWithCredential(credential);
+  // }
+
+  // Sign in with google function
+  signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser
+        ?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken ,
+      idToken: googleAuth?.idToken,
     );
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    print(userCredential.user?.displayName);
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => mainpage()));
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }
 

@@ -465,4 +465,8 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc

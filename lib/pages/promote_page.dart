@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
+<<<<<<< HEAD
+=======
+import 'package:trendmasterass2/pages/company_notification_page.dart';
+
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
 import '../model/user_model.dart';
 import 'company_profile.dart';
-import 'notification_page.dart';
 
 class PromotionPage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -13,9 +18,19 @@ class PromotionPage extends StatefulWidget {
 }
 
 class _PromotionPageState extends State<PromotionPage> {
+<<<<<<< HEAD
   int currentIndex = 1; // Set the initial index to 1 for PromotionPage
+=======
+  int currentIndex = 1;
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
   bool isPromotionClaimed = false;
   double rating = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = 1;
+  }
 
   void _showClaimedDialog() {
     setState(() {
@@ -35,7 +50,7 @@ class _PromotionPageState extends State<PromotionPage> {
           color: Colors.white,
         ),
         title: Text(
-          'Promotion',
+          'Promotions',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -43,6 +58,7 @@ class _PromotionPageState extends State<PromotionPage> {
         centerTitle: true,
       ),
       backgroundColor: Colors.grey[200],
+<<<<<<< HEAD
       body: Column(
         children: [
           SizedBox(height: 110),
@@ -57,11 +73,37 @@ class _PromotionPageState extends State<PromotionPage> {
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+=======
+
+
+      body:FutureBuilder<QuerySnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('campaign_details')
+            .where('userId', isEqualTo: widget.companyModel.uid)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Column(
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
               children: [
-                Text(
-                  'Special Offer Just for You!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                SizedBox(height: 110),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(
+                    'assets/images/mic1.png',
+                    width: 200,
+                    height: 200,
+                  ),
                 ),
+<<<<<<< HEAD
                 SizedBox(height: 5),
                 Text(
                   'Grab this special opportunity now!',
@@ -74,6 +116,171 @@ class _PromotionPageState extends State<PromotionPage> {
           ),
         ],
       ),
+=======
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Special Offer Just for You!',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Grab this special opportunity now!',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      SizedBox(height: 40),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Promote',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+          return Column(
+            children: [
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var campaignData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(15),
+                        title: Text(
+                          campaignData['title'] ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        subtitle: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text data on the left side
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Niche: \n${campaignData['niche'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Description: \n${campaignData['description'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Location: \n${campaignData['location'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  Text(
+                                    'Created On: ${campaignData['createdOn'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(width: 10),
+
+                            // Image on the right side
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                campaignData['image'] ?? '', // Replace 'image' with the key where the image URL is stored
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
+                },
+                child: Container(
+                  height: 50,
+                  // width: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Promote',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+
+            ],
+          );
+
+        },
+      ),
+
+
+
+
+
+
+
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         selectedItemColor: Colors.teal,
@@ -82,7 +289,11 @@ class _PromotionPageState extends State<PromotionPage> {
           if (index != currentIndex) {
             Navigator.of(context).pop();
             setState(() {
+<<<<<<< HEAD
               currentIndex = index; // Update currentIndex when navigating
+=======
+              currentIndex = index;
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
             });
             switch (index) {
               case 0:

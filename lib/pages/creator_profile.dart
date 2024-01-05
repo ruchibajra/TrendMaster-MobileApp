@@ -4,18 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/work_request_model.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../model/user_model.dart';
 
 class InfluencerProfile extends StatefulWidget {
   final UserModel userModel;
   final CompanyModel companyModel;
-  final bool workRequestSent;
-
-
 
   InfluencerProfile(
-      {Key? key, required this.userModel, required this.companyModel, required this.workRequestSent})
+      {Key? key, required this.userModel, required this.companyModel})
       : super(key: key);
 
   @override
@@ -26,36 +22,47 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   bool _workRequestSent = false;
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  WorkRequestModel? _fetchedWorkRequest;
 
   @override
   void initState() {
     super.initState();
-    // _fetchUserData(); // Call the method to fetch user data when the page is entered
-    _workRequestSent = widget.workRequestSent;
+    _fetchWorkRequestData().then((workRequestDoc) {
+      _updateWorkRequestSent(workRequestDoc);
+      Fluttertoast.showToast(msg: 'update afai');
+    });
   }
 
-  // void _fetchUserData() async {
-  //   try {
-  //     // Get a reference to the user's document in the 'users' collection
-  //     DocumentSnapshot userDoc = await firebaseFirestore.collection('work_requests').doc(widget.).get();
-  //
-  //     // Check if the document exists
-  //     if (userDoc.exists) {
-  //       // Convert the document data to a UserModel object
-  //       setState(() {
-  //         _fetchedUserData = UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
-  //       });
-  //     } else {
-  //       // Handle the case where the document doesn't exist
-  //       print('User document does not exist');
-  //     }
-  //   } catch (e) {
-  //     // Handle any errors that may occur during data fetching
-  //     print('Error fetching user data: $e');
-  //   }
-  // }
+  Future<DocumentSnapshot?> _fetchWorkRequestData() async {
+    try {
+      // Get a reference to the 'work_requests' collection
+      CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
 
+      // Use the where clause to filter the documents based on creator and company emails
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: widget.userModel.email)
+          .where('senderId', isEqualTo: widget.companyModel.email)
+          .get();
 
+      if (workRequestsQuery.docs.isNotEmpty) {
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        setState(() {
+          _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+        });
+      } else {
+        print('No matching work request found');
+      }
+    } catch (e) {
+      print('Error fetching work request data: $e');
+    }
+  }
+
+  void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
+    setState(() {
+      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -418,18 +425,39 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   postDetailsToFirestore() async {
 
-    User? user = _auth.currentUser;
-
     WorkRequestModel workRequestModel = WorkRequestModel(
-      senderId: widget.companyModel.email,
-      receiverId: widget.userModel.email,
-      status: 'Pending'
+        senderId: widget.companyModel.email,
+        receiverId: widget.userModel.email,
+        fname: widget.companyModel.name,
+        status: 'Pending'
     );
 
-    await firebaseFirestore
-        .collection("work_requests")
-        .doc()
-        .set(workRequestModel.toMap());
+    try {
+      CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+
+      // Use the where clause to filter the documents based on creator and company emails
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: widget.userModel.email)
+          .where('senderId', isEqualTo: widget.companyModel.email)
+          .get();
+
+      // Check if there are any matching documents
+      if (workRequestsQuery.docs.isNotEmpty) {
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        // Update the document with the new status
+        await workRequestsCollection
+            .doc(workRequestDoc.id)
+            .update({'status': "Pending"});
+      } else {
+        await firebaseFirestore
+            .collection("work_requests")
+            .doc()
+            .set(workRequestModel.toMap());
+      }
+    } catch (e) {
+      print('Error updating work request status: $e');
+    }
   }
 
   // Function to show cancellation confirmation dialog in the center
@@ -456,6 +484,11 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         primary: Colors.teal,
                       ),
                       onPressed: () {
+                        // Update the status to "Cancelled" in Firestore
+                        if (_workRequestSent == true) {
+                          _updateWorkRequestStatus('Cancelled');
+                        }
+
                         setState(() {
                           _workRequestSent = false;
                         });
@@ -487,6 +520,12 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   // Function to show confirmation dialog in the center
   void _showConfirmationPopup(BuildContext context, String message) {
+    // Check if there is already a work request with the same creator and company email
+    if (_workRequestSent == true) {
+      Fluttertoast.showToast(msg: "Work request already sent");
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -509,6 +548,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         primary: Colors.teal,
                       ),
                       onPressed: () {
+                        _updateWorkRequestStatus('Pending');
+
                         setState(() {
                           _workRequestSent = true;
                         });
@@ -536,6 +577,42 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
         );
       },
     );
+  }
+
+  // Function to update the status in Firestore based on conditions
+  void _updateWorkRequestStatus(String newStatus) async {
+
+    if (_workRequestSent == true) {
+      try {
+        CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+
+        // Use the where clause to filter the documents based on creator and company emails
+        QuerySnapshot workRequestsQuery = await workRequestsCollection
+            .where('receiverId', isEqualTo: widget.userModel.email)
+            .where('senderId', isEqualTo: widget.companyModel.email)
+            .get();
+
+        // Check if there are any matching documents
+        if (workRequestsQuery.docs.isNotEmpty) {
+          // Assuming you only expect one document, you can access the first one
+          DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+          // Update the document with the new status
+          await workRequestsCollection
+              .doc(workRequestDoc.id)
+              .update({'status': newStatus});
+
+          // Optional: You can also update the local state if needed
+          setState(() {
+            _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+          });
+        } else {
+          print('No matching work request found');
+        }
+      } catch (e) {
+        print('Error updating work request status: $e');
+      }
+    }
   }
 }
 

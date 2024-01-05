@@ -97,7 +97,7 @@ class CompanyModel {
   String? linkedin;
   String? description;
   String? userType;
-  int? follower;
+  String? profileImage;
 
   CompanyModel({
     this.uid,
@@ -111,7 +111,11 @@ class CompanyModel {
     this.linkedin,
     this.description,
     this.userType,
+<<<<<<< HEAD
     this.follower,
+=======
+    this.profileImage,
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc
   });
 
   factory CompanyModel.fromMap(map) {
@@ -127,7 +131,7 @@ class CompanyModel {
       linkedin: map['linkedin'],
       description: map['description'],
       userType: map['userType'],
-      follower: map['follower'],
+      profileImage: map['profileImage'],
     );
   }
 
@@ -143,11 +147,15 @@ class CompanyModel {
       'linkedin': linkedin,
       'description': description,
       'userType': userType,
-      'follower': follower,
+      'profileImage': profileImage,
     };
   }
 
   void updateUid(String newUid) {
     uid = newUid;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7039bb5026bfde2c015af2817e6c3e1e335332bc

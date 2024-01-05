@@ -2,25 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trendmasterass2/model/user_model.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      home: CreatorHomePage(),
-    );
-  }
-}
+import '../model/work_request_model.dart';
 
 class CreatorHomePage extends StatefulWidget {
+  final UserModel userModel;
+  CreatorHomePage({Key? key, required this.userModel}) : super(key: key);
+
   @override
   _CreatorHomePageState createState() => _CreatorHomePageState();
 }
@@ -31,10 +21,10 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("For You"),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: Text("For You"),
+      //   centerTitle: true,
+      // ),
       body: _buildBody(),
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -83,9 +73,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
       case 1:
         return ProfilePage();
       case 2:
-        return NotificationPage();
-      case 3:
-        return MessagePage();
+        return NotificationPage(userModel:widget.userModel);
       default:
         return Container();
     }
@@ -117,7 +105,8 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            CampaignDetailsPage(campaignData[index]),
+                            CampaignDetailsPage(userModel: widget.userModel,
+                              campaignData: campaignData[index],),
                       ),
                     );
                   },
@@ -157,7 +146,8 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      CampaignDetailsPage(campaignData[index]),
+                                      CampaignDetailsPage(userModel: widget.userModel,
+                                        campaignData: campaignData[index],),
                                 ),
                               );
                             },
@@ -186,16 +176,69 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
   }
 }
 
-class CampaignDetailsPage extends StatelessWidget {
+class CampaignDetailsPage extends StatefulWidget {
+  UserModel userModel;
   final Map<String, dynamic> campaignData;
+  CampaignDetailsPage({required this.userModel, required this.campaignData});
 
-  CampaignDetailsPage(this.campaignData);
+  @override
+  State<CampaignDetailsPage> createState() => _CampaignDetailsPageState();
+}
+
+class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
+  bool _workRequestSent = false;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  WorkRequestModel? _fetchedWorkRequest;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWorkRequestData().then((workRequestDoc) {
+      _updateWorkRequestSent(workRequestDoc);
+    });
+  }
+
+  Future<DocumentSnapshot?> _fetchWorkRequestData() async {
+    try {
+      // Get a reference to the 'work_requests' collection
+      CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign_requests');
+
+      // Use the where clause to filter the documents based on creator and company emails
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: widget.campaignData['userId'] as String? ?? '')
+          .where('senderId', isEqualTo: widget.userModel.email )
+          .get();
+
+      // Check if there are any matching documents
+      if (workRequestsQuery.docs.isNotEmpty) {
+        // Assuming you only expect one document, you can access the first one
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        // Convert the document data to a WorkRequestModel object
+        setState(() {
+          _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+        });
+      } else {
+        print('No matching work request found');
+      }
+    } catch (e) {
+      print('Error fetching work request data: $e');
+    }
+  }
+
+  void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
+    setState(() {
+      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Campaign Details"),
+        title: Text("${widget.userModel.email}"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -218,67 +261,75 @@ class CampaignDetailsPage extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
-                child: CachedNetworkImage(
-                  imageUrl: campaignData['image'] as String? ?? '',
+                child: Image.network(
+                  widget.campaignData['image'] as String? ?? '',
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             SizedBox(height: 24.0),
             Text(
-              campaignData['title'] as String? ?? '',
+              widget.campaignData['title'] as String? ?? '',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.0),
             Text(
-              'Description: ${campaignData['description'] as String? ?? ''}',
+              widget.campaignData['location'] as String? ?? '',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.0),
             Text(
-              'Location: ${campaignData['location'] as String? ?? ''}',
+              widget.campaignData['niche'] as String? ?? '',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.0),
             Text(
-              'Niche: ${campaignData['niche'] as String? ?? ''}',
+              widget.campaignData['description'] as String? ?? '',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.0),
             Text(
-              'Creator Number: ${campaignData['creator_no'] as String? ?? ''}',
+              widget.campaignData['budget'] as String? ?? '',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.0),
             Text(
-              'Budget: ${campaignData['budget'] as String? ?? ''}',
+              widget.campaignData['userId'] as String? ?? '',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 24.0),
+
             ElevatedButton(
               onPressed: () {
-                // Implement the logic for accepting the campaign here.
-                // You can use the campaignData to perform actions related to the accepted campaign.
-                // For example, you may want to update the database or perform other operations.
-                // Customize this logic based on your requirements.
+                if (!_workRequestSent) {
+                  _showConfirmationPopup(context,
+                      "Are you sure you want to work together? ");
+                } else {
+                  // Toggle back to "Let's work together" when clicked again
+                  setState(() {
+                    _showCancellationPopup(context,
+                        "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
+                  });
+                }
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
                 onPrimary: Colors.teal,
-                shape:
-                RoundedRectangleBorder(
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
-                  'Accept Campaign',
+                  _workRequestSent
+                      ? 'Work Request Sent'
+                      : "Let's Work Together",
                   style: TextStyle(fontSize: 18),
                 ),
               ),
@@ -288,6 +339,218 @@ class CampaignDetailsPage extends StatelessWidget {
       ),
     );
   }
+
+  postDetailsToFirestore() async {
+
+    WorkRequestModel workRequestModel = WorkRequestModel(
+        senderId: widget.userModel.email,
+        receiverId:widget.campaignData['userId'] as String? ?? '',
+        status: 'Pending',
+        fname: widget.userModel.firstName,
+        mname: widget.userModel.middleName,
+        lname: widget.userModel.lastName,
+    );
+
+    try {
+      CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign_requests');
+
+      // Use the where clause to filter the documents based on creator and company emails
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: widget.campaignData['userId'] as String? ?? '')
+          .where('senderId', isEqualTo:  widget.userModel.email)
+          .get();
+
+      // Check if there are any matching documents
+      if (workRequestsQuery.docs.isNotEmpty) {
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        // Update the document with the new status
+        await workRequestsCollection
+            .doc(workRequestDoc.id)
+            .update({'status': "Pending"});
+      } else {
+        await firebaseFirestore
+            .collection("campaign_requests")
+            .doc()
+            .set(workRequestModel.toMap());
+      }
+    } catch (e) {
+      print('Error updating work request status: $e');
+    }
+  }
+
+  // Function to show cancellation confirmation dialog in the center
+  void _showCancellationPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        // Update the status to "Cancelled" in Firestore
+                        if (_workRequestSent == true) {
+                          _updateWorkRequestStatus('Cancelled');
+                        }
+
+                        setState(() {
+                          _workRequestSent = false;
+                        });
+                        postDetailsToFirestore();
+                        Navigator.of(context).pop();
+                        _showToast(
+                            "Work request cancelled successfully"); // Show toast here
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "No" button
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to show confirmation dialog in the center
+  void _showConfirmationPopup(BuildContext context, String message) {
+    // Check if there is already a work request with the same creator and company email
+    if (_workRequestSent == true) {
+      Fluttertoast.showToast(msg: "Work request already sent");
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        _updateWorkRequestStatus('Pending');
+
+                        setState(() {
+                          _workRequestSent = true;
+                        });
+                        postDetailsToFirestore();
+                        Navigator.of(context).pop();
+                        _showToast(
+                            "Work request sent successfully"); // Show toast here
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal, // Teal color for the "No" button
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to update the status in Firestore based on conditions
+  void _updateWorkRequestStatus(String newStatus) async {
+    Fluttertoast.showToast(msg: 'out function');
+
+    if (_workRequestSent == true) {
+      Fluttertoast.showToast(msg: 'inside the function');
+      Text('hello');
+      try {
+        CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign'
+            '_requests');
+
+        // Use the where clause to filter the documents based on creator and company emails
+        QuerySnapshot workRequestsQuery = await workRequestsCollection
+            .where('receiverId', isEqualTo: widget.campaignData['userId'] as String? ?? '')
+            .where('senderId', isEqualTo: widget.userModel.email )
+            .get();
+
+        // Check if there are any matching documents
+        if (workRequestsQuery.docs.isNotEmpty) {
+          // Assuming you only expect one document, you can access the first one
+          DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+          // Update the document with the new status
+          await workRequestsCollection
+              .doc(workRequestDoc.id)
+              .update({'status': newStatus});
+
+          // Optional: You can also update the local state if needed
+          setState(() {
+            _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+          });
+        } else {
+          print('No matching work request found');
+        }
+      } catch (e) {
+        print('Error updating work request status: $e');
+      }
+    }
+  }
+
+  // Function to show FlutterToast
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.teal,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
 }
 
 class ProfilePage extends StatelessWidget {
@@ -351,32 +614,262 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class MessagePage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
+  final UserModel userModel;
+  NotificationPage({Key? key, required this.userModel}) : super(key: key);
+
+
+  @override
+  State<NotificationPage> createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+  Future<List<DocumentSnapshot>> getNotifications() async {
+    QuerySnapshot querySnapshot = await firebaseFirestore
+        .collection('work_requests')
+        .where('receiverId', isEqualTo: widget.userModel.email )
+        .get();
+    return querySnapshot.docs;
+  }
+
+  void refreshPage() {
+    setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Messages'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.white,
+        ),
+        title: Text(
+          'Notifications',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Text('Messages Page - Under Construction'),
+      body: FutureBuilder(
+        future: getNotifications(),
+        builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('data is empty'),
+            );
+          } else {
+            List<DocumentSnapshot> notifications = snapshot.data!;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var notification in notifications)
+                      NotificationItem(
+
+                        //name should come of company
+                        name: notification['fname'],
+                        status: notification['status'],
+                        userModel: widget.userModel,
+                        companyModel: CompanyModel(),
+                        firebaseFirestore: firebaseFirestore,
+                        refreshPage: refreshPage,
+                      ),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
       ),
+
     );
   }
 }
 
-class NotificationPage extends StatelessWidget {
+class NotificationItem extends StatelessWidget {
+  final String name;
+  final String status;
+  final UserModel userModel;
+  final CompanyModel companyModel;
+  final FirebaseFirestore firebaseFirestore;
+  final void Function() refreshPage;
+
+  NotificationItem({
+    required this.name,
+    required this.status,
+    required this.userModel,
+    required this.companyModel,
+    required this.firebaseFirestore,
+    required this.refreshPage,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('Notifications Page - Under Construction'),
+    bool isWorkRequestPending = status == 'Pending';
+    bool isWorkRequestAccepted = status == 'Accepted';
+    bool isWorkRequestDeclined = status == 'Declined';
+
+    return Card(
+      elevation: 2,
+      child: ListTile(
+        leading: CircleAvatar(
+          //profile image halnu parcha
+        ),
+        title: Text(
+          "${name}",
+          style: TextStyle(fontWeight: FontWeight.bold,),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 4),
+            Text(' Company wants to work with you'),
+            SizedBox(height: 8),
+            Text(
+              status,
+              style: TextStyle(color: Colors.grey),
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isWorkRequestPending)
+                  ElevatedButton(
+                    onPressed: () {
+                      _updateWorkRequestStatus('Accepted', context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Accepted Work Request of: ${name}'),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                    ),
+                    child: Text('Accept'),
+                  ),
+                SizedBox(width: 8),
+                if (isWorkRequestPending || isWorkRequestAccepted)
+                  OutlinedButton(
+                    onPressed: () {
+                      _showDeclineConfirmationDialog(context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Declined Work Request of: ${name}'),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.red),
+                    ),
+                    child: Text('Decline'),
+                  ),
+              ],
+            ),
+            SizedBox(height: 8),
+            // Add more widgets as needed...
+          ],
+        ),
       ),
     );
   }
+
+  void _showDeclineConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Decline Work Request'),
+          content: Text(
+            'You won\'t be able to accept the work request after declining. By tapping confirm, you will decline the work request sent by ${name}. Are you sure you want to decline?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _updateWorkRequestStatus('Declined', context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Declined Work Request of: ${name}'),
+                  ),
+                );
+
+                Navigator.of(dialogContext).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+              ),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateWorkRequestStatus(String newStatus, BuildContext context) async {
+    try {
+      CollectionReference workRequestsCollection =
+      firebaseFirestore.collection('work_requests');
+
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: userModel.email)
+          .get();
+
+      if (workRequestsQuery.docs.isNotEmpty) {
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        String currentStatus = workRequestDoc['status'];
+
+        if (currentStatus != 'Declined') {
+          await workRequestsCollection
+              .doc(workRequestDoc.id)
+              .update({'status': newStatus});
+
+          // Refresh the page after updating the status
+          refreshPage();
+        } else {
+          // The work request has already been declined, notify the user or handle accordingly
+          print('Cannot accept a declined work request');
+        }
+      } else {
+        print('No matching work request found');
+      }
+    } catch (e) {
+      print('Error updating work request status: $e');
+    }
+  }
+
+
 }
