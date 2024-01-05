@@ -1,10 +1,12 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:trendmasterass2/model/imageModel.dart';
 import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
@@ -21,7 +23,6 @@ class CompanyProfile extends StatefulWidget {
 
 class _CompanyProfileState extends State<CompanyProfile> {
   FirebaseAuth _auth = FirebaseAuth.instance;
-  int followersCount = 10000;
   List<Widget> galleryImages = List.filled(
     6,
     Image.asset('assets/images/company_h1.png', height: 80, width: 80),
@@ -95,15 +96,69 @@ class _CompanyProfileState extends State<CompanyProfile> {
     }
   }
 
-  void _increaseFollowers() {
-    setState(() {
-      followersCount += 100;
-    });
+  Future<void> launchURL(String? url) async {
+    if (url != null && await canLaunch(url)) {
+      await launch(url);
+    } else {
+      Fluttertoast.showToast(msg: "Could not launch $url");
+    }
+  }
+
+  Widget buildContactInfoWithIcon(String label, IconData icon, String? info, {bool clickable = false}) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 24,
+          color: Colors.teal,
+        ),
+        SizedBox(width: 8),
+        if (clickable)
+          GestureDetector(
+            onTap: () {
+              launchURL(info);
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: Text(
+                '$label: $info',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          )
+        else
+          Text(
+            '$label: $info',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.normal,
+              color: Colors.black87,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget buildSocialMediaIcon(IconData icon, String? link) {
+    return GestureDetector(
+      onTap: () {
+        launchURL(link);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(icon, size: 24, color: Colors.blue),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    User? user = _auth.currentUser; // Define the user variable here
+    User? user = _auth.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,8 +185,8 @@ class _CompanyProfileState extends State<CompanyProfile> {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 120,
-                      height: 120,
+                      width: 90,
+                      height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -164,7 +219,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
                           child: Icon(
                             Icons.add,
                             color: Colors.white,
-
                           ),
                         ),
                       ),
@@ -172,65 +226,42 @@ class _CompanyProfileState extends State<CompanyProfile> {
                   ],
                 ),
                 SizedBox(width: 17),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.business_center, size: 24, color: Colors.teal),
-                          SizedBox(width: 8),
-                          Text(
-                            ' ${widget.companyModel.name}',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_sharp,
-                            size: 24,
-                            color: Colors.teal,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            ' ${widget.companyModel.address}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.people,
-                            size: 24,
-                            color: Colors.teal,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            ' ${widget.companyModel.website}',
-                            style: TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildContactInfoWithIcon('Name', Icons.business, widget.companyModel.name),
+                    buildContactInfoWithIcon('Address', Icons.location_on, widget.companyModel.address),
+                    buildContactInfoWithIcon('Email', Icons.email, widget.companyModel.email, clickable: true),
+                    buildContactInfoWithIcon('Phone', Icons.phone, widget.companyModel.phone),
+                    buildContactInfoWithIcon('Website', Icons.web, widget.companyModel.website, clickable: true),
+                    buildContactInfoWithIcon('Facebook', Icons.facebook, widget.companyModel.facebook, clickable: true),
+                    buildContactInfoWithIcon('LinkedIn', EvaIcons.linkedin, widget.companyModel.linkedin, clickable: true),
+                    buildContactInfoWithIcon('Twitter', EvaIcons.twitter, widget.companyModel.twitter, clickable: true),
+                    SizedBox(height: 20),
+                  ],
                 ),
               ],
             ),
-            Text(' ${widget.companyModel.description}'),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1.0,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                color: Colors.grey.shade100,
+              ),
+              padding: EdgeInsets.all(16.0),
+              margin: EdgeInsets.only(top: 16.0),
+              child: Text(
+                widget.companyModel.description ?? "",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
             SizedBox(height: 50),
             Divider(
               color: Colors.black87,
@@ -250,21 +281,17 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 ),
               ),
             ),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 6.0,
-                mainAxisSpacing: 6.0,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  galleryImages.length,
+                      (index) => Container(
+                    color: Colors.teal,
+                    child: galleryImages[index],
+                  ),
+                ),
               ),
-              itemCount: galleryImages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: Colors.teal,
-                  child: galleryImages[index],
-                );
-              },
             ),
           ],
         ),
@@ -310,7 +337,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'profile',
+            label: 'Profile',
           ),
         ],
       ),

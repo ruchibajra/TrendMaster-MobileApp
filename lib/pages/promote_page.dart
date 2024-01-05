@@ -125,20 +125,115 @@ class _PromotionPageState extends State<PromotionPage> {
               ],
             );
           }
+          return Column(
+            children: [
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var campaignData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(15),
+                        title: Text(
+                          campaignData['title'] ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        subtitle: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text data on the left side
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Niche: \n${campaignData['niche'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Description: \n${campaignData['description'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Location: \n${campaignData['location'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  Text(
+                                    'Created On: ${campaignData['createdOn'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
 
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              var campaignData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-              return Card(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              elevation: 5,
-              child: ListTile(
-              title: Text(campaignData['title'] ?? ''),
-              subtitle: Text(campaignData['description'] ?? ''),),
-              );
-            },
+                            SizedBox(width: 10),
+
+                            // Image on the right side
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                campaignData['image'] ?? '', // Replace 'image' with the key where the image URL is stored
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddDetailsPage(companyModel: widget.companyModel)));
+                },
+                child: Container(
+                  height: 50,
+                  // width: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Promote',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+
+            ],
           );
+
         },
       ),
 
