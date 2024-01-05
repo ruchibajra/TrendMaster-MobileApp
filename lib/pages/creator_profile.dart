@@ -29,7 +29,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     super.initState();
     _fetchWorkRequestData().then((workRequestDoc) {
       _updateWorkRequestSent(workRequestDoc);
-      Fluttertoast.showToast(msg: 'update afai');
     });
   }
 
@@ -217,7 +216,7 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                             Text(
                               _workRequestSent
                                   ? ""
-                                  : "Creators Rate Per Creative: Rs. 5000/-",
+                                  : "Creators Rate Per Content: Rs.${widget.userModel.rate}/-",
                               style: TextStyle(fontSize: 10),
                             ),
                           ],
@@ -279,21 +278,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    Container(
-                      height: 36,
-                      width: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.teal,
-                      ),
-                      child: Center(
-                        child: Text(
-                          "ADD MORE",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.white),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -332,21 +316,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                       ],
                     ),
                     SizedBox(height: 20),
-                    Container(
-                      height: 36,
-                      width: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.teal,
-                      ),
-                      child: Center(
-                        child: Text(
-                          "ADD MORE",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.white),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

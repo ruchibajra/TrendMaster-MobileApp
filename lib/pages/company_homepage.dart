@@ -7,6 +7,7 @@ import 'package:trendmasterass2/pages/promote_page.dart';
 import 'package:trendmasterass2/pages/search_page.dart';
 import '../model/user_model.dart';
 import 'company_notification_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CompanyHomePage extends StatefulWidget {
   final CompanyModel companyModel;
@@ -63,11 +64,17 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                   color: Colors.teal,
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundImage: widget.companyModel.profileImage != null
-                            ? NetworkImage(widget.companyModel.profileImage!)
-                            : AssetImage('assets/images/placeholder_image.png') as ImageProvider<Object>,
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: CircleAvatar(
+                          radius: 35,
+                          backgroundColor: Colors.white,  // Set the background color of the circle
+                          child: Icon(
+                            FontAwesomeIcons.building,  // Organization icon from font_awesome_flutter
+                            size: 50,
+                            color: Colors.teal,
+                          ),
+                        ),
                       ),
                       SizedBox(
                         width: 10,
@@ -77,7 +84,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello \n ${widget.companyModel.name}',
+                            '${widget.companyModel.name}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

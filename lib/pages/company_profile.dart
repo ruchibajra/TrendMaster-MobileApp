@@ -179,7 +179,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Column(
               children: [
                 Stack(
                   alignment: Alignment.center,
@@ -271,28 +271,28 @@ class _CompanyProfileState extends State<CompanyProfile> {
               endIndent: 0,
             ),
             SizedBox(height: 20),
-            Center(
-              child: Text(
-                "Gallery",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  galleryImages.length,
-                      (index) => Container(
-                    color: Colors.teal,
-                    child: galleryImages[index],
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     "Gallery",
+            //     style: TextStyle(
+            //       fontSize: 18,
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.black87,
+            //     ),
+            //   ),
+            // ),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Row(
+            //     children: List.generate(
+            //       galleryImages.length,
+            //           (index) => Container(
+            //         color: Colors.teal,
+            //         child: galleryImages[index],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
