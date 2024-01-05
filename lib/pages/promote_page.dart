@@ -158,34 +158,42 @@ class _PromotionPageState extends State<PromotionPage> {
                                 children: [
                                   SizedBox(height: 5),
                                   Text(
-                                    'Niche: \n${campaignData['niche'] ?? ''}',
+                                    'Niche: ${campaignData['niche'] ?? ''}',
                                     style: TextStyle(
                                       color: Colors.grey,
                                     ),
                                   ),
                                   Text(
-                                    'Description: \n${campaignData['description'] ?? ''}',
+                                    'Description: ${campaignData['description'] ?? ''}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                    textAlign: TextAlign.justify,
+                                  ),
+                                  Text(
+                                    'Location: ${campaignData['location'] ?? ''}',
                                     style: TextStyle(
                                       color: Colors.grey,
                                     ),
                                   ),
                                   Text(
-                                    'Location: \n${campaignData['location'] ?? ''}',
+                                    'No. of creator needed: ${campaignData['count'] ?? ''}',
                                     style: TextStyle(
-                                      color: Colors.grey[700],
+                                      color: Colors.grey,
                                     ),
                                   ),
                                   Text(
-                                    'Created On: ${campaignData['createdOn'] ?? ''}',
+                                    'Created On: ${DateTime.now().toString().split(' ')[0]}',
                                     style: TextStyle(
                                       color: Colors.grey,
+                                      fontStyle: FontStyle.italic,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
 
-                            SizedBox(width: 10),
+                            SizedBox(width: 15),
 
                             // Image on the right side
                             ClipRRect(
@@ -212,7 +220,7 @@ class _PromotionPageState extends State<PromotionPage> {
                 },
                 child: Container(
                   height: 50,
-                  // width: 150,
+                  width: 355,
                   decoration: BoxDecoration(
                     color: Colors.teal,
                     borderRadius: BorderRadius.all(
@@ -221,7 +229,7 @@ class _PromotionPageState extends State<PromotionPage> {
                   ),
                   child: Center(
                     child: Text(
-                      'Promote',
+                      'Promote More',
                       style: TextStyle(
                         color: Colors.white,
                       ),

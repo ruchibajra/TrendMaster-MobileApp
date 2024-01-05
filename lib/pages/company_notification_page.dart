@@ -61,7 +61,7 @@ class _NotificationPageState extends State<NotificationPage> {
             );
           } else if (snapshot.data!.isEmpty) {
             return Center(
-              child: Text('${widget.companyModel.uid}'),
+              child: Text('You have no any notifications yet.'),
             );
           } else {
             List<DocumentSnapshot> notifications = snapshot.data!;

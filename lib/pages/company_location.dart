@@ -52,6 +52,7 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       budget: widget.campaignModel.budget,
       location: selectedLocation.toString(),
       userId: widget.companyModel.uid,
+      companyName: widget.companyModel.name,
     );
     await firebaseFirestore
         .collection("campaign_details")

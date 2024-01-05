@@ -4,6 +4,7 @@ import 'package:trendmasterass2/pages/company_profile.dart';
 import 'package:trendmasterass2/pages/creator_profile.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 import 'package:trendmasterass2/pages/promote_page.dart';
+import 'package:trendmasterass2/pages/search_page.dart';
 import '../model/user_model.dart';
 import 'company_notification_page.dart';
 
@@ -176,7 +177,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
             List<UserModel> creators = snapshot.data ?? [];
 
             if (creators.isEmpty) {
-              return Text('data is empty');
+              return Text('No any data yet.');
             }
             List<UserModel> creatorList = creators
                 .where((creator) => creator.userType == 'Creator')
@@ -196,22 +197,29 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 10, right: 5),
-                            child: Icon(Icons.search, color: Colors.white),
+                            child: Icon(Icons.search, color: Colors.grey),
                           ),
                           Container(
                             width: 190,
-                            child: const TextField(
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration.collapsed(
-                                hintText: "Search a Creator",
-                                hintStyle: TextStyle(color: Colors.white),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchPage(companyModel: widget.companyModel), // Replace SearchPage with your desired page
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "Search",
+                                style: TextStyle(color: Colors.grey),
                               ),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
                     Container(
                       color: Colors.red,
                       height: 180,
@@ -274,7 +282,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                               builder: (context) => InfluencerProfile(
                                 companyModel: widget.companyModel,
                                 userModel: creator,
-
                               ),
                             ),
                           );
@@ -376,7 +383,7 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                                   height: 5,
                                                 ),
                                                 Text(
-                                                  "Rs.${creator.rate ?? ''} for 10.0K impressions",
+                                                  "Rs.${creator.rate} per content",
                                                   style: TextStyle(
                                                     fontSize: 13,
                                                   ),

@@ -10,9 +10,10 @@ class CampaignModel{
   int? count;
   String? image;
   String? userId;
+  String? companyName;
 
 
-  CampaignModel({this.id, this.title, this.description, this.niche, this.budget, this.count, this.location, this.image, this.userId});
+  CampaignModel({this.id, this.title, this.description, this.niche, this.budget, this.count, this.location, this.image, this.userId, this.companyName});
 
   // receiving data from the server
   factory CampaignModel.fromMap(map) {
@@ -25,7 +26,8 @@ class CampaignModel{
         count: map['count'],
         location: map['location'],
         image: map['image'],
-        userId: map['userId']
+        userId: map['userId'],
+        companyName: map['companyName']
     );
   }
 
@@ -40,6 +42,7 @@ class CampaignModel{
       'location': location,
       'image': image,
       'userId': userId,
+      'companyName': companyName,
     };
   }
 }

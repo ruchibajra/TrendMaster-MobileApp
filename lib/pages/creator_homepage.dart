@@ -133,7 +133,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                              campaignData[index]['location'] as String? ?? '',
+                              'by ${campaignData[index]['companyName'] as String? ?? ''}',
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
@@ -671,7 +671,7 @@ class _NotificationPageState extends State<NotificationPage> {
             );
           } else if (snapshot.data!.isEmpty) {
             return Center(
-              child: Text('data is empty'),
+              child: Text('You have no any notifications yet.'),
             );
           } else {
             List<DocumentSnapshot> notifications = snapshot.data!;
