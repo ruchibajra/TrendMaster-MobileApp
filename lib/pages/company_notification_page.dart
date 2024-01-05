@@ -74,14 +74,15 @@ class _NotificationPageState extends State<NotificationPage> {
                   children: [
                     for (var notification in notifications)
                       NotificationItem(
-                        fname: notification['fname'],
-                        mname: notification['mname'],
-                        lname: notification['lname'],
-                        status: notification['status'],
+                        fname: notification['fname'] ?? '',
+                        mname: notification['mname'] ?? '',
+                        lname: notification['lname'] ?? '',
+                        status: notification['status'] ?? '',
                         userModel: UserModel(),
                         companyModel: widget.companyModel,
                         firebaseFirestore: firebaseFirestore,
                         refreshPage: refreshPage,
+                        // profileImage: notification['profileImage'] ?? '',
                       ),
                     SizedBox(height: 16),
                   ],
@@ -164,6 +165,7 @@ class NotificationItem extends StatelessWidget {
   final CompanyModel companyModel;
   final FirebaseFirestore firebaseFirestore;
   final void Function() refreshPage;
+  // final String profileImage;
 
   NotificationItem({
     required this.fname,
@@ -174,6 +176,7 @@ class NotificationItem extends StatelessWidget {
     required this.companyModel,
     required this.firebaseFirestore,
     required this.refreshPage,
+    // required this.profileImage,
   });
 
   @override
@@ -186,10 +189,10 @@ class NotificationItem extends StatelessWidget {
       elevation: 2,
       child: ListTile(
         leading: CircleAvatar(
-          //profile image halnu parcha
+          // child: Image.network("{profileImage}")
         ),
         title: Text(
-          "${fname} ${mname} ${lname}",
+          "${fname}${mname} ${lname}",
           style: TextStyle(fontWeight: FontWeight.bold,),
         ),
         subtitle: Column(

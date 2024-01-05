@@ -1066,6 +1066,7 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future<List<DocumentSnapshot>> getNotifications() async {
@@ -1129,8 +1130,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
                         //name should come of company
                         // profileImage: notification['profileImage'],
-                        name: notification['fname'],
-                        status: notification['status'],
+                        name: notification['fname'] ?? '',
+                        status: notification['status'] ?? '',
                         userModel: widget.userModel,
                         companyModel: CompanyModel(),
                         firebaseFirestore: firebaseFirestore,
