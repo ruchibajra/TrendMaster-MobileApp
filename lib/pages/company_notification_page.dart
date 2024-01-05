@@ -199,7 +199,7 @@ class NotificationItem extends StatelessWidget {
             Text('wants to work with you'),
             SizedBox(height: 8),
             Text(
-              status,
+               status,
               style: TextStyle(color: Colors.grey),
             ),
             SizedBox(height: 8),

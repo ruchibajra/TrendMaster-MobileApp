@@ -17,6 +17,7 @@ class UserModel {
   String? description;
   String? userType;
   double? rate;
+  String? profileImage;
 
   UserModel({
     this.uid,
@@ -37,6 +38,7 @@ class UserModel {
     this.description,
     this.userType,
     this.rate,
+    this.profileImage
   });
 
   factory UserModel.fromMap(map) {
@@ -59,6 +61,7 @@ class UserModel {
       description: map['description'],
       userType: map['userType'],
       rate: map['rate'],
+      profileImage: map['profileImage'],
     );
   }
 
@@ -81,6 +84,7 @@ class UserModel {
       'description': description,
       'userType': userType,
       'rate': rate,
+      'profileImage': profileImage,
     };
   }
 }

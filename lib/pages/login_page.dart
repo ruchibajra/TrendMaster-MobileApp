@@ -53,8 +53,8 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         controller: emailController,
                         decoration: InputDecoration(
-                          hintText: "Enter Username or Email Address",
-                          labelText: "Username or Email",
+                          hintText: "Enter Email Address",
+                          labelText: "Email Address",
                         ),
                       ),
                       SizedBox(height: 10),
@@ -112,59 +112,67 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              // Create new account section
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Container(
-                  width: 330,
-                  child: Column(
+              SizedBox(height: 20,),
+              Text('-OR-'),
+              
+              SizedBox(height: 20,),
+
+              Container(
+                width: 320,
+                padding: EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(15.0), // Adjust the radius as needed
+                ),// Adjust the radius as needed
+
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+
                     children: [
-                      Column(
-                        children: [
-                          Text("-OR-", style: TextStyle(fontSize: 20)),
-                          SizedBox(height: 20),
-                          FractionallySizedBox(
-                            widthFactor: 0.97,
-                            child: ElevatedButton(
-                              onPressed: () => onPressedSignupType(context),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white),
-                              child: Text("CREATE NEW ACCOUNT"),
+                      Icon(
+                        Icons.info_rounded,
+                        color: Colors.teal, // Change the color to your desired color
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'New to TrendMaster?',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      FractionallySizedBox(
+                        // widthFactor: 0.4, // Adjust the widthFactor to make it smaller
+                        child: TextButton(
+                          onPressed: () => onPressedSignupType(context),
+                          style: TextButton.styleFrom(
+                            primary: Colors.teal, // Text color
+                          ),
+                          child: Text(
+                            'Sign up',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.teal, // Change the underline color
+                // Add underline for link style
                             ),
                           ),
-                          FractionallySizedBox(
-                            widthFactor: 0.97,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                signInWithGoogle();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white),
-                              child: Text("Sign in with Google"),
-                            ),
-                          ),
-                          FractionallySizedBox(
-                            widthFactor: 0.97,
-                            child: ElevatedButton(
-                              onPressed: () =>
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginPage()),
-                                  ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white),
-                              child: Text("Sign up with Facebook"),
-                            ),
-                          ),
-                        ],
-                      )
+                        ),
+                      ),
+
                     ],
                   ),
                 ),
               )
+
+
+
+
             ],
           )),
     );
@@ -251,25 +259,25 @@ class _LoginPageState extends State<LoginPage> {
   //   return await FirebaseAuth.instance.signInWithCredential(credential);
   // }
 
-  // Sign in with google function
-  signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser
-        ?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    // Navigator.push(
-    //     context, MaterialPageRoute(builder: (context) => mainpage()));
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
+  // // Sign in with google function
+  // signInWithGoogle() async {
+  //   // Trigger the authentication flow
+  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //
+  //   // Obtain the auth details from the request
+  //   final GoogleSignInAuthentication? googleAuth = await googleUser
+  //       ?.authentication;
+  //
+  //   // Create a new credential
+  //   final credential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth?.accessToken,
+  //     idToken: googleAuth?.idToken,
+  //   );
+  //   // Navigator.push(
+  //   //     context, MaterialPageRoute(builder: (context) => mainpage()));
+  //   // Once signed in, return the UserCredential
+  //   return await FirebaseAuth.instance.signInWithCredential(credential);
+  // }
 }
 
 // Password Reset Screen

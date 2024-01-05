@@ -3,12 +3,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/user_model.dart';
+import 'package:trendmasterass2/pages/login_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../model/work_request_model.dart';
 
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+
+import 'package:firebase_auth/firebase_auth.dart';
+
 class CreatorHomePage extends StatefulWidget {
   final UserModel userModel;
+
   CreatorHomePage({Key? key, required this.userModel}) : super(key: key);
 
   @override
@@ -20,12 +34,121 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+      return Container();
+    }
+
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("For You"),
-      //   centerTitle: true,
-      // ),
+      appBar: AppBar(
+        title: Text("For You"),
+        centerTitle: true,
+      ),
       body: _buildBody(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                Container(
+                  color: Colors.teal,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          FontAwesomeIcons.person,
+                          size: 50,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                        height: 200,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello \n ${widget.userModel.firstName}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                '${widget.userModel.address}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.person, size: 30, color: Colors.grey),
+                        title: Text('Profile', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => ProfilePage()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.home, size: 30, color: Colors.grey),
+                        title: Text('Home', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.notifications, size: 30, color: Colors.grey),
+                        title: Text('Notification', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => NotificationPage(userModel: widget.userModel)),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout, size: 30, color: Colors.grey),
+                        title: Text('Logout', style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          _showLogoutPopup(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+
+
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         color: Colors.teal,
@@ -41,21 +164,15 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.person),
-                onPressed: () {
-                  _onTabTapped(1);
-                },
-              ),
-              IconButton(
                 icon: Icon(Icons.notifications),
                 onPressed: () {
                   _onTabTapped(2);
                 },
               ),
               IconButton(
-                icon: Icon(Icons.message),
+                icon: Icon(Icons.person),
                 onPressed: () {
-                  _onTabTapped(3);
+                  _onTabTapped(1);
                 },
               ),
             ],
@@ -66,6 +183,58 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
     );
   }
 
+  void _showLogoutPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ),
+                        );
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.teal,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('No', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
@@ -73,7 +242,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
       case 1:
         return ProfilePage();
       case 2:
-        return NotificationPage(userModel:widget.userModel);
+        return NotificationPage(userModel: widget.userModel);
       default:
         return Container();
     }
@@ -104,9 +273,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            CampaignDetailsPage(userModel: widget.userModel,
-                              campaignData: campaignData[index],),
+                        builder: (context) => CampaignDetailsPage(userModel: widget.userModel, campaignData: campaignData[index]),
                       ),
                     );
                   },
@@ -129,12 +296,12 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                           child: ListTile(
                             title: Text(
                               campaignData[index]['title'] as String? ?? '',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
+
                             subtitle: Text(
-                              'by ${campaignData[index]['companyName'] as String? ?? ''}',
-                              style: TextStyle(fontSize: 16),
+                             "by ${ campaignData[index]['companyName'] as String? ?? ''}",
+                              style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
                             ),
                           ),
                         ),
@@ -145,9 +312,7 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      CampaignDetailsPage(userModel: widget.userModel,
-                                        campaignData: campaignData[index],),
+                                  builder: (context) => CampaignDetailsPage(userModel: widget.userModel, campaignData: campaignData[index]),
                                 ),
                               );
                             },
@@ -175,6 +340,12 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
     });
   }
 }
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 
 class CampaignDetailsPage extends StatefulWidget {
   UserModel userModel;
@@ -238,103 +409,134 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.userModel.email}"),
+        title: Text("Campaign Details"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: Image.network(
-                  widget.campaignData['image'] as String? ?? '',
-                  fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 250,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            SizedBox(height: 24.0),
-            Text(
-              widget.campaignData['title'] as String? ?? '',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              widget.campaignData['location'] as String? ?? '',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              widget.campaignData['niche'] as String? ?? '',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              widget.campaignData['description'] as String? ?? '',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              widget.campaignData['budget'] as String? ?? '',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              widget.campaignData['userId'] as String? ?? '',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 24.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Image.network(
+                    widget.campaignData['image'] as String? ?? '',
+                    fit: BoxFit.cover,
 
-            ElevatedButton(
-              onPressed: () {
-                if (!_workRequestSent) {
-                  _showConfirmationPopup(context,
-                      "Are you sure you want to work together? ");
-                } else {
-                  // Toggle back to "Let's work together" when clicked again
-                  setState(() {
-                    _showCancellationPopup(context,
-                        "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?");
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white,
-                onPrimary: Colors.teal,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
+              SizedBox(height: 20),
+              Center(
                 child: Text(
-                  _workRequestSent
-                      ? 'Work Request Sent'
-                      : "Let's Work Together",
-                  style: TextStyle(fontSize: 18),
+                  widget.campaignData['title'] as String? ?? '',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-          ],
+              // SizedBox(height: 16.0),
+              Center(
+                child: Text('by ${widget.campaignData['companyName'] as String? ?? ''}', style:
+                TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic
+
+                ),),
+              ),
+              SizedBox(height: 16.0),
+
+
+              Center(
+                child: Text('Description', style:
+                TextStyle(
+                  fontSize: 20,
+                  decoration: TextDecoration.underline,
+
+                ),),
+              ),
+
+              Text(
+                widget.campaignData['description'] as String? ?? '',
+                style: TextStyle(fontSize: 18, ),
+                textAlign: TextAlign.justify,
+
+
+              ),
+              SizedBox(height: 8.0),
+
+              Text(
+                "Creator's Location (Preferred): ${widget.campaignData['location'] as String? ?? ''}",
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                "Area of Expertise: ${widget.campaignData['niche'] as String? ?? ''}",
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                "No. of Creators Wanted:  ${widget.campaignData['count'].toString()}",
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                "Budget: Rs.${widget.campaignData['budget'] as String? ?? ''}",
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 25),
+
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (!_workRequestSent) {
+                      _showConfirmationPopup(
+                        context,
+                        "Are you sure you want to work together? ",
+                      );
+                    } else {
+                      // Toggle back to "Let's work together" when clicked again
+                      setState(() {
+                        _showCancellationPopup(
+                          context,
+                          "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?",
+                        );
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.teal,
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _workRequestSent
+                          ? 'Work Request Sent'
+                          : "Let's Work Together",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -343,12 +545,12 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
   postDetailsToFirestore() async {
 
     WorkRequestModel workRequestModel = WorkRequestModel(
-        senderId: widget.userModel.email,
-        receiverId:widget.campaignData['userId'] as String? ?? '',
-        status: 'Pending',
-        fname: widget.userModel.firstName,
-        mname: widget.userModel.middleName,
-        lname: widget.userModel.lastName,
+      senderId: widget.userModel.email,
+      receiverId:widget.campaignData['userId'] as String? ?? '',
+      status: 'Pending',
+      fname: widget.userModel.firstName,
+      mname: widget.userModel.middleName,
+      lname: widget.userModel.lastName,
     );
 
     try {
@@ -553,66 +755,306 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
 
 }
 
-class ProfilePage extends StatelessWidget {
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  File? _image;
+  String imageUrl = '';
+  final imagePicker = ImagePicker();
+  Key _imageKey = UniqueKey();
+
+  Future<void> imagePickerMethod() async {
+    XFile? localFile =
+    await imagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (localFile != null) {
+        _image = File(localFile.path);
+        uploadPicture();
+        // You can add your own UI feedback here
+      } else {
+        // You can add your own UI feedback here
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          if (snapshot.data == null) {
-            return Center(child: Text('You are not authenticated.'));
-          }
+    User? user = _auth.currentUser;
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Profile'),
-              centerTitle: true,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Welcome, ${snapshot.data!.email}!'),
-                  FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(snapshot.data!.uid)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        final userData =
-                        snapshot.data!.data() as Map<String, dynamic>;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+        centerTitle: true,
+        backgroundColor: Colors.teal, // Teal theme
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Display Profile Picture
+            FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user?.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final userData =
+                  snapshot.data!.data() as Map<String, dynamic>;
+                  String profileImageUrl =
+                      userData['profileImage'] as String? ?? '';
 
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  // Display the profile picture or a default image
+                  Widget profileImageWidget = profileImageUrl.isEmpty
+                      ? Icon(
+                    Icons.account_circle,
+                    size: 100,
+                    color: Colors.grey,
+                  )
+                      : CircleAvatar(
+                    radius: 50,
+                    key: _imageKey,
+                    backgroundImage: NetworkImage(profileImageUrl),
+                  );
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Profile Picture
+                      GestureDetector(
+                        onTap: () {
+                          imagePickerMethod();
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
                           children: [
-                            Text('First Name: ${userData['firstName']}'),
-                            Text('Last Name: ${userData['lastName']}'),
-                            Text('Phone: ${userData['phone']}'),
-                            Text('Address: ${userData['address']}'),
+                            Container(
+                              // width: 140,
+                              // height: 140,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.teal, // Teal border color
+                                  width: 5.0,
+                                ),
+                              ),
+                              child: profileImageWidget,
+                            ),
+                            Positioned(
+                              bottom: 5,
+                              right: -15,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.black, // Black button color
+                                  shape: CircleBorder(),
+                                ),
+                                onPressed: () {
+                                  imagePickerMethod();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      // Full Namea
+                      Text(
+                        '${userData['firstName'] ?? ''}${userData['middleName']?? '' } ${userData['lastName'] ?? ''}',
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal), // Teal color
+                      ),
+
+                      SizedBox(height: 10),
+
+                      // Email
+                      Text(user?.email ?? '',
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.black87)),
+
+                      SizedBox(height: 10),
+
+                      // Phone
+                      Text(userData['phone'] ?? '',
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.black87)),
+
+                      SizedBox(height: 10),
+
+                      // Address
+                      Text(userData['address'] ?? '',
+                          style: TextStyle(
+                              fontSize: 16, color: Colors.black87)),
+
+                      SizedBox(height: 10),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildSocialMediaColumn('assets/images/fb_logo.png', userData['facebook'] as String? ?? ''),
+                          SizedBox(width: 10,),
+
+                          _buildSocialMediaColumn('assets/images/insta_logo.png', userData['instagram'] as String? ?? ''),
+                          SizedBox(width: 10,),
+
+                          _buildSocialMediaColumn('assets/images/youtube_logo.png', userData['youtube'] as String? ?? ''),
+                          SizedBox(width: 10,),
+
+
+                        ],
+                      ),
+
+                      // SizedBox(height: 10),
+
+                      // Description
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.teal, // Teal border color
+                            // width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                          color: Colors.grey.shade100, // Light grey background
+                        ),
+                        padding: EdgeInsets.all(16.0),
+                        margin: EdgeInsets.only(top: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'About Me:',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal), // Teal color
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              userData['description'] ?? '',
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black87),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+                    ],
+                  );
+                }
+              },
             ),
-          );
-        }
-      },
+          ],
+        ),
+      ),
     );
   }
+
+  Future<String?> uploadPicture() async {
+    String fileName = _image!.path.split('/').last;
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    Reference referenceDirImages = referenceRoot.child('profile_images');
+    Reference referenceImageToUpload = referenceDirImages.child(fileName);
+
+    try {
+      await referenceImageToUpload.putFile(_image!);
+      imageUrl = await referenceImageToUpload.getDownloadURL();
+      await postDetailsToFirestore();
+      // You can add your own UI feedback here
+    } catch (error) {
+      print('Error uploading image: $error');
+      // You can add your own UI feedback here
+      return null;
+    }
+  }
+
+  Future<void> postDetailsToFirestore() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    try {
+      await user?.updateProfile(photoURL: imageUrl);
+
+      if (user != null) {
+        await firebaseFirestore.collection("users").doc(user.uid).update({
+          'profileImage': imageUrl,
+        });
+      }
+
+      setState(() {
+        _imageKey = UniqueKey(); // Force refresh the image
+      });
+
+      // You can add your own UI feedback here
+    } catch (e) {
+      print('Navigation error: $e');
+      // You can add your own UI feedback here
+    }
+  }
 }
+
+// Function to add social media links
+Widget _buildSocialMediaColumn(String imagePath, String mediaUrl) {
+  return InkWell(
+    onTap: () {
+      _launchSocialMedia(mediaUrl);
+    },
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset(imagePath, height: 30, width: 35),
+        SizedBox(height: 10),
+      ],
+    ),
+  );
+}
+
+// Function to launch Social Medias
+void _launchSocialMedia(String mediaUrl) async {
+  try {
+    await launch(
+      mediaUrl,
+      forceSafariVC: false,
+      universalLinksOnly: true,
+    );
+  } catch (e) {
+    print('Error launching media url : $e');
+  }
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 class NotificationPage extends StatefulWidget {
   final UserModel userModel;
@@ -671,7 +1113,7 @@ class _NotificationPageState extends State<NotificationPage> {
             );
           } else if (snapshot.data!.isEmpty) {
             return Center(
-              child: Text('You have no any notifications yet.'),
+              child: Text('You have no any notificaitons yet.'),
             );
           } else {
             List<DocumentSnapshot> notifications = snapshot.data!;
@@ -686,6 +1128,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       NotificationItem(
 
                         //name should come of company
+                        // profileImage: notification['profileImage'],
                         name: notification['fname'],
                         status: notification['status'],
                         userModel: widget.userModel,
@@ -706,7 +1149,11 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 class NotificationItem extends StatelessWidget {
+  // final String profileImage;
   final String name;
   final String status;
   final UserModel userModel;
@@ -715,6 +1162,7 @@ class NotificationItem extends StatelessWidget {
   final void Function() refreshPage;
 
   NotificationItem({
+    // required this.profileImage,
     required this.name,
     required this.status,
     required this.userModel,
@@ -733,7 +1181,8 @@ class NotificationItem extends StatelessWidget {
       elevation: 2,
       child: ListTile(
         leading: CircleAvatar(
-          //profile image halnu parcha
+          // backgroundImage: NetworkImage(profileImage),
+
         ),
         title: Text(
           "${name}",
@@ -743,7 +1192,7 @@ class NotificationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 4),
-            Text(' Company wants to work with you'),
+            Text('wants to work with you'),
             SizedBox(height: 8),
             Text(
               status,
