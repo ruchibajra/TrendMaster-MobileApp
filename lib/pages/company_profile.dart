@@ -40,7 +40,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
       if (localFile != null) {
         _image = File(localFile.path);
         uploadPicture();
-        Fluttertoast.showToast(msg: "Selected");
+        Fluttertoast.showToast(msg: "Profile Picture Uploaded Successfully.");
       } else {
         Fluttertoast.showToast(msg: "No File Selected");
       }
@@ -58,10 +58,8 @@ class _CompanyProfileState extends State<CompanyProfile> {
       imageUrl = await referenceImageToUpload.getDownloadURL();
       await Future.delayed(Duration(seconds: 1));
       postDetailsToFirestore();
-      Fluttertoast.showToast(msg: "Upload Picture Successful");
     } catch (error) {
       print('Error uploading image: $error');
-      Fluttertoast.showToast(msg: "Upload Picture Function Failed");
       return null;
     }
   }
@@ -89,8 +87,6 @@ class _CompanyProfileState extends State<CompanyProfile> {
       setState(() {
         _imageKey = UniqueKey(); // Force refresh the image
       });
-
-      Fluttertoast.showToast(msg: "Image Uploaded Successfully");
     } catch (e) {
       Fluttertoast.showToast(msg: "Navigation error: $e");
     }
@@ -105,42 +101,61 @@ class _CompanyProfileState extends State<CompanyProfile> {
   }
 
   Widget buildContactInfoWithIcon(String label, IconData icon, String? info, {bool clickable = false}) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 24,
-          color: Colors.teal,
-        ),
-        SizedBox(width: 8),
-        if (clickable)
-          GestureDetector(
-            onTap: () {
-              launchURL(info);
-            },
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: Text(
-                '$label: $info',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          )
-        else
-          Text(
-            '$label: $info',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.normal,
-              color: Colors.black87,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(
+              icon,
+              size: 20,
+              color: Colors.teal,
             ),
           ),
-      ],
+          SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$label:',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 2),
+                if (clickable)
+                  GestureDetector(
+                    onTap: () {
+                      launchURL(info);
+                    },
+                    child: Text(
+                      info ?? "",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
+                else
+                  Text(
+                    info ?? "",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black87,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -174,23 +189,23 @@ class _CompanyProfileState extends State<CompanyProfile> {
         title: Text("Company Profile"),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: [
-                Stack(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: 90,
-                      height: 90,
+                      width: 120,
+                      height: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.black,
+                          color: Colors.teal,
                           width: 2.0,
                         ),
                       ),
@@ -225,75 +240,114 @@ class _CompanyProfileState extends State<CompanyProfile> {
                     ),
                   ],
                 ),
-                SizedBox(width: 17),
-                Column(
+              ),
+              SizedBox(height: 20),
+              // Personal Details Section
+              Card(
+                elevation: 3,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Personal Details',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      buildContactInfoWithIcon('Name', Icons.business, widget.companyModel.name),
+                      buildContactInfoWithIcon('Address', Icons.location_on, widget.companyModel.address),
+                      buildContactInfoWithIcon('Email', Icons.email, widget.companyModel.email),
+                      buildContactInfoWithIcon('Phone', Icons.phone, widget.companyModel.phone),
+                      buildContactInfoWithIcon('Website', Icons.link, widget.companyModel.website),
+
+                    ],
+                  ),
+                ),
+              ),
+              // Social Media Links Section
+              Card(
+                elevation: 3,
+                margin: EdgeInsets.symmetric(vertical: 5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Social Media Links',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        // color: Colors.grey[200],
+                        padding: EdgeInsets.all(20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildSocialMediaColumn('assets/images/fb_logo.png', widget.companyModel.facebook ?? ''),
+                            SizedBox(width: 10,),
+                            _buildSocialMediaColumn('assets/images/linkedin_logo.png', widget.companyModel.linkedin ?? ''),
+                            SizedBox(width: 10,),
+                            _buildSocialMediaColumn('assets/images/twitter_logo.png', widget.companyModel.twitter?? ''),
+                            SizedBox(width: 10,),
+
+
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Company Description Section
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.grey.shade100,
+                ),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildContactInfoWithIcon('Name', Icons.business, widget.companyModel.name),
-                    buildContactInfoWithIcon('Address', Icons.location_on, widget.companyModel.address),
-                    buildContactInfoWithIcon('Email', Icons.email, widget.companyModel.email, clickable: true),
-                    buildContactInfoWithIcon('Phone', Icons.phone, widget.companyModel.phone),
-                    buildContactInfoWithIcon('Website', Icons.web, widget.companyModel.website, clickable: true),
-                    buildContactInfoWithIcon('Facebook', Icons.facebook, widget.companyModel.facebook, clickable: true),
-                    buildContactInfoWithIcon('LinkedIn', EvaIcons.linkedin, widget.companyModel.linkedin, clickable: true),
-                    buildContactInfoWithIcon('Twitter', EvaIcons.twitter, widget.companyModel.twitter, clickable: true),
-                    SizedBox(height: 20),
+                    Text(
+                      'Company Description',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      widget.companyModel.description ?? "",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1.0,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                color: Colors.grey.shade100,
               ),
-              padding: EdgeInsets.all(16.0),
-              margin: EdgeInsets.only(top: 16.0),
-              child: Text(
-                widget.companyModel.description ?? "",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            SizedBox(height: 50),
-            Divider(
-              color: Colors.black87,
-              thickness: 1,
-              height: 20,
-              indent: 0,
-              endIndent: 0,
-            ),
-            SizedBox(height: 20),
-            // Center(
-            //   child: Text(
-            //     "Gallery",
-            //     style: TextStyle(
-            //       fontSize: 18,
-            //       fontWeight: FontWeight.bold,
-            //       color: Colors.black87,
-            //     ),
-            //   ),
-            // ),
-            // SingleChildScrollView(
-            //   scrollDirection: Axis.horizontal,
-            //   child: Row(
-            //     children: List.generate(
-            //       galleryImages.length,
-            //           (index) => Container(
-            //         color: Colors.teal,
-            //         child: galleryImages[index],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -343,4 +397,38 @@ class _CompanyProfileState extends State<CompanyProfile> {
       ),
     );
   }
+
+// Function to add social media links
+  Widget _buildSocialMediaColumn(String imagePath, String mediaUrl) {
+    return InkWell(
+      onTap: () {
+        _launchSocialMedia(mediaUrl);
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(imagePath, height: 30, width: 35),
+          SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+// Function to launch Social Medias
+  void _launchSocialMedia(String mediaUrl) async {
+    try {
+      await launch(
+        mediaUrl,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+    } catch (e) {
+      print('Error launching media url : $e');
+    }
+  }
+
+
 }
+
+

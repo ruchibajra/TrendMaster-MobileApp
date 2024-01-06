@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../model/user_model.dart';
 import 'company_homepage.dart';
 import 'company_profile.dart';
@@ -325,5 +326,6 @@ class NotificationItem extends StatelessWidget {
     } catch (e) {
       print('Error updating work request status: $e');
     }
+    Fluttertoast.showToast(msg: '${companyModel.uid}');
   }
 }

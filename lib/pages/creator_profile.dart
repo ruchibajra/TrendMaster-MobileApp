@@ -35,7 +35,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   Future<DocumentSnapshot?> _fetchWorkRequestData() async {
     try {
       // Get a reference to the 'work_requests' collection
-      CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+      CollectionReference workRequestsCollection =
+          firebaseFirestore.collection('work_requests');
 
       // Use the where clause to filter the documents based on creator and company emails
       QuerySnapshot workRequestsQuery = await workRequestsCollection
@@ -47,7 +48,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
         DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
 
         setState(() {
-          _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+          _fetchedWorkRequest = WorkRequestModel.fromMap(
+              workRequestDoc.data() as Map<String, dynamic>);
         });
       } else {
         print('No matching work request found');
@@ -59,7 +61,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
     setState(() {
-      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
+      _workRequestSent =
+          workRequestDoc != null && workRequestDoc['status'] == 'Pending';
     });
   }
 
@@ -103,7 +106,15 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage('assets/images/logo.png'),
+                      backgroundColor: Colors.transparent,
+                      child: ClipOval(
+                        child: Image.network(
+                          "${widget.userModel.profileImage ?? ""}",
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -326,30 +337,16 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Function to add social media links
   Widget _buildSocialMediaColumn(String imagePath, String followers) {
     return InkWell(
       onTap: () {
         if (imagePath.contains('fb_logo.png')) {
-          _launchSocialMedia('https://www.facebook.com/profile.php?id=100008392064480');
+          _launchSocialMedia("${widget.userModel.facebook}");
         } else if (imagePath.contains('insta_logo.png')) {
-          _launchSocialMedia('https://www.instagram.com/ruuuchi.b/');
+          _launchSocialMedia("${widget.userModel.instagram}");
         } else if (imagePath.contains('youtube_logo.png')) {
-          _launchSocialMedia('https://www.youtube.com/watch?v=4T7HwLGNiuw&ab_channel=ChillVibes');
+          _launchSocialMedia("${widget.userModel.youtube}");
         }
       },
       child: Column(
@@ -393,16 +390,15 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
   }
 
   postDetailsToFirestore() async {
-
     WorkRequestModel workRequestModel = WorkRequestModel(
         senderId: widget.companyModel.email,
         receiverId: widget.userModel.email,
         fname: widget.companyModel.name,
-        status: 'Pending'
-    );
+        status: 'Pending');
 
     try {
-      CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+      CollectionReference workRequestsCollection =
+          firebaseFirestore.collection('work_requests');
 
       // Use the where clause to filter the documents based on creator and company emails
       QuerySnapshot workRequestsQuery = await workRequestsCollection
@@ -435,11 +431,23 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             padding: EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Text(
+                  'Cancellation',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red, // Title in red color
+                  ),
+                ),
+                SizedBox(height: 10),
                 Text(
                   message,
                   style: TextStyle(fontSize: 18, color: Colors.black),
@@ -450,10 +458,13 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
+                        primary: Colors.teal, // Teal background color
+                        side: BorderSide(color: Colors.red), // Red border
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       onPressed: () {
-                        // Update the status to "Cancelled" in Firestore
                         if (_workRequestSent == true) {
                           _updateWorkRequestStatus('Cancelled');
                         }
@@ -462,14 +473,16 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                           _workRequestSent = false;
                         });
                         Navigator.of(context).pop();
-                        _showToast(
-                            "Work request cancelled successfully"); // Show toast here
+                        _showToast("Work request cancelled successfully");
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         primary: Colors.teal, // Teal color for the "No" button
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -549,10 +562,10 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
   // Function to update the status in Firestore based on conditions
   void _updateWorkRequestStatus(String newStatus) async {
-
     if (_workRequestSent == true) {
       try {
-        CollectionReference workRequestsCollection = firebaseFirestore.collection('work_requests');
+        CollectionReference workRequestsCollection =
+            firebaseFirestore.collection('work_requests');
 
         // Use the where clause to filter the documents based on creator and company emails
         QuerySnapshot workRequestsQuery = await workRequestsCollection
@@ -572,7 +585,8 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
 
           // Optional: You can also update the local state if needed
           setState(() {
-            _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+            _fetchedWorkRequest = WorkRequestModel.fromMap(
+                workRequestDoc.data() as Map<String, dynamic>);
           });
         } else {
           print('No matching work request found');

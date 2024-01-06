@@ -39,6 +39,9 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     return creators;
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     key: _scaffoldKey;
@@ -282,6 +285,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                         (BuildContext context, int index) {
                       UserModel creator = creatorList[index];
 
+
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -482,50 +487,11 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
         ],
       ),
     );
+
   }
 
-  // Function to add social media links
-  Widget _buildSocialMediaColumn(String imagePath, String followers) {
-    return InkWell(
-      onTap: () {
-        if (imagePath.contains('fb_logo.png')) {
-          _launchSocialMedia('https://www.facebook.com/profile.php?id=100008392064480');
-        } else if (imagePath.contains('insta_logo.png')) {
-          _launchSocialMedia('https://www.instagram.com/ruuuchi.b/');
-        } else if (imagePath.contains('youtube_logo.png')) {
-          _launchSocialMedia('https://www.youtube.com/watch?v=4T7HwLGNiuw&ab_channel=ChillVibes');
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(imagePath, height: 50, width: 50),
-          SizedBox(height: 10),
-          Text(
-            followers,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-// Function to launch Social Medias
-  void _launchSocialMedia(String mediaUrl) async {
-    try {
-      await launch(
-        mediaUrl,
-        forceSafariVC: false,
-        universalLinksOnly: true,
-      );
-    } catch (e) {
-      print('Error launching media url : $e');
-    }
-  }
+
 
   void _showLogoutPopup(BuildContext context) {
     showDialog(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,11 +44,15 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
 
     return Scaffold(
       appBar: AppBar(
+
         title: Text("For You"),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white), // Set the icon color to white
+
       ),
       body: _buildBody(),
       drawer: Drawer(
+
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -56,49 +60,72 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
               children: [
                 Container(
                   color: Colors.teal,
-                  child: Row(
+                  child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          FontAwesomeIcons.person,
-                          size: 50,
-                          color: Colors.teal,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50.0),
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: Container(
+                              width: 100.0,
+                              height: 100.0,
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(
                         width: 10,
-                        height: 200,
+                        height: 20,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Hello \n ${widget.userModel.firstName}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.red,
-                                size: 16,
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                '${widget.userModel.address}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+
+                                SizedBox(width: 5),
+                                Text( "Welcome Creator !",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+
+                              ],
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  '${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -158,19 +185,19 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.home , color: Colors.white70,),
                 onPressed: () {
                   _onTabTapped(0);
                 },
               ),
               IconButton(
-                icon: Icon(Icons.notifications),
+                icon: Icon(Icons.notifications, color: Colors.white70,),
                 onPressed: () {
                   _onTabTapped(2);
                 },
               ),
               IconButton(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.person, color: Colors.white70,),
                 onPressed: () {
                   _onTabTapped(1);
                 },
@@ -317,9 +344,9 @@ class _CreatorHomePageState extends State<CreatorHomePage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.white,
+                              primary: Colors.teal,
                             ),
-                            child: Text("View Campaign"),
+                            child: Text("View Campaign", style: TextStyle(color: Colors.white),),
                           ),
                         ),
                       ],
@@ -377,6 +404,8 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
       appBar: AppBar(
         title: Text("Campaign Details"),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white), // Set the icon color to white
+
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -478,7 +507,7 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
                       setState(() {
                         _showCancellationPopup(
                           context,
-                          "Are you sure you want to cancel your work request with ${widget.userModel.firstName ?? ''} ${widget.userModel.middleName ?? ''} ${widget.userModel.lastName ?? ''}?",
+                          "Are you sure you want to cancel your work request with ${widget.campaignData['companyName'] ?? ''}?",
                         );
                       });
                     }
@@ -592,6 +621,17 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+
+                Text(
+                  'Cancellation',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red, // Title in red color
+                  ),
+                ),
+                SizedBox(height: 10),
+
                 Text(
                   message,
                   style: TextStyle(fontSize: 18, color: Colors.black),
@@ -602,7 +642,8 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
+                        primary: Colors.teal, // Teal background color
+                        side: BorderSide(color: Colors.red), // Red border
                       ),
                       onPressed: () {
                         // Update the status to "Cancelled" in Firestore
@@ -791,179 +832,181 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         backgroundColor: Colors.teal, // Teal theme
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Display Profile Picture
-            FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(user?.uid)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final userData =
-                  snapshot.data!.data() as Map<String, dynamic>;
-                  String profileImageUrl =
-                      userData['profileImage'] as String? ?? '';
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Display Profile Picture
+              FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user?.uid)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    final userData =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                    String profileImageUrl =
+                        userData['profileImage'] as String? ?? '';
 
-                  // Display the profile picture or a default image
-                  Widget profileImageWidget = profileImageUrl.isEmpty
-                      ? Icon(
-                    Icons.account_circle,
-                    size: 100,
-                    color: Colors.grey,
-                  )
-                      : CircleAvatar(
-                    radius: 50,
-                    key: _imageKey,
-                    backgroundImage: NetworkImage(profileImageUrl),
-                  );
+                    // Display the profile picture or a default image
+                    Widget profileImageWidget = profileImageUrl.isEmpty
+                        ? Icon(
+                      Icons.account_circle,
+                      size: 100,
+                      color: Colors.grey,
+                    )
+                        : CircleAvatar(
+                      radius: 50,
+                      key: _imageKey,
+                      backgroundImage: NetworkImage(profileImageUrl),
+                    );
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Profile Picture
-                      GestureDetector(
-                        onTap: () {
-                          imagePickerMethod();
-                        },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              // width: 140,
-                              // height: 140,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.teal, // Teal border color
-                                  width: 5.0,
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Profile Picture
+                        GestureDetector(
+                          onTap: () {
+                            imagePickerMethod();
+                          },
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                // width: 140,
+                                // height: 140,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.teal, // Teal border color
+                                    width: 5.0,
+                                  ),
                                 ),
+                                child: profileImageWidget,
                               ),
-                              child: profileImageWidget,
-                            ),
-                            Positioned(
-                              bottom: 5,
-                              right: -15,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.black, // Black button color
-                                  shape: CircleBorder(),
-                                ),
-                                onPressed: () {
-                                  imagePickerMethod();
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
+                              Positioned(
+                                bottom: 5,
+                                right: -15,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.black, // Black button color
+                                    shape: CircleBorder(),
+                                  ),
+                                  onPressed: () {
+                                    imagePickerMethod();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 20),
-
-                      // Full Namea
-                      Text(
-                        '${userData['firstName'] ?? ''}${userData['middleName']?? '' } ${userData['lastName'] ?? ''}',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal), // Teal color
-                      ),
-
-                      SizedBox(height: 10),
-
-                      // Email
-                      Text(user?.email ?? '',
-                          style: TextStyle(
-                              fontSize: 16, color: Colors.black87)),
-
-                      SizedBox(height: 10),
-
-                      // Phone
-                      Text(userData['phone'] ?? '',
-                          style: TextStyle(
-                              fontSize: 16, color: Colors.black87)),
-
-                      SizedBox(height: 10),
-
-                      // Address
-                      Text(userData['address'] ?? '',
-                          style: TextStyle(
-                              fontSize: 16, color: Colors.black87)),
-
-                      SizedBox(height: 10),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildSocialMediaColumn('assets/images/fb_logo.png', userData['facebook'] as String? ?? ''),
-                          SizedBox(width: 10,),
-
-                          _buildSocialMediaColumn('assets/images/insta_logo.png', userData['instagram'] as String? ?? ''),
-                          SizedBox(width: 10,),
-
-                          _buildSocialMediaColumn('assets/images/youtube_logo.png', userData['youtube'] as String? ?? ''),
-                          SizedBox(width: 10,),
-
-
-                        ],
-                      ),
-
-                      // SizedBox(height: 10),
-
-                      // Description
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.teal, // Teal border color
-                            // width: 1.0,
+                            ],
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          color: Colors.grey.shade100, // Light grey background
                         ),
-                        padding: EdgeInsets.all(16.0),
-                        margin: EdgeInsets.only(top: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                        SizedBox(height: 20),
+
+                        // Full Namea
+                        Text(
+                          '${userData['firstName'] ?? ''}${userData['middleName']?? '' } ${userData['lastName'] ?? ''}',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal), // Teal color
+                        ),
+
+                        SizedBox(height: 10),
+
+                        // Email
+                        Text(user?.email ?? '',
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.black87)),
+
+                        SizedBox(height: 10),
+
+                        // Phone
+                        Text(userData['phone'] ?? '',
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.black87)),
+
+                        SizedBox(height: 10),
+
+                        // Address
+                        Text(userData['address'] ?? '',
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.black87)),
+
+                        SizedBox(height: 10),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'About Me:',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal), // Teal color
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              userData['description'] ?? '',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.black87),
-                            ),
+                            _buildSocialMediaColumn('assets/images/fb_logo.png', userData['facebook'] as String? ?? ''),
+                            SizedBox(width: 10,),
+
+                            _buildSocialMediaColumn('assets/images/insta_logo.png', userData['instagram'] as String? ?? ''),
+                            SizedBox(width: 10,),
+
+                            _buildSocialMediaColumn('assets/images/youtube_logo.png', userData['youtube'] as String? ?? ''),
+                            SizedBox(width: 10,),
+
+
                           ],
                         ),
-                      ),
 
-                      SizedBox(height: 20),
-                    ],
-                  );
-                }
-              },
-            ),
-          ],
+                        // SizedBox(height: 10),
+
+                        // Description
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.teal, // Teal border color
+                              // width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                            color: Colors.grey.shade100, // Light grey background
+                          ),
+                          padding: EdgeInsets.all(16.0),
+                          margin: EdgeInsets.only(top: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'About Me:',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.teal), // Teal color
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                userData['description'] ?? '',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black87),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 20),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -979,6 +1022,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await referenceImageToUpload.putFile(_image!);
       imageUrl = await referenceImageToUpload.getDownloadURL();
       await postDetailsToFirestore();
+      Fluttertoast.showToast(msg: 'Profile Picture Uploaded Successfully');
       // You can add your own UI feedback here
     } catch (error) {
       print('Error uploading image: $error');
@@ -1220,12 +1264,12 @@ class NotificationItem extends StatelessWidget {
                     onPressed: () {
                       _showDeclineConfirmationDialog(context);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Declined Work Request of: ${name}'),
-                        ),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     content: Text(
+                      //         'Declined Work what yar Request of: ${name}'),
+                      //   ),
+                      // );
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Colors.red),
