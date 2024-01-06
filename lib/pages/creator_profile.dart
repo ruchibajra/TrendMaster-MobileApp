@@ -461,7 +461,6 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
                         setState(() {
                           _workRequestSent = false;
                         });
-                        // postDetailsToFirestore();
                         Navigator.of(context).pop();
                         _showToast(
                             "Work request cancelled successfully"); // Show toast here

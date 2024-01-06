@@ -371,40 +371,6 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
     });
   }
 
-  Future<DocumentSnapshot?> _fetchWorkRequestData() async {
-    try {
-      // Get a reference to the 'work_requests' collection
-      CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign_requests');
-
-      // Use the where clause to filter the documents based on creator and company emails
-      QuerySnapshot workRequestsQuery = await workRequestsCollection
-          .where('receiverId', isEqualTo: widget.campaignData['userId'] as String? ?? '')
-          .where('senderId', isEqualTo: widget.userModel.email )
-          .get();
-
-      // Check if there are any matching documents
-      if (workRequestsQuery.docs.isNotEmpty) {
-        // Assuming you only expect one document, you can access the first one
-        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
-
-        // Convert the document data to a WorkRequestModel object
-        setState(() {
-          _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
-        });
-      } else {
-        print('No matching work request found');
-      }
-    } catch (e) {
-      print('Error fetching work request data: $e');
-    }
-  }
-
-  void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
-    setState(() {
-      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -581,6 +547,40 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
     }
   }
 
+  Future<DocumentSnapshot?> _fetchWorkRequestData() async {
+    try {
+      // Get a reference to the 'work_requests' collection
+      CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign_requests');
+
+      // Use the where clause to filter the documents based on creator and company emails
+      QuerySnapshot workRequestsQuery = await workRequestsCollection
+          .where('receiverId', isEqualTo: widget.campaignData['userId'] as String? ?? '')
+          .where('senderId', isEqualTo: widget.userModel.email )
+          .get();
+
+      // Check if there are any matching documents
+      if (workRequestsQuery.docs.isNotEmpty) {
+        // Assuming you only expect one document, you can access the first one
+        DocumentSnapshot workRequestDoc = workRequestsQuery.docs.first;
+
+        // Convert the document data to a WorkRequestModel object
+        setState(() {
+          _fetchedWorkRequest = WorkRequestModel.fromMap(workRequestDoc.data() as Map<String, dynamic>);
+        });
+      } else {
+        print('No matching work request found');
+      }
+    } catch (e) {
+      print('Error fetching work request data: $e');
+    }
+  }
+
+  void _updateWorkRequestSent(DocumentSnapshot? workRequestDoc) {
+    setState(() {
+      _workRequestSent = workRequestDoc != null && workRequestDoc['status'] == 'Pending';
+    });
+  }
+
   // Function to show cancellation confirmation dialog in the center
   void _showCancellationPopup(BuildContext context, String message) {
     showDialog(
@@ -613,7 +613,6 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
                         setState(() {
                           _workRequestSent = false;
                         });
-                        postDetailsToFirestore();
                         Navigator.of(context).pop();
                         _showToast(
                             "Work request cancelled successfully"); // Show toast here
@@ -702,14 +701,9 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
 
   // Function to update the status in Firestore based on conditions
   void _updateWorkRequestStatus(String newStatus) async {
-    Fluttertoast.showToast(msg: 'out function');
-
     if (_workRequestSent == true) {
-      Fluttertoast.showToast(msg: 'inside the function');
-      Text('hello');
       try {
-        CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign'
-            '_requests');
+        CollectionReference workRequestsCollection = firebaseFirestore.collection('campaign_requests');
 
         // Use the where clause to filter the documents based on creator and company emails
         QuerySnapshot workRequestsQuery = await workRequestsCollection
