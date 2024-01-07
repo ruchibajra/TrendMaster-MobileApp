@@ -1170,6 +1170,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         // profileImage: notification['profileImage'],
                         name: notification['fname'] ?? '',
                         status: notification['status'] ?? '',
+                        senderId: notification['senderId'] ?? '',
                         userModel: widget.userModel,
                         companyModel: CompanyModel(),
                         firebaseFirestore: firebaseFirestore,
@@ -1195,6 +1196,7 @@ class NotificationItem extends StatelessWidget {
   // final String profileImage;
   final String name;
   final String status;
+  final String senderId;
   final UserModel userModel;
   final CompanyModel companyModel;
   final FirebaseFirestore firebaseFirestore;
@@ -1204,6 +1206,7 @@ class NotificationItem extends StatelessWidget {
     // required this.profileImage,
     required this.name,
     required this.status,
+    required this.senderId,
     required this.userModel,
     required this.companyModel,
     required this.firebaseFirestore,
@@ -1244,7 +1247,7 @@ class NotificationItem extends StatelessWidget {
                 if (isWorkRequestPending)
                   ElevatedButton(
                     onPressed: () {
-                      _updateWorkRequestStatus('Accepted', context);
+                      _updateWorkRequestStatus('Accepted', context, senderId);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -1263,13 +1266,6 @@ class NotificationItem extends StatelessWidget {
                   OutlinedButton(
                     onPressed: () {
                       _showDeclineConfirmationDialog(context);
-
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text(
-                      //         'Declined Work what yar Request of: ${name}'),
-                      //   ),
-                      // );
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Colors.red),
@@ -1304,7 +1300,7 @@ class NotificationItem extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                _updateWorkRequestStatus('Declined', context);
+                _updateWorkRequestStatus('Declined', context, senderId);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -1326,13 +1322,15 @@ class NotificationItem extends StatelessWidget {
     );
   }
 
-  void _updateWorkRequestStatus(String newStatus, BuildContext context) async {
+  void _updateWorkRequestStatus(String newStatus, BuildContext context, String email) async {
     try {
       CollectionReference workRequestsCollection =
       firebaseFirestore.collection('work_requests');
 
       QuerySnapshot workRequestsQuery = await workRequestsCollection
           .where('receiverId', isEqualTo: userModel.email)
+          .where('senderId', isEqualTo: email)
+
           .get();
 
       if (workRequestsQuery.docs.isNotEmpty) {

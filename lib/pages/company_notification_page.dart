@@ -79,6 +79,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         mname: notification['mname'] ?? '',
                         lname: notification['lname'] ?? '',
                         status: notification['status'] ?? '',
+                        senderId: notification['senderId'] ?? '',
                         userModel: UserModel(),
                         companyModel: widget.companyModel,
                         firebaseFirestore: firebaseFirestore,
@@ -162,6 +163,7 @@ class NotificationItem extends StatelessWidget {
   final String mname;
   final String lname;
   final String status;
+  final String senderId;
   final UserModel userModel;
   final CompanyModel companyModel;
   final FirebaseFirestore firebaseFirestore;
@@ -173,6 +175,7 @@ class NotificationItem extends StatelessWidget {
     required this.mname,
     required this.lname,
     required this.status,
+    required this.senderId,
     required this.userModel,
     required this.companyModel,
     required this.firebaseFirestore,
@@ -213,7 +216,7 @@ class NotificationItem extends StatelessWidget {
                 if (isWorkRequestPending)
                   ElevatedButton(
                     onPressed: () {
-                      _updateWorkRequestStatus('Accepted', context);
+                      _updateWorkRequestStatus('Accepted', context, senderId );
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -262,7 +265,7 @@ class NotificationItem extends StatelessWidget {
         return AlertDialog(
           title: Text('Decline Work Request'),
           content: Text(
-            'You won\'t be able to accept the work request after declining. By tapping confirm, you will decline the work request sent by ${fname} ${mname} ${lname}. Are you sure you want to decline?',
+            'You won\'t be able to accept the work request ${senderId} declining. By tapping confirm, you will decline the work request sent by ${fname} ${mname} ${lname}. Are you sure you want to decline?',
           ),
           actions: [
             TextButton(
@@ -273,7 +276,7 @@ class NotificationItem extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                _updateWorkRequestStatus('Declined', context);
+                _updateWorkRequestStatus('Declined', context, senderId);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -295,13 +298,15 @@ class NotificationItem extends StatelessWidget {
     );
   }
 
-  void _updateWorkRequestStatus(String newStatus, BuildContext context) async {
+  void _updateWorkRequestStatus(String newStatus, BuildContext context, String email) async {
     try {
+      // Fluttertoast.showToast(msg: email);
       CollectionReference workRequestsCollection =
       firebaseFirestore.collection('campaign_requests');
 
       QuerySnapshot workRequestsQuery = await workRequestsCollection
           .where('receiverId', isEqualTo: companyModel.uid)
+          .where('senderId', isEqualTo: email)
           .get();
 
       if (workRequestsQuery.docs.isNotEmpty) {
