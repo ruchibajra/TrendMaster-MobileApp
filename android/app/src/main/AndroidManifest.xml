@@ -3,6 +3,11 @@
         android:label="trendmasterass2"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Add this meta-data for Google Sign-In -->
+        <meta-data
+            android:name="com.google.android.gms.auth.api.signin.client.649885100643-qud79gr4p3va5pt1bdtg904ue7s5pmkl.apps.googleusercontent.com"
+            android:value="649885100643-qud79gr4p3va5pt1bdtg904ue7s5pmkl.apps.googleusercontent.com" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
