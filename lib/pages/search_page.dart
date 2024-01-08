@@ -33,11 +33,9 @@ class _SearchPageState extends State<SearchPage> {
       }).toList();
     });
   }
-
   void _onSearchChanged() {
     String query = _searchController.text.toLowerCase();
     print(_searchController.text);
-    // print("old data" + _data.toString());
 
     List<UserModel> filteredList = _data
         .where((user) =>
@@ -101,8 +99,8 @@ class _SearchPageState extends State<SearchPage> {
           );
         },
       )
-          : Container()) // Display an empty container when _filteredData is empty
-          : Container(), // Display an empty container when search query is empty
+          : Container())
+          : Container(),
     );
   }
 }

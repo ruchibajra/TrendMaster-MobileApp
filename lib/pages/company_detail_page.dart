@@ -69,12 +69,15 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
   final imagePicker = ImagePicker();
   String? downloadUrl;
 
-  //image picking from our device
+  // Image picking from our device
   Future imagePickerMethod()async{
     ImagePicker imagePicker = ImagePicker();
+
+    // Open the device's gallery for image selection
     XFile? localFile = await imagePicker.pickImage(source: ImageSource.gallery);
     print('${localFile?.path}');
 
+    // Update UI state based on user's image selection
     setState(() {
       if(localFile != null){
         _image = File(localFile.path);
@@ -95,19 +98,12 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
     // Create a reference to storage root
     Reference referenceImageToUpload = referenceDirImages.child(fileName);
     try{
-      //Store the file
+      // Store the file
       await referenceImageToUpload.putFile(_image!);
       imageUrl= await referenceImageToUpload.getDownloadURL();
       // Add a small delay
       await Future.delayed(Duration(seconds: 1));
       await postDetailsToFirestore();
-
-      // // Navigate to the new page and pass the imageUrl
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => CheckImagePage(imageUrl: imageUrl),
-      //   ),
-      // );
 
     }catch(error){
       print('Error uploading image: $error');
@@ -115,6 +111,7 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
       return null;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

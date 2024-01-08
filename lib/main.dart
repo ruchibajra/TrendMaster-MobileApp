@@ -3,9 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 
-Future<void> main() async{
+Future<void> main() async {
+  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  // Initialize Firebase services
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print('Error initializing Firebase: $e');
+    // Handle initialization errors as needed
+  }
+
+  // Run the application
   runApp(const MyApp());
 }
 

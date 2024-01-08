@@ -36,13 +36,12 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
     ];
   }
 
+  // Function to post campaign details to Firebase
   postDetailsToFirebase() async{
+    // Accessing Firestore instance
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = _auth.currentUser;
 
-    // DocumentSnapshot campaignSnapshot =
-    // await firebaseFirestore.collection("campaign_details").doc(user?.uid).get();
-
+    // Creating a CampaignModel object with details from widget
     CampaignModel campaignModel = CampaignModel(
       title: widget.campaignModel.title ,
       description: widget.campaignModel.description,
@@ -54,13 +53,14 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
       userId: widget.companyModel.uid,
       companyName: widget.companyModel.name,
     );
+    // Adding campaign details to Firestore collection
     await firebaseFirestore
         .collection("campaign_details")
         .doc()
         .set(campaignModel.toMap());
-
     Fluttertoast.showToast(msg: "Campaign Created Successfully.");
 
+    // Navigating to the CompanySuccessPage with company details
     Navigator.of(context).push(
       MaterialPageRoute(builder:(context) => CompanySuccessPage(companyModel: widget.companyModel)),
     );
