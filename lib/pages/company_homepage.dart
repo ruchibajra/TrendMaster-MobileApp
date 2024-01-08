@@ -66,52 +66,72 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
               children: [
                 Container(
                   color: Colors.teal,
-                  child: Row(
+                  child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.only(top: 50.0),
                         child: CircleAvatar(
-                          radius: 35,
-                          backgroundColor: Colors.white,  // Set the background color of the circle
-                          child: Icon(
-                            FontAwesomeIcons.building,  // Organization icon from font_awesome_flutter
-                            size: 50,
-                            color: Colors.teal,
+                          radius: 50,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: Container(
+                              width: 100.0,
+                              height: 100.0,
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(
                         width: 10,
-                        height: 200,
+                        height: 20,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${widget.companyModel.name}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.red,
-                                size: 16,
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                '${widget.companyModel.address}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+
+                                SizedBox(width: 5),
+                                Text( "Welcome Company !",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+
+                              ],
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  '${widget.companyModel.name ?? ''}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

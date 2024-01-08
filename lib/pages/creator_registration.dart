@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendmasterass2/model/user_model.dart';
-import 'package:trendmasterass2/pages/company_homepage.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 
-enum Gender { Male, Female }
+TextEditingController passwordController = TextEditingController();
 
 class CreatorRegistration extends StatefulWidget {
   @override
@@ -20,7 +19,6 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController addressController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController instagramController = TextEditingController();
   TextEditingController youtubeController = TextEditingController();
@@ -29,13 +27,15 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   TextEditingController youtubeSubscriberController = TextEditingController();
   TextEditingController facebookSubscriberController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController rateController = TextEditingController(); // Added rateController
+  TextEditingController rateController = TextEditingController();
 
   String? selectedGender;
   List<String> selectedNiches = [];
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<Map<String, dynamic>> getNicheList() {
     return [
@@ -69,6 +69,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'First Name',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'First Name'),
         ),
         SizedBox(height: 10),
         TextFormField(
@@ -85,6 +86,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Last Name',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Last Name'),
         ),
         SizedBox(height: 10),
         Text(
@@ -99,6 +101,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Address',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Address'),
         ),
         SizedBox(height: 10),
         Text(
@@ -138,6 +141,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Email',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateEmail(value),
         ),
         SizedBox(height: 10),
         Text(
@@ -152,6 +156,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Phone',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Phone'),
         ),
         SizedBox(height: 10),
         Text(
@@ -167,6 +172,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Password',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validatePassword(value),
         ),
         SizedBox(height: 10,),
         TextFormField(
@@ -176,6 +182,7 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
             labelText: 'Confirm Password',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateConfirmPassword(value),
         ),
       ],
     );
@@ -382,8 +389,10 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
   }
 
   void signUp(String email, String password) async {
-    await _auth.createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => postDetailsToFirestore());
+    if (_formKey.currentState!.validate()) {
+      await _auth.createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => postDetailsToFirestore());
+    }
   }
 
   postDetailsToFirestore() async {
@@ -418,21 +427,42 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
 
     Fluttertoast.showToast(msg: "Account Created Successfully!");
 
-    Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => LoginPage()), (
-        route) => false);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Registration Completed"),
+          content: Text("Your account has been created successfully."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Influencer Registration'),
+        title: const Text('Creator Registration'),
         backgroundColor: Colors.teal,
+        iconTheme: IconThemeData(color: Colors.white), // Set the icon color to white
+
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
         child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -465,4 +495,41 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       ),
     );
   }
+}
+
+String? validateTextField(String? value, String fieldName) {
+  if (value == null || value.isEmpty) {
+    return '$fieldName is required';
+  }
+  return null;
+}
+
+String? validateEmail(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Email  is required';
+  }
+  if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$").hasMatch(value)) {
+    return 'Enter a valid email address';
+  }
+  return null;
+}
+
+String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Password is required';
+  }
+  if (value.length < 6) {
+    return 'Password must be at least 6 characters';
+  }
+  return null;
+}
+
+String? validateConfirmPassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Confirm Password is required';
+  }
+  if (value != passwordController.text) {
+    return 'Passwords do not match';
+  }
+  return null;
 }

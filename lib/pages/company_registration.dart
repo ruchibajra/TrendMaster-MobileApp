@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trendmasterass2/model/user_model.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
-
-import 'company_homepage.dart';
 
 class CompanyRegistrationScreen extends StatefulWidget {
   @override
@@ -31,14 +28,14 @@ class _CompanyRegistrationScreenState
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Widget companyInformation(){
+  Widget companyInformation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(height: 20),
         Text(
-          'Company Information',
+          'Information',
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -50,6 +47,7 @@ class _CompanyRegistrationScreenState
             labelText: 'Company Name',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Company Name'),
         ),
         SizedBox(height: 10),
 
@@ -59,6 +57,7 @@ class _CompanyRegistrationScreenState
             labelText: 'Address',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Address'),
         ),
         SizedBox(height: 10),
         TextFormField(
@@ -67,6 +66,7 @@ class _CompanyRegistrationScreenState
             labelText: 'Email',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateEmail(value),
         ),
         SizedBox(height: 10),
         TextFormField(
@@ -75,6 +75,7 @@ class _CompanyRegistrationScreenState
             labelText: 'Phone',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateTextField(value, 'Phone'),
         ),
         SizedBox(height: 10),
         TextFormField(
@@ -84,6 +85,7 @@ class _CompanyRegistrationScreenState
             labelText: 'Password',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validatePassword(value),
         ),
         SizedBox(height: 20),
         TextFormField(
@@ -93,14 +95,14 @@ class _CompanyRegistrationScreenState
             labelText: 'Confirm Password',
             border: OutlineInputBorder(),
           ),
+          validator: (value) => validateConfirmPassword(value),
         ),
         SizedBox(height: 20),
       ],
     );
   }
 
-  //Online Presence
-  Widget onlinePresence(){
+  Widget onlinePresence() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -113,8 +115,6 @@ class _CompanyRegistrationScreenState
             fontWeight: FontWeight.bold,
           ),
         ),
-        // You can add a file upload field for the company logo here.
-        // Example: FileUploadWidget(),
         SizedBox(height: 20),
         Text(
           'Website URL (if applicable)',
@@ -132,11 +132,9 @@ class _CompanyRegistrationScreenState
         SizedBox(height: 20),
       ],
     );
-
   }
 
-  //Social Media Profiles
-  Widget socialMediaProfile(){
+  Widget socialMediaProfile() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +146,7 @@ class _CompanyRegistrationScreenState
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10), // Added spacing here
+        SizedBox(height: 10),
         TextFormField(
           controller: facebookController,
           decoration: InputDecoration(
@@ -156,7 +154,7 @@ class _CompanyRegistrationScreenState
             border: OutlineInputBorder(),
           ),
         ),
-        SizedBox(height: 10), // Added spacing here
+        SizedBox(height: 10),
         TextFormField(
           controller: twitterController,
           decoration: InputDecoration(
@@ -164,7 +162,7 @@ class _CompanyRegistrationScreenState
             border: OutlineInputBorder(),
           ),
         ),
-        SizedBox(height: 10), // Added spacing here
+        SizedBox(height: 10),
         TextFormField(
           controller: linkedinController,
           decoration: InputDecoration(
@@ -177,7 +175,6 @@ class _CompanyRegistrationScreenState
     );
   }
 
-  // Description Section
   Widget buildDescription() {
     return Column(
       children: [
@@ -202,11 +199,12 @@ class _CompanyRegistrationScreenState
     );
   }
 
-  //Signup Function
   void signUp(String email, String password) async {
-    // if (_formKey.currentState!.validate)
-    await _auth.createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => postDetailsToFirestore());
+    if (_formKey.currentState!.validate()) {
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => postDetailsToFirestore());
+    }
   }
 
   postDetailsToFirestore() async {
@@ -234,49 +232,108 @@ class _CompanyRegistrationScreenState
 
     Fluttertoast.showToast(msg: "Account Created Successfully!");
 
-    Navigator.pushAndRemoveUntil(
-        (context), MaterialPageRoute(builder: (context) => LoginPage()), (
-        route) => false);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Registration Completed"),
+          content: Text("Your company account has been created successfully."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
+  String? validateTextField(String? value, String fieldName) {
+    if (value == null || value.isEmpty) {
+      return '$fieldName is required';
+    }
+    return null;
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    if (!RegExp(r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$").hasMatch(value)) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  String? validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Confirm Password is required';
+    }
+    if (value != passwordController.text) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Influencer Registration'),
+        title: const Text('Company Registration'),
         backgroundColor: Colors.teal,
+        iconTheme: IconThemeData(color: Colors.white), // Set the icon color to white
+
       ),
       body: SingleChildScrollView(
         child: Form(
+          key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(9.0),
             child: Column(
-                children: <Widget>[
-                  companyInformation(),
-                  onlinePresence(),
-                  socialMediaProfile(),
-                  buildDescription(),
-                  SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        signUp(emailController.text, passwordController.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
-                        minimumSize: Size(150, 50),
-                      ),
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                        ),
+              children: <Widget>[
+                companyInformation(),
+                onlinePresence(),
+                socialMediaProfile(),
+                buildDescription(),
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      signUp(emailController.text, passwordController.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.teal,
+                      minimumSize: Size(150, 50),
+                    ),
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
                       ),
                     ),
                   ),
-                ]
+                ),
+              ],
             ),
           ),
         ),

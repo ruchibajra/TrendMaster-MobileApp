@@ -74,7 +74,10 @@ class _CompanyProfileState extends State<CompanyProfile> {
         image: imageUrl.toString(),
       );
 
-      await firebaseFirestore.collection("image_store").doc().set(imageModel.toMap());
+      await firebaseFirestore
+          .collection("image_store")
+          .doc()
+          .set(imageModel.toMap());
 
       await user?.updateProfile(photoURL: imageUrl);
 
@@ -100,7 +103,8 @@ class _CompanyProfileState extends State<CompanyProfile> {
     }
   }
 
-  Widget buildContactInfoWithIcon(String label, IconData icon, String? info, {bool clickable = false}) {
+  Widget buildContactInfoWithIcon(String label, IconData icon, String? info,
+      {bool clickable = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -214,8 +218,10 @@ class _CompanyProfileState extends State<CompanyProfile> {
                         backgroundImage: _image != null
                             ? Image.file(_image!, key: _imageKey).image
                             : user?.photoURL != null
-                            ? Image.network(user!.photoURL!, key: _imageKey).image
-                            : AssetImage('assets/images/company_h1.png') as ImageProvider<Object>?,
+                            ? Image.network(user!.photoURL!, key: _imageKey)
+                            .image
+                            : AssetImage('assets/images/company_h1.png')
+                        as ImageProvider<Object>?,
                       ),
                     ),
                     Positioned(
@@ -242,6 +248,27 @@ class _CompanyProfileState extends State<CompanyProfile> {
                 ),
               ),
               SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: () {
+                  // Add the functionality to update the profile here
+                  // You can call a function or navigate to another screen for updating
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UpdateCompany()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.teal, // Set the button color to tealish
+                ),
+                child: Text(
+                  'Update Profile',
+                  style: TextStyle(
+                      color: Colors.white), // Set the text color to white
+                ),
+              ),
+
               // Personal Details Section
               Card(
                 elevation: 3,
@@ -263,12 +290,16 @@ class _CompanyProfileState extends State<CompanyProfile> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      buildContactInfoWithIcon('Name', Icons.business, widget.companyModel.name),
-                      buildContactInfoWithIcon('Address', Icons.location_on, widget.companyModel.address),
-                      buildContactInfoWithIcon('Email', Icons.email, widget.companyModel.email),
-                      buildContactInfoWithIcon('Phone', Icons.phone, widget.companyModel.phone),
-                      buildContactInfoWithIcon('Website', Icons.link, widget.companyModel.website),
-
+                      buildContactInfoWithIcon(
+                          'Name', Icons.business, widget.companyModel.name),
+                      buildContactInfoWithIcon('Address', Icons.location_on,
+                          widget.companyModel.address),
+                      buildContactInfoWithIcon(
+                          'Email', Icons.email, widget.companyModel.email),
+                      buildContactInfoWithIcon(
+                          'Phone', Icons.phone, widget.companyModel.phone),
+                      buildContactInfoWithIcon(
+                          'Website', Icons.link, widget.companyModel.website),
                     ],
                   ),
                 ),
@@ -300,15 +331,23 @@ class _CompanyProfileState extends State<CompanyProfile> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildSocialMediaColumn('assets/images/fb_logo.png', widget.companyModel.facebook ?? ''),
-                            SizedBox(width: 10,),
-                            _buildSocialMediaColumn('assets/images/linkedin_logo.png', widget.companyModel.linkedin ?? ''),
-                            SizedBox(width: 10,),
-                            _buildSocialMediaColumn('assets/images/twitter_logo.png', widget.companyModel.twitter?? ''),
-                            SizedBox(width: 10,),
-
-
-
+                            _buildSocialMediaColumn('assets/images/fb_logo.png',
+                                widget.companyModel.facebook ?? ''),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            _buildSocialMediaColumn(
+                                'assets/images/linkedin_logo.png',
+                                widget.companyModel.linkedin ?? ''),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            _buildSocialMediaColumn(
+                                'assets/images/twitter_logo.png',
+                                widget.companyModel.twitter ?? ''),
+                            SizedBox(
+                              width: 10,
+                            ),
                           ],
                         ),
                       ),
@@ -360,17 +399,23 @@ class _CompanyProfileState extends State<CompanyProfile> {
             switch (index) {
               case 0:
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => CompanyHomePage(companyModel: widget.companyModel)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CompanyHomePage(companyModel: widget.companyModel)),
                 );
                 break;
               case 1:
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => PromotionPage(companyModel: widget.companyModel)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PromotionPage(companyModel: widget.companyModel)),
                 );
                 break;
               case 2:
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => NotificationPage(companyModel: widget.companyModel)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          NotificationPage(companyModel: widget.companyModel)),
                 );
                 break;
             }
@@ -427,8 +472,282 @@ class _CompanyProfileState extends State<CompanyProfile> {
       print('Error launching media url : $e');
     }
   }
-
-
 }
 
+///////////////////////////////////////////////////////////////////
+class UpdateCompany extends StatefulWidget {
+  @override
+  _UpdateCompanyState createState() => _UpdateCompanyState();
+}
 
+class _UpdateCompanyState extends State<UpdateCompany> {
+  // Text controllers for various fields
+  TextEditingController companyNameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController websiteController = TextEditingController();
+  TextEditingController facebookController = TextEditingController();
+  TextEditingController twitterController = TextEditingController();
+  TextEditingController linkedinController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserDetails();
+  }
+
+  // Function to fetch user details from Firestore
+  void fetchUserDetails() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
+      await _firestore.collection("users").doc(user.uid).get();
+
+      if (userDoc.exists) {
+        // Set user details to respective controllers
+        setState(() {
+          companyNameController.text = userDoc['name'];
+          addressController.text = userDoc['address'];
+          phoneController.text = userDoc['phone'];
+          websiteController.text = userDoc['website'];
+          facebookController.text = userDoc['facebook'];
+          twitterController.text = userDoc['twitter'];
+          linkedinController.text = userDoc['linkedin'];
+          descriptionController.text = userDoc['description'];
+        });
+      }
+    }
+  }
+
+  // Function to update user profile
+  void updateProfile() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      CompanyModel userModel = CompanyModel(
+        email: user.email,
+        uid: user.uid,
+        userType: 'Company',
+        name: companyNameController.text,
+        address: addressController.text,
+        phone: phoneController.text,
+        website: websiteController.text,
+        linkedin: linkedinController.text,
+        facebook: facebookController.text,
+        twitter: twitterController.text,
+        description: descriptionController.text,
+      );
+
+      try {
+        // Update user profile in Firestore
+        await _firestore
+            .collection("users")
+            .doc(user.uid)
+            .set(userModel.toMap());
+        showSuccessDialog();
+      } catch (error) {
+        showErrorDialog();
+      }
+    }
+  }
+
+  // Function to show success dialog
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Profile Updated", style: TextStyle(color: Colors.teal)),
+          content: Text("Your profile has been updated successfully!",
+              style: TextStyle(color: Colors.teal)),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK", style: TextStyle(color: Colors.teal)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to show error dialog
+  void showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error", style: TextStyle(color: Colors.teal)),
+          content: Text("An error occurred while updating your profile.",
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.teal,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK", style: TextStyle(color: Colors.teal)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Widget for company information section
+  Widget companyInformation() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 20),
+        Text(
+          'Company Information',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        TextFormField(
+          controller: companyNameController,
+          decoration: InputDecoration(
+            labelText: 'Company Name',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 10),
+
+        // Add similar TextFormFields for other company details
+        TextFormField(
+          controller: addressController,
+          decoration: InputDecoration(
+            labelText: 'Address',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 10),
+        TextFormField(
+          controller: emailController,
+          decoration: InputDecoration(
+            labelText: 'Email',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 10),
+        TextFormField(
+          controller: phoneController,
+          decoration: InputDecoration(
+            labelText: 'Phone',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 10),
+        TextFormField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'Password',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 20),
+        TextFormField(
+          controller: confirmPasswordController,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'Confirm Password',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+
+  // Widget for online presence section
+  Widget onlinePresence() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 20),
+        Text(
+          'Company Online Presence',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 20),
+        Text(
+          'Website URL (if applicable)',
+          style: TextStyle(
+            fontSize: 18,
+          ),
+        ),
+        TextFormField(
+          controller: websiteController,
+          decoration: InputDecoration(
+            labelText: 'Website URL',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+
+  // Add similar Widget functions for socialMediaProfile, buildDescription
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Company Update Profile'),
+        backgroundColor: Colors.teal,
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+          child: Padding(
+            padding: const EdgeInsets.all(9.0),
+            child: Column(
+              children: <Widget>[
+                companyInformation(),
+                onlinePresence(),
+                // Add calls to other Widget functions
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      updateProfile();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.teal,
+                      minimumSize: Size(150, 50),
+                    ),
+                    child: const Text(
+                      'Update Profile',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -7,18 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trendmasterass2/model/user_model.dart';
 import 'package:trendmasterass2/pages/login_page.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../model/work_request_model.dart';
-
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
-import 'package:firebase_auth/firebase_auth.dart';
 
 class CreatorHomePage extends StatefulWidget {
   final UserModel userModel;
@@ -816,9 +807,8 @@ class _ProfilePageState extends State<ProfilePage> {
       if (localFile != null) {
         _image = File(localFile.path);
         uploadPicture();
-        // You can add your own UI feedback here
       } else {
-        // You can add your own UI feedback here
+        print('upload fail');
       }
     });
   }
@@ -965,7 +955,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
 
-                        // SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add the functionality to update the profile here
+                            // You can call a function or navigate to another screen for updating
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => UpdateCreator()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.teal, // Set the button color to tealish
+                          ),
+                          child: Text(
+                            'Update Profile',
+                            style: TextStyle(color: Colors.white), // Set the text color to white
+                          ),
+                        ),// SizedBox(height: 10),
 
                         // Description
                         Container(
@@ -1088,7 +1095,535 @@ void _launchSocialMedia(String mediaUrl) async {
 
 
 
+ //////////////////////////////////////////////////
+ class UpdateCreator extends StatefulWidget {
+   @override
+   _UpdateCreatorState createState() => _UpdateCreatorState();
+ }
 
+ class _UpdateCreatorState extends State<UpdateCreator> {
+   TextEditingController firstNameController = TextEditingController();
+   TextEditingController middleNameController = TextEditingController();
+   TextEditingController lastNameController = TextEditingController();
+   TextEditingController addressController = TextEditingController();
+   TextEditingController emailController = TextEditingController();
+   TextEditingController phoneController = TextEditingController();
+   TextEditingController passwordController = TextEditingController();
+   TextEditingController confirmPasswordController = TextEditingController();
+   TextEditingController instagramController = TextEditingController();
+   TextEditingController youtubeController = TextEditingController();
+   TextEditingController facebookController = TextEditingController();
+   TextEditingController instagramSubscriberController = TextEditingController();
+   TextEditingController youtubeSubscriberController = TextEditingController();
+   TextEditingController facebookSubscriberController = TextEditingController();
+   TextEditingController descriptionController = TextEditingController();
+   TextEditingController rateController = TextEditingController();
+
+   String? selectedGender;
+   List<String> selectedNiches = [];
+
+   FirebaseAuth _auth = FirebaseAuth.instance;
+   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+   List<Map<String, dynamic>> getNicheList() {
+     return [
+       {'niche': 'Fashion', 'color': Colors.teal},
+       {'niche': 'Motivate', 'color': Colors.teal},
+       {'niche': 'Food Vlog', 'color': Colors.teal},
+       {'niche': 'Entertainment', 'color': Colors.teal},
+       {'niche': 'Informative', 'color': Colors.teal},
+       {'niche': 'Makeup', 'color': Colors.teal},
+       {'niche': 'Content Creator', 'color': Colors.teal},
+       {'niche': 'Model', 'color': Colors.teal},
+       {'niche': 'Comedy', 'color': Colors.teal},
+     ];
+   }
+
+   @override
+   void initState() {
+     super.initState();
+     fetchUserDetails();
+   }
+
+   void fetchUserDetails() async {
+     User? user = _auth.currentUser;
+     if (user != null) {
+       DocumentSnapshot<Map<String, dynamic>> userDoc =
+       await _firestore.collection("users").doc(user.uid).get();
+
+       if (userDoc.exists) {
+         setState(() {
+           firstNameController.text = userDoc['firstName'];
+           addressController.text = userDoc['address'];
+           phoneController.text = userDoc['phone'];
+           selectedGender = userDoc['gender'];
+           emailController.text = userDoc['email'];
+           instagramController.text = userDoc['instagram'];
+           youtubeController.text = userDoc['youtube'];
+           facebookController.text = userDoc['facebook'];
+           instagramSubscriberController.text =
+               userDoc['instagramSubscriber'].toString();
+           youtubeSubscriberController.text =
+               userDoc['youtubeSubscriber'].toString();
+           facebookSubscriberController.text =
+               userDoc['facebookSubscriber'].toString();
+           descriptionController.text = userDoc['description'];
+           rateController.text = userDoc['rate'].toString();
+           selectedNiches = List.from(userDoc['niche']);
+           middleNameController.text = userDoc['middleName'];
+           lastNameController.text = userDoc['lastName'];
+         });
+       }
+     }
+   }
+
+
+   void updateProfile() async {
+     User? user = _auth.currentUser;
+     if (user != null) {
+       UserModel userModel = UserModel(
+         email: user.email,
+         uid: user.uid,
+         userType: 'Creator',
+         firstName: firstNameController.text,
+         middleName: middleNameController.text,
+         lastName: lastNameController.text,
+         address: addressController.text,
+         gender: selectedGender.toString(),
+         phone: phoneController.text,
+         instagram: instagramController.text,
+         youtube: youtubeController.text,
+         facebook: facebookController.text,
+         instagramSubscriber: int.parse(instagramSubscriberController.text),
+         youtubeSubscriber: int.parse(youtubeSubscriberController.text),
+         facebookSubscriber: int.parse(facebookSubscriberController.text),
+         niche: selectedNiches.toString(),
+         description: descriptionController.text,
+         rate: double.parse(rateController.text),
+       );
+
+       await _firestore
+           .collection("users")
+           .doc(user.uid)
+           .set(userModel.toMap())
+           .then((_) {
+         // Show a success popup when the profile is updated
+         showDialog(
+           context: context,
+           builder: (BuildContext context) {
+             return AlertDialog(
+               title: Text("Profile Updated", style: TextStyle(color: Colors.teal)),
+               content: Text("Your profile has been updated successfully!", style: TextStyle(color: Colors.teal)),
+               backgroundColor: Colors.white,
+               actions: [
+                 TextButton(
+                   onPressed: () {
+                     Navigator.of(context).pop();
+                   },
+                   child: Text("OK", style: TextStyle(color: Colors.teal)),
+                 ),
+               ],
+             );
+           },
+         );
+       }).catchError((error) {
+         // Handle any error that might occur during the update
+         showDialog(
+           context: context,
+           builder: (BuildContext context) {
+             return AlertDialog(
+               title: Text("Error", style: TextStyle(color: Colors.teal)),
+               content: Text("An error occurred while updating your profile.", style: TextStyle(color: Colors.white)),
+               backgroundColor: Colors.teal,
+               actions: [
+                 TextButton(
+                   onPressed: () {
+                     Navigator.of(context).pop();
+                   },
+                   child: Text("OK", style: TextStyle(color: Colors.teal)),
+                 ),
+               ],
+             );
+           },
+         );
+       });
+     }
+   }
+
+
+
+
+   Widget buildPersonalInformation() {
+     return Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: <Widget>[
+         SizedBox(height: 20),
+         Text(
+           'Personal Information',
+           style: TextStyle(
+             fontSize: 22,
+             fontWeight: FontWeight.bold,
+           ),
+         ),
+         TextFormField(
+           controller: firstNameController,
+           decoration: InputDecoration(
+             labelText: 'First Name',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         TextFormField(
+           controller: middleNameController,
+           decoration: InputDecoration(
+             labelText: 'Middle Name',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         TextFormField(
+           controller: lastNameController,
+           decoration: InputDecoration(
+             labelText: 'Last Name',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Address',
+           style: TextStyle(
+             fontSize: 18,
+           ),
+         ),
+         TextFormField(
+           controller: addressController,
+           decoration: InputDecoration(
+             labelText: 'Address',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Gender',
+           style: TextStyle(
+             fontSize: 18,
+           ),
+         ),
+         DropdownButtonFormField<String>(
+           decoration: InputDecoration(
+             labelText: 'Select Gender',
+             border: OutlineInputBorder(),
+           ),
+           value: selectedGender,
+           onChanged: (String? value) {
+             setState(() {
+               selectedGender = value;
+             });
+           },
+           items: <String>['Male', 'Female'].map((String value) {
+             return DropdownMenuItem<String>(
+               value: value,
+               child: Text(value),
+             );
+           }).toList(),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Email',
+           style: TextStyle(
+             fontSize: 18,
+           ),
+         ),
+         TextFormField(
+           controller: emailController,
+           decoration: InputDecoration(
+             labelText: 'Email',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Phone',
+           style: TextStyle(
+             fontSize: 18,
+           ),
+         ),
+         TextFormField(
+           controller: phoneController,
+           decoration: InputDecoration(
+             labelText: 'Phone',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Password',
+           style: TextStyle(
+             fontSize: 18,
+           ),
+         ),
+         TextFormField(
+           controller: passwordController,
+           obscureText: true,
+           decoration: InputDecoration(
+             labelText: 'Password',
+             border: OutlineInputBorder(),
+           ),
+         ),
+         SizedBox(height: 10),
+         TextFormField(
+           controller: confirmPasswordController,
+           obscureText: true,
+           decoration: InputDecoration(
+             labelText: 'Confirm Password',
+             border: OutlineInputBorder(),
+           ),
+         ),
+       ],
+     );
+   }
+
+   Widget buildSocialMediaProfiles() {
+     return Column(
+       children: [
+         SizedBox(height: 20),
+         Text(
+           'Social Media Profiles',
+           style: TextStyle(
+             fontSize: 22,
+             fontWeight: FontWeight.bold,
+           ),
+         ),
+         Row(
+           children: [
+             Expanded(
+               child: Padding(
+                 padding: const EdgeInsets.only(right: 20.0),
+                 child: TextFormField(
+                   controller: instagramController,
+                   decoration: InputDecoration(
+                     labelText: 'Instagram Handle',
+                     border: OutlineInputBorder(),
+                   ),
+                 ),
+               ),
+             ),
+             SizedBox(
+               width: 100,
+               child: TextFormField(
+                 controller: instagramSubscriberController,
+                 keyboardType: TextInputType.number,
+                 decoration: InputDecoration(
+                   labelText: 'Subscribers',
+                   border: OutlineInputBorder(),
+                 ),
+               ),
+             ),
+           ],
+         ),
+         SizedBox(height: 10),
+         Row(
+           children: [
+             Expanded(
+               child: Padding(
+                 padding: const EdgeInsets.only(right: 10.0),
+                 child: TextFormField(
+                   controller: youtubeController,
+                   decoration: InputDecoration(
+                     labelText: 'YouTube Channel (if applicable)',
+                     border: OutlineInputBorder(),
+                   ),
+                 ),
+               ),
+             ),
+             SizedBox(
+               width: 100,
+               child: TextFormField(
+                 controller: youtubeSubscriberController,
+                 keyboardType: TextInputType.number,
+                 decoration: InputDecoration(
+                   labelText: 'Subscribers',
+                   border: OutlineInputBorder(),
+                 ),
+               ),
+             ),
+           ],
+         ),
+         SizedBox(height: 10),
+         Row(
+           children: [
+             Expanded(
+               child: Padding(
+                 padding: const EdgeInsets.only(right: 10.0),
+                 child: TextFormField(
+                   controller: facebookController,
+                   decoration: InputDecoration(
+                     labelText: 'Facebook Handle',
+                     border: OutlineInputBorder(),
+                   ),
+                 ),
+               ),
+             ),
+             SizedBox(
+               width: 100,
+               child: TextFormField(
+                 controller: facebookSubscriberController,
+                 keyboardType: TextInputType.number,
+                 decoration: InputDecoration(
+                   labelText: 'Subscribers',
+                   border: OutlineInputBorder(),
+                 ),
+               ),
+             ),
+           ],
+         ),
+         SizedBox(height: 10),
+         Row(
+           children: [
+             Expanded(
+               child: Padding(
+                 padding: const EdgeInsets.only(right: 10.0),
+                 child: TextFormField(
+                   controller: rateController,
+                   keyboardType: TextInputType.number,
+                   decoration: InputDecoration(
+                     labelText: 'Rate',
+                     border: OutlineInputBorder(),
+                   ),
+                 ),
+               ),
+             ),
+           ],
+         ),
+       ],
+     );
+   }
+
+   Widget buildNicheSelection() {
+     return Column(
+       children: [
+         SizedBox(height: 20),
+         Text(
+           'Niche/Category',
+           style: TextStyle(
+             fontSize: 22,
+             fontWeight: FontWeight.bold,
+           ),
+         ),
+         SizedBox(height: 10),
+         Text(
+           'Select Niche',
+           style: TextStyle(fontWeight: FontWeight.bold),
+         ),
+         SizedBox(height: 5),
+         Column(
+           crossAxisAlignment: CrossAxisAlignment.center,
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+             Wrap(
+               spacing: 8,
+               runSpacing: 8,
+               children: getNicheList().map((location) {
+                 return OutlinedButton(
+                   onPressed: () {
+                     setState(() {
+                       selectedNiches.contains(location['niche'])
+                           ? selectedNiches.remove(location['niche'])
+                           : selectedNiches.add(location['niche']);
+                     });
+                   },
+                   child: Text(
+                     location['niche'],
+                     style: TextStyle(
+                       color: selectedNiches.contains(location['niche'])
+                           ? Colors.white
+                           : location['color'],
+                     ),
+                   ),
+                   style: OutlinedButton.styleFrom(
+                     primary: selectedNiches.contains(location['niche'])
+                         ? location['color']
+                         : null,
+                     backgroundColor: selectedNiches.contains(location['niche'])
+                         ? location['color']
+                         : null,
+                   ),
+                 );
+               }).toList(),
+             ),
+           ],
+         ),
+       ],
+     );
+   }
+
+   Widget buildDescription() {
+     return Column(
+       children: [
+         SizedBox(height: 20),
+         Text(
+           'Description',
+           style: TextStyle(
+             fontSize: 22,
+             fontWeight: FontWeight.bold,
+           ),
+         ),
+         SizedBox(height: 10),
+         TextFormField(
+           controller: descriptionController,
+           maxLines: 3,
+           decoration: InputDecoration(
+             labelText: 'Tell us about yourself',
+             border: OutlineInputBorder(),
+           ),
+         ),
+       ],
+     );
+   }
+
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+       appBar: AppBar(
+         title: const Text('Update Influencer Profile'),
+         backgroundColor: Colors.teal,
+       ),
+       body: SingleChildScrollView(
+         padding: EdgeInsets.all(20.0),
+         child: Form(
+           child: Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: <Widget>[
+               buildPersonalInformation(),
+               buildSocialMediaProfiles(),
+               buildNicheSelection(),
+               buildDescription(),
+               SizedBox(height: 20),
+               Center(
+                 child: ElevatedButton(
+                   onPressed: () {
+                     updateProfile();
+                   },
+                   style: ElevatedButton.styleFrom(
+                     primary: Colors.teal,
+                     minimumSize: Size(150, 50),
+                   ),
+                   child: const Text(
+                     'Update Profile',
+                     style: TextStyle(
+                       color: Colors.white,
+                       fontSize: 22,
+                     ),
+                   ),
+                 ),
+               ),
+             ],
+           ),
+         ),
+       ),
+     );
+   }
+ }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
