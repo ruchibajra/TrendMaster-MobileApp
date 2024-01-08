@@ -456,7 +456,8 @@ class _CreatorRegistrationState extends State<CreatorRegistration> {
       appBar: AppBar(
         title: const Text('Creator Registration'),
         backgroundColor: Colors.teal,
-        iconTheme: IconThemeData(color: Colors.white), // Set the icon color to white
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
 
       ),
       body: SingleChildScrollView(
