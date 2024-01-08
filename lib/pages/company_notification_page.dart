@@ -192,9 +192,6 @@ class NotificationItem extends StatelessWidget {
     return Card(
       elevation: 2,
       child: ListTile(
-        leading: CircleAvatar(
-          // child: Image.network("{profileImage}")
-        ),
         title: Text(
           "${fname}${mname} ${lname}",
           style: TextStyle(fontWeight: FontWeight.bold,),
