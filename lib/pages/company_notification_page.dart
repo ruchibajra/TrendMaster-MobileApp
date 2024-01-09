@@ -328,6 +328,6 @@ class NotificationItem extends StatelessWidget {
     } catch (e) {
       print('Error updating work request status: $e');
     }
-    Fluttertoast.showToast(msg: '${companyModel.uid}');
+    // Fluttertoast.showToast(msg: '${companyModel.uid}');
   }
 }

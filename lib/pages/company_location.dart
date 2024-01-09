@@ -125,7 +125,7 @@ class _CompanyLocationPageState extends State<CompanyLocationPage> {
 
               SizedBox(height: 35),
               FractionallySizedBox(
-                widthFactor: 0.55, // Adjust this value according to your requirement
+                widthFactor: 0.55,
                 child: ElevatedButton(
                   onPressed: () async{
                    await postDetailsToFirebase();

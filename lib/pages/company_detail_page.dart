@@ -166,7 +166,7 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.file(
                       _image!,
-                      fit: BoxFit.cover, // Set the fit property to cover the entire container
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -257,7 +257,7 @@ class _AddDetailsPageState extends State<AddDetailsPage> {
               SizedBox(height: 35),
               Center(
                 child: FractionallySizedBox(
-                  widthFactor: 0.55, // Adjust this value according to your requirement
+                  widthFactor: 0.55,
                   child: ElevatedButton(
                     onPressed: () async{
                       await uploadPicture();
