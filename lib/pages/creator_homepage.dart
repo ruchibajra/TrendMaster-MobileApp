@@ -543,6 +543,7 @@ class _CampaignDetailsPageState extends State<CampaignDetailsPage> {
       fname: widget.userModel.firstName,
       mname: widget.userModel.middleName,
       lname: widget.userModel.lastName,
+      creatorFname: widget.campaignData['companyName'] as String ?? ''
     );
 
     try {
@@ -1649,12 +1650,31 @@ class _NotificationPageState extends State<NotificationPage> {
 
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
+  // Future<List<DocumentSnapshot>> getNotifications() async {
+  //   QuerySnapshot querySnapshot = await firebaseFirestore
+  //       .collection('work_requests')
+  //       .where('receiverId', isEqualTo: widget.userModel.email )
+  //       .get();
+  //   return querySnapshot.docs;
+  // }
+
   Future<List<DocumentSnapshot>> getNotifications() async {
-    QuerySnapshot querySnapshot = await firebaseFirestore
+    QuerySnapshot campaignRequestsQuery = await firebaseFirestore
         .collection('work_requests')
         .where('receiverId', isEqualTo: widget.userModel.email )
         .get();
-    return querySnapshot.docs;
+
+    QuerySnapshot workRequestsQuery = await firebaseFirestore
+        .collection('campaign_requests')
+        .where('senderId', isEqualTo: widget.userModel.email)
+        .where('status', isEqualTo: "Accepted")
+        .get();
+
+    List<DocumentSnapshot> combinedNotifications = [];
+    combinedNotifications.addAll(campaignRequestsQuery.docs);
+    combinedNotifications.addAll(workRequestsQuery.docs);
+
+    return combinedNotifications;
   }
 
   void refreshPage() {
@@ -1713,10 +1733,15 @@ class _NotificationPageState extends State<NotificationPage> {
                         name: notification['fname'] ?? '',
                         status: notification['status'] ?? '',
                         senderId: notification['senderId'] ?? '',
+                        creatorFname: notification.reference.parent!.id == 'campaign_requests'
+                            ? notification['creatorFname'] ?? ''
+                            : '',
                         userModel: widget.userModel,
                         companyModel: CompanyModel(),
                         firebaseFirestore: firebaseFirestore,
                         refreshPage: refreshPage,
+                        isWorkRequest: notification.reference.parent!.id == 'campaign_requests',
+
                       ),
                     SizedBox(height: 16),
                   ],
@@ -1740,9 +1765,12 @@ class NotificationItem extends StatelessWidget {
   final String status;
   final String senderId;
   final UserModel userModel;
+  final String creatorFname;
   final CompanyModel companyModel;
   final FirebaseFirestore firebaseFirestore;
   final void Function() refreshPage;
+  final bool isWorkRequest;
+
 
   NotificationItem({
     // required this.profileImage,
@@ -1750,9 +1778,12 @@ class NotificationItem extends StatelessWidget {
     required this.status,
     required this.senderId,
     required this.userModel,
+    required this.creatorFname,
     required this.companyModel,
     required this.firebaseFirestore,
     required this.refreshPage,
+    required this.isWorkRequest,
+
   });
 
   @override
@@ -1773,7 +1804,7 @@ class NotificationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 4),
-            Text('wants to work with you'),
+            Text(isWorkRequest ? 'is now working with ${creatorFname}' : 'wants to work with you'),
             SizedBox(height: 8),
             Text(
               status,
@@ -1801,7 +1832,7 @@ class NotificationItem extends StatelessWidget {
                     child: Text('Accept'),
                   ),
                 SizedBox(width: 8),
-                if (isWorkRequestPending || isWorkRequestAccepted)
+                if (isWorkRequestPending || isWorkRequestAccepted && !isWorkRequest)
                   OutlinedButton(
                     onPressed: () {
                       _showDeclineConfirmationDialog(context);

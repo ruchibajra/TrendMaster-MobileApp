@@ -6,8 +6,10 @@ class WorkRequestModel{
   String? fname;
   String? lname;
   String? mname;
+  String? creatorFname;
 
-  WorkRequestModel({ this.uid, this.senderId, this.receiverId, this.status, this.fname, this.lname, this.mname});
+
+  WorkRequestModel({ this.uid, this.senderId, this.receiverId, this.status, this.fname, this.lname, this.mname, this.creatorFname});
 
   //receiving data from server
   factory WorkRequestModel.fromMap(map){
@@ -19,6 +21,8 @@ class WorkRequestModel{
       fname: map['fname'],
       lname: map['lname'],
       mname: map['mname'],
+      creatorFname: map['creatorFname'],
+
     );
   }
 
@@ -31,6 +35,8 @@ class WorkRequestModel{
       'fname' : fname,
       'lname' : lname,
       'mname' : mname,
+      'creatorFname' : creatorFname,
+
     };
   }
 }

@@ -394,6 +394,7 @@ class _InfluencerProfileState extends State<InfluencerProfile> {
         senderId: widget.companyModel.email,
         receiverId: widget.userModel.email,
         fname: widget.companyModel.name,
+        creatorFname: widget.userModel.firstName,
         status: 'Pending');
 
     try {

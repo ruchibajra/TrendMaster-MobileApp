@@ -220,7 +220,7 @@ class _CompanyProfileState extends State<CompanyProfile> {
                             : user?.photoURL != null
                             ? Image.network(user!.photoURL!, key: _imageKey)
                             .image
-                            : AssetImage('assets/images/company_h1.png')
+                            : AssetImage('assets/images/profile_image.png')
                         as ImageProvider<Object>?,
                       ),
                     ),

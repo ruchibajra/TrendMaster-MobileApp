@@ -19,11 +19,22 @@ class _NotificationPageState extends State<NotificationPage> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future<List<DocumentSnapshot>> getNotifications() async {
-    QuerySnapshot querySnapshot = await firebaseFirestore
+    QuerySnapshot campaignRequestsQuery = await firebaseFirestore
         .collection('campaign_requests')
         .where('receiverId', isEqualTo: widget.companyModel.uid)
         .get();
-    return querySnapshot.docs;
+
+    QuerySnapshot workRequestsQuery = await firebaseFirestore
+        .collection('work_requests')
+        .where('senderId', isEqualTo: widget.companyModel.email)
+        .where('status', isEqualTo: "Accepted")
+        .get();
+
+    List<DocumentSnapshot> combinedNotifications = [];
+    combinedNotifications.addAll(campaignRequestsQuery.docs);
+    combinedNotifications.addAll(workRequestsQuery.docs);
+
+    return combinedNotifications;
   }
 
   void refreshPage() {
@@ -62,7 +73,7 @@ class _NotificationPageState extends State<NotificationPage> {
             );
           } else if (snapshot.data!.isEmpty) {
             return Center(
-              child: Text('You have no any notifications yet.'),
+              child: Text('You have no notifications yet.'),
             );
           } else {
             List<DocumentSnapshot> notifications = snapshot.data!;
@@ -80,11 +91,14 @@ class _NotificationPageState extends State<NotificationPage> {
                         lname: notification['lname'] ?? '',
                         status: notification['status'] ?? '',
                         senderId: notification['senderId'] ?? '',
+                        creatorFname: notification.reference.parent!.id == 'work_requests'
+                            ? notification['creatorFname'] ?? ''
+                            : '',
                         userModel: UserModel(),
                         companyModel: widget.companyModel,
                         firebaseFirestore: firebaseFirestore,
                         refreshPage: refreshPage,
-                        // profileImage: notification['profileImage'] ?? '',
+                        isWorkRequest: notification.reference.parent!.id == 'work_requests',
                       ),
                     SizedBox(height: 16),
                   ],
@@ -160,6 +174,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
 class NotificationItem extends StatelessWidget {
   final String fname;
+  final String creatorFname;
   final String mname;
   final String lname;
   final String status;
@@ -168,10 +183,13 @@ class NotificationItem extends StatelessWidget {
   final CompanyModel companyModel;
   final FirebaseFirestore firebaseFirestore;
   final void Function() refreshPage;
+  final bool isWorkRequest;
+
   // final String profileImage;
 
   NotificationItem({
     required this.fname,
+    required this.creatorFname,
     required this.mname,
     required this.lname,
     required this.status,
@@ -180,6 +198,8 @@ class NotificationItem extends StatelessWidget {
     required this.companyModel,
     required this.firebaseFirestore,
     required this.refreshPage,
+    required this.isWorkRequest,
+
     // required this.profileImage,
   });
 
@@ -200,7 +220,7 @@ class NotificationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 4),
-            Text('wants to work with you'),
+            Text(isWorkRequest ? 'is now working with ${creatorFname}' : 'Wants to work with you'),
             SizedBox(height: 8),
             Text(
                status,
@@ -228,7 +248,7 @@ class NotificationItem extends StatelessWidget {
                     child: Text('Accept'),
                   ),
                 SizedBox(width: 8),
-                if (isWorkRequestPending || isWorkRequestAccepted)
+                if (isWorkRequestPending || isWorkRequestAccepted && !isWorkRequest)
                   OutlinedButton(
                     onPressed: () {
                       _showDeclineConfirmationDialog(context);
